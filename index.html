@@ -1,313 +1,581 @@
 <!doctype html>
 <html lang="de">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#07070f">
-  <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="assets/style.css">
-  <title>Browser-Arcade</title>
-  <meta name="description" content="Kleine Browser-Klassiker zum direkt Losspielen – ohne Konto, ohne Cookies, ohne Tracking. Highscores bleiben im eigenen Browser.">
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="Browser-Arcade">
-  <meta property="og:description" content="Browser-Klassiker ohne Konto, Cookies und Tracking.">
-  <meta property="og:locale" content="de_DE">
-</head>
-<body>
-  <!-- Deko-Raster im Hintergrund (rein optisch, s. style.css) -->
-  <div class="raster" aria-hidden="true"></div>
-  <a class="skip-link" href="#main">Zum Inhalt springen</a>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#07070f" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="assets/style.css" />
+    <title>Browser-Arcade</title>
+    <meta
+      name="description"
+      content="Kleine Browser-Klassiker zum direkt Losspielen – ohne Konto, ohne Cookies, ohne Tracking. Highscores bleiben im eigenen Browser."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Browser-Arcade" />
+    <meta property="og:description" content="Browser-Klassiker ohne Konto, Cookies und Tracking." />
+    <meta property="og:locale" content="de_DE" />
+  </head>
+  <body>
+    <!-- Deko-Raster im Hintergrund (rein optisch, s. style.css) -->
+    <div class="raster" aria-hidden="true"></div>
+    <a class="skip-link" href="#main">Zum Inhalt springen</a>
 
-  <header class="kopf">
-    <nav class="container nav" aria-label="Hauptnavigation">
-      <a class="marke" href="index.html"><span class="logo">▶</span>GAMES</a>
-      <div class="nav-links">
-        
-        <a href="#bald">Bald</a>
-        <a href="impressum.html">Impressum</a>
-        <a href="datenschutz.html">Datenschutz</a>
-      </div>
-    </nav>
-  </header>
-
-  <main id="main">
-
-    <section class="hero">
-      <div class="container">
-        <p class="zeile">Insert Coin … nicht nötig</p>
-        <h1>Browser-Klassiker.<br>Einfach losspielen.</h1>
-        <p class="intro">Kleine Spiele, direkt im Browser – ohne Konto, ohne Cookies, ohne Tracking. Deine Highscores bleiben bei dir auf dem Gerät.</p>
-      </div>
-    </section>
-
-    <!-- ===== Kategorie: Arcade (pink) ===== -->
-    <section class="kategorie container" style="--kat:var(--pink)">
-      <h2>Arcade</h2>
-      <div class="raster-karten">
-
-        <a class="karte" href="snake/" style="--kat:var(--pink)">
-          <span class="karte-icon" aria-hidden="true">
-            <svg viewBox="0 0 48 48" fill="currentColor"><path d="M6 10h12v6H12v6h12v-6h18v6h-6v6h6v6H30v6h12v6H24v-6h6v-6H12v6h6v6H6v-6h6v-6H6v-6h12v-6H6z" opacity=".9"/><rect x="36" y="12" width="4" height="4" fill="#fff"/></svg>
-          </span>
-          <h3>Snake</h3>
-          <p>Fressen, wachsen, nicht in den eigenen Schwanz beißen. 8 Labyrinth-Level im Handy-Display-Look.</p>
-          <span class="meta"><span>Highscore: Punkte</span><span class="los">Spielen →</span></span>
-        </a>
-
-        <a class="karte" href="pixelrex/" style="--kat:var(--pink)">
-          <span class="karte-icon" aria-hidden="true">
-            <svg viewBox="0 0 48 48" fill="currentColor"><path d="M26 6h14v6h4v10h-6v4h-6v4h-4v6h4v6h-6v-6h-4v6h-6v-8h-4v-4H8v-6H4v-4h8v4h4v4h6V12h4z"/><rect x="34" y="10" width="3" height="3" fill="#07070f"/></svg>
-          </span>
-          <h3>Pixelrex</h3>
-          <p>Endlos-Läufer durch 5 Welten: springen, ducken, Lava und Eiszapfen ausweichen.</p>
-          <span class="meta"><span>Highscore: Distanz</span><span class="los">Spielen →</span></span>
-        </a>
-
-        <a class="karte" href="flattervogel/" style="--kat:var(--pink)">
-          <span class="karte-icon" aria-hidden="true">
-            <svg viewBox="0 0 48 48" fill="currentColor"><path d="M14 18a10 10 0 0 1 20 0c6 1 9 5 9 8-3 1-6 1-9 0-2 6-8 10-14 8-7-2-10-10-6-16z"/><circle cx="29" cy="16" r="2.5" fill="#07070f"/><path d="M6 24c4-2 8-2 11 0-3 3-7 3-11 0z" opacity=".6"/></svg>
-          </span>
-          <h3>Flattervogel</h3>
-          <p>Flattere durch die Lücken, vom Morgengrauen bis Mitternacht, mit schwingenden Säulen.</p>
-          <span class="meta"><span>Highscore: Säulen</span><span class="los">Spielen →</span></span>
-        </a>
-
-        <a class="karte" href="froschsprung/" style="--kat:var(--pink)">
-          <span class="karte-icon" aria-hidden="true">
-            <svg viewBox="0 0 48 48" fill="currentColor"><ellipse cx="24" cy="30" rx="13" ry="10"/><circle cx="16" cy="18" r="6"/><circle cx="32" cy="18" r="6"/><circle cx="15" cy="17" r="2" fill="#07070f"/><circle cx="31" cy="17" r="2" fill="#07070f"/><path d="M4 40c4-4 8-5 11-4M44 40c-4-4-8-5-11-4" stroke="currentColor" stroke-width="3" fill="none"/></svg>
-          </span>
-          <h3>Froschsprung</h3>
-          <p>Über Straße und Fluss in die Buchten: 10 Level mit Krokodilen, Schlange und Bonusfliege.</p>
-          <span class="meta"><span>Highscore: Punkte</span><span class="los">Spielen →</span></span>
-        </a>
-
-        <a class="karte" href="mauerbrecher/" style="--kat:var(--pink)">
-          <span class="karte-icon" aria-hidden="true">
-            <svg viewBox="0 0 48 48" fill="currentColor"><rect x="4" y="6" width="12" height="6" rx="1"/><rect x="18" y="6" width="12" height="6" rx="1" opacity=".75"/><rect x="32" y="6" width="12" height="6" rx="1"/><rect x="4" y="15" width="12" height="6" rx="1" opacity=".55"/><rect x="18" y="15" width="12" height="6" rx="1"/><rect x="32" y="15" width="12" height="6" rx="1" opacity=".55"/><circle cx="24" cy="31" r="3"/><rect x="15" y="40" width="18" height="4" rx="2"/></svg>
-          </span>
-          <h3>Mauerbrecher</h3>
-          <p>Schläger, Ball, Steine: 12 Level mit harten Steinen, Power-ups und Mehrfachball.</p>
-          <span class="meta"><span>Highscore: Punkte</span><span class="los">Spielen →</span></span>
-        </a>
-
-        <a class="karte" href="meteorsturm/" style="--kat:var(--pink)">
-          <span class="karte-icon" aria-hidden="true">
-            <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"><path d="M6 44 15 18l9 26-9-6z"/><path d="M31 4l8 2 5 7-1 8-6 5-8-1-4-6 1-8z"/><circle cx="20" cy="12" r="1.6" fill="currentColor"/><circle cx="23" cy="6" r="1.6" fill="currentColor"/></svg>
-          </span>
-          <h3>Meteorsturm</h3>
-          <p>Vektor-Arcade: Schub geben, Brocken zerlegen, UFOs ausweichen. Welle für Welle.</p>
-          <span class="meta"><span>Highscore: Punkte</span><span class="los">Spielen →</span></span>
-        </a>
-
-      </div>
-    </section>
-
-    <!-- ===== Kategorie: Puzzle (cyan) ===== -->
-    <section class="kategorie container" style="--kat:var(--cyan)">
-      <h2>Puzzle</h2>
-      <div class="raster-karten">
-
-        <a class="karte" href="2048/" style="--kat:var(--cyan)">
-          <span class="karte-icon" aria-hidden="true">
-            <svg viewBox="0 0 48 48" fill="currentColor"><rect x="4" y="4" width="18" height="18" rx="3" opacity=".55"/><rect x="26" y="4" width="18" height="18" rx="3" opacity=".8"/><rect x="4" y="26" width="18" height="18" rx="3" opacity=".8"/><rect x="26" y="26" width="18" height="18" rx="3"/></svg>
-          </span>
-          <h3>2048</h3>
-          <p>Kacheln schieben, gleiche Zahlen verschmelzen – bis zur 2048 und darüber hinaus.</p>
-          <span class="meta"><span>Highscore: Punkte</span><span class="los">Spielen →</span></span>
-        </a>
-
-        <a class="karte" href="minesweeper/" style="--kat:var(--cyan)">
-          <span class="karte-icon" aria-hidden="true">
-            <svg viewBox="0 0 48 48" fill="currentColor"><circle cx="24" cy="26" r="11"/><path d="M22 4h4v8h-4zM22 36h4v8h-4zM2 24h8v4H2zM38 24h8v4h-8zM9 11l3-3 6 6-3 3zM30 32l3-3 6 6-3 3zM36 8l3 3-6 6-3-3zM12 29l3 3-6 6-3-3z"/><circle cx="20" cy="22" r="3" fill="#fff" opacity=".8"/></svg>
-          </span>
-          <h3>Minesweeper</h3>
-          <p>Felder aufdecken, Minen markieren, logisch kombinieren. Drei Schwierigkeitsgrade.</p>
-          <span class="meta"><span>Highscore: Bestzeit</span><span class="los">Spielen →</span></span>
-        </a>
-
-        <a class="karte" href="sudoku/" style="--kat:var(--cyan)">
-          <span class="karte-icon" aria-hidden="true">
-            <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="5" y="5" width="38" height="38" rx="3"/><path d="M5 17.5h38M5 30.5h38M17.5 5v38M30.5 5v38"/><path d="M10 13h3M23 26h3M36 39h2" stroke-width="3.5"/></svg>
-          </span>
-          <h3>Sudoku</h3>
-          <p>Zahlenlogik in drei Schwierigkeitsgraden – mit Notiz-Modus und Konflikt-Anzeige.</p>
-          <span class="meta"><span>Highscore: Bestzeit</span><span class="los">Spielen →</span></span>
-        </a>
-
-      </div>
-    </section>
-
-    <!-- ===== Kategorie: Wörter (lime) ===== -->
-    <section class="kategorie container" style="--kat:var(--lime)">
-      <h2>Wörter</h2>
-      <div class="raster-karten">
-
-        <a class="karte" href="wortfuchs/" style="--kat:var(--lime)">
-          <span class="karte-icon" aria-hidden="true">
-            <svg viewBox="0 0 48 48" fill="currentColor"><rect x="4" y="16" width="12" height="12" rx="2" opacity=".5"/><rect x="18" y="16" width="12" height="12" rx="2"/><rect x="32" y="16" width="12" height="12" rx="2" opacity=".75"/><rect x="11" y="31" width="12" height="12" rx="2" opacity=".75"/><rect x="25" y="31" width="12" height="12" rx="2" opacity=".5"/><rect x="11" y="4" width="26" height="9" rx="2" opacity=".35"/></svg>
-          </span>
-          <h3>Wortfuchs</h3>
-          <p>Errate das deutsche Wort mit fünf Buchstaben in sechs Versuchen. Jeden Versuch gibt's Farb-Hinweise.</p>
-          <span class="meta"><span>Highscore: Siegesserie</span><span class="los">Spielen →</span></span>
-        </a>
-
-      </div>
-    </section>
-
-    <!-- ===== Kategorie: Glück & Zahlen (gold) ===== -->
-    <section class="kategorie container" style="--kat:var(--gold)">
-      <h2>Glück &amp; Zahlen</h2>
-      <div class="raster-karten">
-
-        <a class="karte" href="zahlenraten/" style="--kat:var(--gold)">
-          <span class="karte-icon" aria-hidden="true">
-            <svg viewBox="0 0 48 48" fill="currentColor"><rect x="6" y="6" width="36" height="36" rx="6" opacity=".25"/><path d="M24 12c-5 0-8.5 3-8.8 7.4h5.2c.2-1.9 1.5-3 3.5-3 2 0 3.3 1.1 3.3 2.8 0 1.6-.8 2.5-2.9 3.9-2.4 1.5-3.4 3-3.3 5.6l0 1.3h5.1v-1c0-1.7.7-2.5 2.9-3.9 2.5-1.6 3.9-3.5 3.9-6.2 0-4.1-3.5-6.9-8.9-6.9zM24 33.5a3.2 3.2 0 1 0 0 6.4 3.2 3.2 0 0 0 0-6.4z"/></svg>
-          </span>
-          <h3>Zahlenraten</h3>
-          <p>Ich denke mir eine Zahl – du rätst, ich sage „höher" oder „tiefer". Wie wenige Versuche schaffst du?</p>
-          <span class="meta"><span>Highscore: wenigste Versuche</span><span class="los">Spielen →</span></span>
-        </a>
-
-        <a class="karte" href="higher-lower/" style="--kat:var(--gold)">
-          <span class="karte-icon" aria-hidden="true">
-            <svg viewBox="0 0 48 48" fill="currentColor"><path d="M15 44V18H7L19 4l12 14h-8v26z" opacity=".9"/><path d="M33 4v26h8L29 44 17 30h8V4z" opacity=".45"/></svg>
-          </span>
-          <h3>Higher Lower</h3>
-          <p>Kommt die nächste Karte höher oder tiefer? Baue die längste Kette richtiger Tipps.</p>
-          <span class="meta"><span>Highscore: längste Kette</span><span class="los">Spielen →</span></span>
-        </a>
-
-        <a class="karte" href="coinflip/" style="--kat:var(--gold)">
-          <span class="karte-icon" aria-hidden="true">
-            <svg viewBox="0 0 48 48" fill="currentColor"><circle cx="21" cy="24" r="16" fill="none" stroke="currentColor" stroke-width="3.5"/><circle cx="21" cy="24" r="9" opacity=".35"/><path d="M38 10c4 4 6 9 6 14s-2 10-6 14" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/></svg>
-          </span>
-          <h3>Coinflip</h3>
-          <p>Kopf oder Zahl? Tippe richtig und baue die längste Kette.</p>
-          <span class="meta"><span>Highscore: längste Kette</span><span class="los">Spielen →</span></span>
-        </a>
-
-      </div>
-    </section>
-
-    <!-- ===== Kategorie: Casino (gold, gemeinsames Spielgeld-Konto) ===== -->
-    <section class="kategorie container" style="--kat:var(--gold)">
-      <h2>Casino <span class="alters-hinweis" style="margin:0">ab 16</span></h2>
-      <div class="raster-karten">
-
-        <a class="karte" href="slots/" style="--kat:var(--gold)">
-          <span class="karte-icon" aria-hidden="true"><svg viewBox="0 0 48 48" fill="currentColor"><rect x="4" y="8" width="34" height="32" rx="4" fill="none" stroke="currentColor" stroke-width="3"/><rect x="9" y="16" width="7" height="12" rx="1.5"/><rect x="18" y="16" width="7" height="12" rx="1.5" opacity=".7"/><rect x="27" y="16" width="7" height="12" rx="1.5"/><rect x="11" y="33" width="20" height="3" rx="1.5" opacity=".6"/><path d="M41 12h3v10h-3z"/><circle cx="42.5" cy="9" r="3.4"/></svg></span>
-          <h3>Slots</h3>
-          <p>Drei Walzen, eine Gewinnlinie. Einsatz wählen, drehen, hoffen – die Gewinntabelle steht auf der Seite.</p>
-          <span class="meta"><span>Highscore: höchster Gewinn</span><span class="los">Spielen →</span></span>
-        </a>
-
-        <a class="karte" href="blackjack/" style="--kat:var(--gold)">
-          <span class="karte-icon" aria-hidden="true"><svg viewBox="0 0 48 48" fill="currentColor"><rect x="6" y="10" width="20" height="28" rx="3" opacity=".45" transform="rotate(-10 16 24)"/><rect x="20" y="8" width="20" height="28" rx="3"/><text x="30" y="22" text-anchor="middle" font-size="12" font-weight="bold" fill="#07070f" font-family="monospace">21</text><path d="M30 26c-2 0-3.2 1.4-3.2 3 0 2.4 3.2 4.6 3.2 4.6s3.2-2.2 3.2-4.6c0-1.6-1.2-3-3.2-3z" fill="#07070f"/></svg></span>
-          <h3>Blackjack</h3>
-          <p>Schlag den Dealer: Hit, Stand, Double. Blackjack zahlt 3:2.</p>
-          <span class="meta"><span>Highscore: höchster Gewinn</span><span class="los">Spielen →</span></span>
-        </a>
-
-        <a class="karte" href="higher-lower/?modus=casino" style="--kat:var(--gold)">
-          <span class="karte-icon" aria-hidden="true"><svg viewBox="0 0 48 48" fill="currentColor"><path d="M13 40V20H6L16 8l10 12h-7v20z" opacity=".9"/><circle cx="34" cy="31" r="9" fill="none" stroke="currentColor" stroke-width="3"/><path d="M34 26v10M30 29h6" stroke="currentColor" stroke-width="3" fill="none"/></svg></span>
-          <h3>Higher Lower · Casino</h3>
-          <p>Hoch, Tief oder Gleich – mit Einsatz und dynamischen Quoten. Gleich zahlt am meisten.</p>
-          <span class="meta"><span>Gemeinsames Konto</span><span class="los">Spielen →</span></span>
-        </a>
-
-        <a class="karte" href="tempelschatz/" style="--kat:var(--gold)">
-          <span class="karte-icon" aria-hidden="true">
-            <svg viewBox="0 0 48 48" fill="currentColor"><path d="M24 4 44 20H4z"/><rect x="8" y="22" width="5" height="18"/><rect x="17" y="22" width="5" height="18" opacity=".7"/><rect x="26" y="22" width="5" height="18" opacity=".7"/><rect x="35" y="22" width="5" height="18"/><rect x="4" y="40" width="40" height="4"/><circle cx="24" cy="13" r="3" fill="#07070f"/></svg>
-          </span>
-          <h3>Tempelschatz</h3>
-          <p>Ägypten-Slot: 5 Walzen, 10 Linien, Freispiele mit expandierendem Spezialsymbol.</p>
-          <span class="meta"><span>Highscore: höchster Gewinn</span><span class="los">Spielen →</span></span>
-        </a>
-
-        <a class="karte" href="angelglueck/" style="--kat:var(--gold)">
-          <span class="karte-icon" aria-hidden="true">
-            <svg viewBox="0 0 48 48" fill="currentColor"><path d="M8 22c6-8 16-8 22 0-6 8-16 8-22 0z"/><circle cx="14" cy="21" r="2" fill="#07070f"/><path d="M30 22l8-6v12z"/><path d="M40 6c2 10 1 20-4 28a6 6 0 1 1-3-2" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>
-          </span>
-          <h3>Angelglück</h3>
-          <p>Angel-Slot: Der Angler sammelt in den Freispielen die Geldwerte aller Fische ein.</p>
-          <span class="meta"><span>Highscore: höchster Gewinn</span><span class="los">Spielen →</span></span>
-        </a>
-
-        <a class="karte" href="coinflip/?modus=casino" style="--kat:var(--gold)">
-          <span class="karte-icon" aria-hidden="true">
-            <svg viewBox="0 0 48 48" fill="currentColor"><circle cx="21" cy="24" r="16" fill="none" stroke="currentColor" stroke-width="3.5"/><circle cx="21" cy="24" r="9" opacity=".35"/><path d="M38 10c4 4 6 9 6 14s-2 10-6 14" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/></svg>
-          </span>
-          <h3>Coinflip · Casino</h3>
-          <p>Kopf oder Zahl mit Einsatz – und die seltene Kante zahlt ×47.</p>
-          <span class="meta"><span>Gemeinsames Konto</span><span class="los">Spielen →</span></span>
-        </a>
-
-        <a class="karte" href="risikoleiter/" style="--kat:var(--gold)">
-          <span class="karte-icon" aria-hidden="true">
-            <svg viewBox="0 0 48 48" fill="currentColor"><rect x="12" y="4" width="4" height="40" rx="1.5"/><rect x="32" y="4" width="4" height="40" rx="1.5"/><rect x="16" y="9" width="16" height="3.5" rx="1.5"/><rect x="16" y="17" width="16" height="3.5" rx="1.5" opacity=".8"/><rect x="16" y="25" width="16" height="3.5" rx="1.5" opacity=".6"/><rect x="16" y="33" width="16" height="3.5" rx="1.5" opacity=".4"/></svg>
-          </span>
-          <h3>Risikoleiter</h3>
-          <p>Steige Stufe für Stufe auf: Sammeln oder riskieren? Jeder Schritt ist 50 zu 50 – und trotzdem verlieren fast alle.</p>
-          <span class="meta"><span>Highscore: höchster Gewinn</span><span class="los">Spielen →</span></span>
-        </a>
-      </div>
-      <p style="margin-top:14px;color:var(--mut);font-size:.9rem">Alle Casino-Spiele teilen sich ein Spielgeld-Konto (Startkapital 1.000). Nur Spielgeld – kein Echtgeld, keine Kaufmöglichkeit. Weil die Spiele echte Automaten nachbilden (simuliertes Glücksspiel), sind sie erst ab 16 Jahren gedacht.</p>
-    </section>
-
-    <!-- ===== Kategorie: Karten ===== -->
-    <section class="kategorie container" style="--kat:var(--gold)">
-      <h2>Karten</h2>
-      <div class="raster-karten">
-
-        <a class="karte" href="solitaer/" style="--kat:var(--gold)">
-          <span class="karte-icon" aria-hidden="true"><svg viewBox="0 0 48 48" fill="currentColor"><rect x="4" y="12" width="16" height="24" rx="2" opacity=".4"/><rect x="16" y="9" width="16" height="26" rx="2" opacity=".7"/><rect x="28" y="6" width="16" height="28" rx="2"/><path d="M36 13c-2 0-3.4 1.5-3.4 3.3 0 2.6 3.4 5 3.4 5s3.4-2.4 3.4-5c0-1.8-1.4-3.3-3.4-3.3z" fill="#07070f"/></svg></span>
-          <h3>Solitär</h3>
-          <p>Klondike mit 1er- oder 3er-Ziehen: Drag &amp; Drop, Rückgängig und Auto-Abschluss.</p>
-          <span class="meta"><span>Highscore: Bestzeit</span><span class="los">Spielen →</span></span>
-        </a>
-      </div>
-    </section>
-
-
-    <!-- ===== Bald verfügbar (violett, nicht klickbar) ===== -->
-    <section class="kategorie container" id="bald" style="--kat:var(--violet)">
-      <h2>Bald verfügbar</h2>
-      <div class="raster-karten">
-        <div class="karte bald" style="--kat:var(--violet)">
-          <span class="badge">Welle 4</span>
-          <span class="karte-icon" aria-hidden="true">
-            <svg viewBox="0 0 48 48" fill="currentColor"><path d="M14 42h20v-4H14zM16 36h16l-2-6H18zM17 12l3-6h8l3 6c0 6-2 10-3 14H20c-1-4-3-8-3-14z"/><rect x="19" y="4" width="10" height="3" rx="1.5"/></svg>
-          </span>
-          <h3>Brettspiele</h3>
-          <p>Schach, Dame und Ludo – abwechselnd am selben Gerät.</p>
-          <span class="meta"><span>Hot-Seat</span></span>
+    <header class="kopf">
+      <nav class="container nav" aria-label="Hauptnavigation">
+        <a class="marke" href="index.html"><span class="logo">▶</span>GAMES</a>
+        <div class="nav-links">
+          <a href="#bald">Bald</a>
+          <a href="impressum.html">Impressum</a>
+          <a href="datenschutz.html">Datenschutz</a>
         </div>
-
-
-        
-
-        
-
-      </div>
-    </section>
-
-    <section class="container">
-      <div class="hinweis">
-        <strong>Deine Daten bleiben deine Daten:</strong> Diese Seite nutzt keine Cookies und sendet nichts an den Server. Highscores und Spielstände liegen ausschließlich im Speicher deines Browsers (localStorage) und lassen sich dort jederzeit löschen. Details in der <a href="datenschutz.html">Datenschutzerklärung</a>.
-      </div>
-    </section>
-
-  </main>
-
-  <footer class="fuss">
-    <div class="container fuss-in">
-      <span>Browser-Arcade · Open Source</span>
-      <nav aria-label="Rechtliches">
-        <a href="impressum.html">Impressum</a>
-        <a href="datenschutz.html">Datenschutz</a>
       </nav>
-    </div>
-  </footer>
-  <script type="module" src="assets/keks.js"></script>
-</body>
+    </header>
+
+    <main id="main">
+      <section class="hero">
+        <div class="container">
+          <p class="zeile">Insert Coin … nicht nötig</p>
+          <h1>Browser-Klassiker.<br />Einfach losspielen.</h1>
+          <p class="intro">
+            Kleine Spiele, direkt im Browser – ohne Konto, ohne Cookies, ohne Tracking. Deine
+            Highscores bleiben bei dir auf dem Gerät.
+          </p>
+        </div>
+      </section>
+
+      <!-- ===== Kategorie: Arcade (pink) ===== -->
+      <section class="kategorie container" style="--kat: var(--pink)">
+        <h2>Arcade</h2>
+        <div class="raster-karten">
+          <a class="karte" href="snake/" style="--kat: var(--pink)">
+            <span class="karte-icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48" fill="currentColor">
+                <path
+                  d="M6 10h12v6H12v6h12v-6h18v6h-6v6h6v6H30v6h12v6H24v-6h6v-6H12v6h6v6H6v-6h6v-6H6v-6h12v-6H6z"
+                  opacity=".9"
+                />
+                <rect x="36" y="12" width="4" height="4" fill="#fff" />
+              </svg>
+            </span>
+            <h3>Snake</h3>
+            <p>
+              Fressen, wachsen, nicht in den eigenen Schwanz beißen. 8 Labyrinth-Level im
+              Handy-Display-Look.
+            </p>
+            <span class="meta"
+              ><span>Highscore: Punkte</span><span class="los">Spielen →</span></span
+            >
+          </a>
+
+          <a class="karte" href="pixelrex/" style="--kat: var(--pink)">
+            <span class="karte-icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48" fill="currentColor">
+                <path
+                  d="M26 6h14v6h4v10h-6v4h-6v4h-4v6h4v6h-6v-6h-4v6h-6v-8h-4v-4H8v-6H4v-4h8v4h4v4h6V12h4z"
+                />
+                <rect x="34" y="10" width="3" height="3" fill="#07070f" />
+              </svg>
+            </span>
+            <h3>Pixelrex</h3>
+            <p>Endlos-Läufer durch 5 Welten: springen, ducken, Lava und Eiszapfen ausweichen.</p>
+            <span class="meta"
+              ><span>Highscore: Distanz</span><span class="los">Spielen →</span></span
+            >
+          </a>
+
+          <a class="karte" href="flattervogel/" style="--kat: var(--pink)">
+            <span class="karte-icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48" fill="currentColor">
+                <path
+                  d="M14 18a10 10 0 0 1 20 0c6 1 9 5 9 8-3 1-6 1-9 0-2 6-8 10-14 8-7-2-10-10-6-16z"
+                />
+                <circle cx="29" cy="16" r="2.5" fill="#07070f" />
+                <path d="M6 24c4-2 8-2 11 0-3 3-7 3-11 0z" opacity=".6" />
+              </svg>
+            </span>
+            <h3>Flattervogel</h3>
+            <p>
+              Flattere durch die Lücken, vom Morgengrauen bis Mitternacht, mit schwingenden Säulen.
+            </p>
+            <span class="meta"
+              ><span>Highscore: Säulen</span><span class="los">Spielen →</span></span
+            >
+          </a>
+
+          <a class="karte" href="froschsprung/" style="--kat: var(--pink)">
+            <span class="karte-icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48" fill="currentColor">
+                <ellipse cx="24" cy="30" rx="13" ry="10" />
+                <circle cx="16" cy="18" r="6" />
+                <circle cx="32" cy="18" r="6" />
+                <circle cx="15" cy="17" r="2" fill="#07070f" />
+                <circle cx="31" cy="17" r="2" fill="#07070f" />
+                <path
+                  d="M4 40c4-4 8-5 11-4M44 40c-4-4-8-5-11-4"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  fill="none"
+                />
+              </svg>
+            </span>
+            <h3>Froschsprung</h3>
+            <p>
+              Über Straße und Fluss in die Buchten: 10 Level mit Krokodilen, Schlange und
+              Bonusfliege.
+            </p>
+            <span class="meta"
+              ><span>Highscore: Punkte</span><span class="los">Spielen →</span></span
+            >
+          </a>
+
+          <a class="karte" href="mauerbrecher/" style="--kat: var(--pink)">
+            <span class="karte-icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48" fill="currentColor">
+                <rect x="4" y="6" width="12" height="6" rx="1" />
+                <rect x="18" y="6" width="12" height="6" rx="1" opacity=".75" />
+                <rect x="32" y="6" width="12" height="6" rx="1" />
+                <rect x="4" y="15" width="12" height="6" rx="1" opacity=".55" />
+                <rect x="18" y="15" width="12" height="6" rx="1" />
+                <rect x="32" y="15" width="12" height="6" rx="1" opacity=".55" />
+                <circle cx="24" cy="31" r="3" />
+                <rect x="15" y="40" width="18" height="4" rx="2" />
+              </svg>
+            </span>
+            <h3>Mauerbrecher</h3>
+            <p>Schläger, Ball, Steine: 12 Level mit harten Steinen, Power-ups und Mehrfachball.</p>
+            <span class="meta"
+              ><span>Highscore: Punkte</span><span class="los">Spielen →</span></span
+            >
+          </a>
+
+          <a class="karte" href="meteorsturm/" style="--kat: var(--pink)">
+            <span class="karte-icon" aria-hidden="true">
+              <svg
+                viewBox="0 0 48 48"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.4"
+                stroke-linejoin="round"
+              >
+                <path d="M6 44 15 18l9 26-9-6z" />
+                <path d="M31 4l8 2 5 7-1 8-6 5-8-1-4-6 1-8z" />
+                <circle cx="20" cy="12" r="1.6" fill="currentColor" />
+                <circle cx="23" cy="6" r="1.6" fill="currentColor" />
+              </svg>
+            </span>
+            <h3>Meteorsturm</h3>
+            <p>Vektor-Arcade: Schub geben, Brocken zerlegen, UFOs ausweichen. Welle für Welle.</p>
+            <span class="meta"
+              ><span>Highscore: Punkte</span><span class="los">Spielen →</span></span
+            >
+          </a>
+        </div>
+      </section>
+
+      <!-- ===== Kategorie: Puzzle (cyan) ===== -->
+      <section class="kategorie container" style="--kat: var(--cyan)">
+        <h2>Puzzle</h2>
+        <div class="raster-karten">
+          <a class="karte" href="2048/" style="--kat: var(--cyan)">
+            <span class="karte-icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48" fill="currentColor">
+                <rect x="4" y="4" width="18" height="18" rx="3" opacity=".55" />
+                <rect x="26" y="4" width="18" height="18" rx="3" opacity=".8" />
+                <rect x="4" y="26" width="18" height="18" rx="3" opacity=".8" />
+                <rect x="26" y="26" width="18" height="18" rx="3" />
+              </svg>
+            </span>
+            <h3>2048</h3>
+            <p>Kacheln schieben, gleiche Zahlen verschmelzen – bis zur 2048 und darüber hinaus.</p>
+            <span class="meta"
+              ><span>Highscore: Punkte</span><span class="los">Spielen →</span></span
+            >
+          </a>
+
+          <a class="karte" href="minesweeper/" style="--kat: var(--cyan)">
+            <span class="karte-icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48" fill="currentColor">
+                <circle cx="24" cy="26" r="11" />
+                <path
+                  d="M22 4h4v8h-4zM22 36h4v8h-4zM2 24h8v4H2zM38 24h8v4h-8zM9 11l3-3 6 6-3 3zM30 32l3-3 6 6-3 3zM36 8l3 3-6 6-3-3zM12 29l3 3-6 6-3-3z"
+                />
+                <circle cx="20" cy="22" r="3" fill="#fff" opacity=".8" />
+              </svg>
+            </span>
+            <h3>Minesweeper</h3>
+            <p>Felder aufdecken, Minen markieren, logisch kombinieren. Drei Schwierigkeitsgrade.</p>
+            <span class="meta"
+              ><span>Highscore: Bestzeit</span><span class="los">Spielen →</span></span
+            >
+          </a>
+
+          <a class="karte" href="sudoku/" style="--kat: var(--cyan)">
+            <span class="karte-icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5">
+                <rect x="5" y="5" width="38" height="38" rx="3" />
+                <path d="M5 17.5h38M5 30.5h38M17.5 5v38M30.5 5v38" />
+                <path d="M10 13h3M23 26h3M36 39h2" stroke-width="3.5" />
+              </svg>
+            </span>
+            <h3>Sudoku</h3>
+            <p>Zahlenlogik in drei Schwierigkeitsgraden – mit Notiz-Modus und Konflikt-Anzeige.</p>
+            <span class="meta"
+              ><span>Highscore: Bestzeit</span><span class="los">Spielen →</span></span
+            >
+          </a>
+        </div>
+      </section>
+
+      <!-- ===== Kategorie: Wörter (lime) ===== -->
+      <section class="kategorie container" style="--kat: var(--lime)">
+        <h2>Wörter</h2>
+        <div class="raster-karten">
+          <a class="karte" href="wortfuchs/" style="--kat: var(--lime)">
+            <span class="karte-icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48" fill="currentColor">
+                <rect x="4" y="16" width="12" height="12" rx="2" opacity=".5" />
+                <rect x="18" y="16" width="12" height="12" rx="2" />
+                <rect x="32" y="16" width="12" height="12" rx="2" opacity=".75" />
+                <rect x="11" y="31" width="12" height="12" rx="2" opacity=".75" />
+                <rect x="25" y="31" width="12" height="12" rx="2" opacity=".5" />
+                <rect x="11" y="4" width="26" height="9" rx="2" opacity=".35" />
+              </svg>
+            </span>
+            <h3>Wortfuchs</h3>
+            <p>
+              Errate das deutsche Wort mit fünf Buchstaben in sechs Versuchen. Jeden Versuch gibt's
+              Farb-Hinweise.
+            </p>
+            <span class="meta"
+              ><span>Highscore: Siegesserie</span><span class="los">Spielen →</span></span
+            >
+          </a>
+        </div>
+      </section>
+
+      <!-- ===== Kategorie: Glück & Zahlen (gold) ===== -->
+      <section class="kategorie container" style="--kat: var(--gold)">
+        <h2>Glück &amp; Zahlen</h2>
+        <div class="raster-karten">
+          <a class="karte" href="zahlenraten/" style="--kat: var(--gold)">
+            <span class="karte-icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48" fill="currentColor">
+                <rect x="6" y="6" width="36" height="36" rx="6" opacity=".25" />
+                <path
+                  d="M24 12c-5 0-8.5 3-8.8 7.4h5.2c.2-1.9 1.5-3 3.5-3 2 0 3.3 1.1 3.3 2.8 0 1.6-.8 2.5-2.9 3.9-2.4 1.5-3.4 3-3.3 5.6l0 1.3h5.1v-1c0-1.7.7-2.5 2.9-3.9 2.5-1.6 3.9-3.5 3.9-6.2 0-4.1-3.5-6.9-8.9-6.9zM24 33.5a3.2 3.2 0 1 0 0 6.4 3.2 3.2 0 0 0 0-6.4z"
+                />
+              </svg>
+            </span>
+            <h3>Zahlenraten</h3>
+            <p>
+              Ich denke mir eine Zahl – du rätst, ich sage „höher" oder „tiefer". Wie wenige
+              Versuche schaffst du?
+            </p>
+            <span class="meta"
+              ><span>Highscore: wenigste Versuche</span><span class="los">Spielen →</span></span
+            >
+          </a>
+
+          <a class="karte" href="higher-lower/" style="--kat: var(--gold)">
+            <span class="karte-icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48" fill="currentColor">
+                <path d="M15 44V18H7L19 4l12 14h-8v26z" opacity=".9" />
+                <path d="M33 4v26h8L29 44 17 30h8V4z" opacity=".45" />
+              </svg>
+            </span>
+            <h3>Higher Lower</h3>
+            <p>
+              Kommt die nächste Karte höher oder tiefer? Baue die längste Kette richtiger Tipps.
+            </p>
+            <span class="meta"
+              ><span>Highscore: längste Kette</span><span class="los">Spielen →</span></span
+            >
+          </a>
+
+          <a class="karte" href="coinflip/" style="--kat: var(--gold)">
+            <span class="karte-icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48" fill="currentColor">
+                <circle
+                  cx="21"
+                  cy="24"
+                  r="16"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3.5"
+                />
+                <circle cx="21" cy="24" r="9" opacity=".35" />
+                <path
+                  d="M38 10c4 4 6 9 6 14s-2 10-6 14"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3.5"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </span>
+            <h3>Coinflip</h3>
+            <p>Kopf oder Zahl? Tippe richtig und baue die längste Kette.</p>
+            <span class="meta"
+              ><span>Highscore: längste Kette</span><span class="los">Spielen →</span></span
+            >
+          </a>
+        </div>
+      </section>
+
+      <!-- ===== Kategorie: Casino (gold, gemeinsames Spielgeld-Konto) ===== -->
+      <section class="kategorie container" style="--kat: var(--gold)">
+        <h2>Casino <span class="alters-hinweis" style="margin: 0">ab 16</span></h2>
+        <div class="raster-karten">
+          <a class="karte" href="slots/" style="--kat: var(--gold)">
+            <span class="karte-icon" aria-hidden="true"
+              ><svg viewBox="0 0 48 48" fill="currentColor">
+                <rect
+                  x="4"
+                  y="8"
+                  width="34"
+                  height="32"
+                  rx="4"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3"
+                />
+                <rect x="9" y="16" width="7" height="12" rx="1.5" />
+                <rect x="18" y="16" width="7" height="12" rx="1.5" opacity=".7" />
+                <rect x="27" y="16" width="7" height="12" rx="1.5" />
+                <rect x="11" y="33" width="20" height="3" rx="1.5" opacity=".6" />
+                <path d="M41 12h3v10h-3z" />
+                <circle cx="42.5" cy="9" r="3.4" /></svg
+            ></span>
+            <h3>Slots</h3>
+            <p>
+              Drei Walzen, eine Gewinnlinie. Einsatz wählen, drehen, hoffen – die Gewinntabelle
+              steht auf der Seite.
+            </p>
+            <span class="meta"
+              ><span>Highscore: höchster Gewinn</span><span class="los">Spielen →</span></span
+            >
+          </a>
+
+          <a class="karte" href="blackjack/" style="--kat: var(--gold)">
+            <span class="karte-icon" aria-hidden="true"
+              ><svg viewBox="0 0 48 48" fill="currentColor">
+                <rect
+                  x="6"
+                  y="10"
+                  width="20"
+                  height="28"
+                  rx="3"
+                  opacity=".45"
+                  transform="rotate(-10 16 24)"
+                />
+                <rect x="20" y="8" width="20" height="28" rx="3" />
+                <text
+                  x="30"
+                  y="22"
+                  text-anchor="middle"
+                  font-size="12"
+                  font-weight="bold"
+                  fill="#07070f"
+                  font-family="monospace"
+                >
+                  21
+                </text>
+                <path
+                  d="M30 26c-2 0-3.2 1.4-3.2 3 0 2.4 3.2 4.6 3.2 4.6s3.2-2.2 3.2-4.6c0-1.6-1.2-3-3.2-3z"
+                  fill="#07070f"
+                /></svg
+            ></span>
+            <h3>Blackjack</h3>
+            <p>Schlag den Dealer: Hit, Stand, Double. Blackjack zahlt 3:2.</p>
+            <span class="meta"
+              ><span>Highscore: höchster Gewinn</span><span class="los">Spielen →</span></span
+            >
+          </a>
+
+          <a class="karte" href="higher-lower/?modus=casino" style="--kat: var(--gold)">
+            <span class="karte-icon" aria-hidden="true"
+              ><svg viewBox="0 0 48 48" fill="currentColor">
+                <path d="M13 40V20H6L16 8l10 12h-7v20z" opacity=".9" />
+                <circle cx="34" cy="31" r="9" fill="none" stroke="currentColor" stroke-width="3" />
+                <path
+                  d="M34 26v10M30 29h6"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  fill="none"
+                /></svg
+            ></span>
+            <h3>Higher Lower · Casino</h3>
+            <p>
+              Hoch, Tief oder Gleich – mit Einsatz und dynamischen Quoten. Gleich zahlt am meisten.
+            </p>
+            <span class="meta"
+              ><span>Gemeinsames Konto</span><span class="los">Spielen →</span></span
+            >
+          </a>
+
+          <a class="karte" href="tempelschatz/" style="--kat: var(--gold)">
+            <span class="karte-icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48" fill="currentColor">
+                <path d="M24 4 44 20H4z" />
+                <rect x="8" y="22" width="5" height="18" />
+                <rect x="17" y="22" width="5" height="18" opacity=".7" />
+                <rect x="26" y="22" width="5" height="18" opacity=".7" />
+                <rect x="35" y="22" width="5" height="18" />
+                <rect x="4" y="40" width="40" height="4" />
+                <circle cx="24" cy="13" r="3" fill="#07070f" />
+              </svg>
+            </span>
+            <h3>Tempelschatz</h3>
+            <p>Ägypten-Slot: 5 Walzen, 10 Linien, Freispiele mit expandierendem Spezialsymbol.</p>
+            <span class="meta"
+              ><span>Highscore: höchster Gewinn</span><span class="los">Spielen →</span></span
+            >
+          </a>
+
+          <a class="karte" href="angelglueck/" style="--kat: var(--gold)">
+            <span class="karte-icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48" fill="currentColor">
+                <path d="M8 22c6-8 16-8 22 0-6 8-16 8-22 0z" />
+                <circle cx="14" cy="21" r="2" fill="#07070f" />
+                <path d="M30 22l8-6v12z" />
+                <path
+                  d="M40 6c2 10 1 20-4 28a6 6 0 1 1-3-2"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                />
+              </svg>
+            </span>
+            <h3>Angelglück</h3>
+            <p>Angel-Slot: Der Angler sammelt in den Freispielen die Geldwerte aller Fische ein.</p>
+            <span class="meta"
+              ><span>Highscore: höchster Gewinn</span><span class="los">Spielen →</span></span
+            >
+          </a>
+
+          <a class="karte" href="coinflip/?modus=casino" style="--kat: var(--gold)">
+            <span class="karte-icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48" fill="currentColor">
+                <circle
+                  cx="21"
+                  cy="24"
+                  r="16"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3.5"
+                />
+                <circle cx="21" cy="24" r="9" opacity=".35" />
+                <path
+                  d="M38 10c4 4 6 9 6 14s-2 10-6 14"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3.5"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </span>
+            <h3>Coinflip · Casino</h3>
+            <p>Kopf oder Zahl mit Einsatz – und die seltene Kante zahlt ×47.</p>
+            <span class="meta"
+              ><span>Gemeinsames Konto</span><span class="los">Spielen →</span></span
+            >
+          </a>
+
+          <a class="karte" href="risikoleiter/" style="--kat: var(--gold)">
+            <span class="karte-icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48" fill="currentColor">
+                <rect x="12" y="4" width="4" height="40" rx="1.5" />
+                <rect x="32" y="4" width="4" height="40" rx="1.5" />
+                <rect x="16" y="9" width="16" height="3.5" rx="1.5" />
+                <rect x="16" y="17" width="16" height="3.5" rx="1.5" opacity=".8" />
+                <rect x="16" y="25" width="16" height="3.5" rx="1.5" opacity=".6" />
+                <rect x="16" y="33" width="16" height="3.5" rx="1.5" opacity=".4" />
+              </svg>
+            </span>
+            <h3>Risikoleiter</h3>
+            <p>
+              Steige Stufe für Stufe auf: Sammeln oder riskieren? Jeder Schritt ist 50 zu 50 – und
+              trotzdem verlieren fast alle.
+            </p>
+            <span class="meta"
+              ><span>Highscore: höchster Gewinn</span><span class="los">Spielen →</span></span
+            >
+          </a>
+        </div>
+        <p style="margin-top: 14px; color: var(--mut); font-size: 0.9rem">
+          Alle Casino-Spiele teilen sich ein Spielgeld-Konto (Startkapital 1.000). Nur Spielgeld –
+          kein Echtgeld, keine Kaufmöglichkeit. Weil die Spiele echte Automaten nachbilden
+          (simuliertes Glücksspiel), sind sie erst ab 16 Jahren gedacht.
+        </p>
+      </section>
+
+      <!-- ===== Kategorie: Karten ===== -->
+      <section class="kategorie container" style="--kat: var(--gold)">
+        <h2>Karten</h2>
+        <div class="raster-karten">
+          <a class="karte" href="solitaer/" style="--kat: var(--gold)">
+            <span class="karte-icon" aria-hidden="true"
+              ><svg viewBox="0 0 48 48" fill="currentColor">
+                <rect x="4" y="12" width="16" height="24" rx="2" opacity=".4" />
+                <rect x="16" y="9" width="16" height="26" rx="2" opacity=".7" />
+                <rect x="28" y="6" width="16" height="28" rx="2" />
+                <path
+                  d="M36 13c-2 0-3.4 1.5-3.4 3.3 0 2.6 3.4 5 3.4 5s3.4-2.4 3.4-5c0-1.8-1.4-3.3-3.4-3.3z"
+                  fill="#07070f"
+                /></svg
+            ></span>
+            <h3>Solitär</h3>
+            <p>
+              Klondike mit 1er- oder 3er-Ziehen: Drag &amp; Drop, Rückgängig und Auto-Abschluss.
+            </p>
+            <span class="meta"
+              ><span>Highscore: Bestzeit</span><span class="los">Spielen →</span></span
+            >
+          </a>
+        </div>
+      </section>
+
+      <!-- ===== Bald verfügbar (violett, nicht klickbar) ===== -->
+      <section class="kategorie container" id="bald" style="--kat: var(--violet)">
+        <h2>Bald verfügbar</h2>
+        <div class="raster-karten">
+          <div class="karte bald" style="--kat: var(--violet)">
+            <span class="badge">Welle 4</span>
+            <span class="karte-icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48" fill="currentColor">
+                <path
+                  d="M14 42h20v-4H14zM16 36h16l-2-6H18zM17 12l3-6h8l3 6c0 6-2 10-3 14H20c-1-4-3-8-3-14z"
+                />
+                <rect x="19" y="4" width="10" height="3" rx="1.5" />
+              </svg>
+            </span>
+            <h3>Brettspiele</h3>
+            <p>Schach, Dame und Ludo – abwechselnd am selben Gerät.</p>
+            <span class="meta"><span>Hot-Seat</span></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="container">
+        <div class="hinweis">
+          <strong>Deine Daten bleiben deine Daten:</strong> Diese Seite nutzt keine Cookies und
+          sendet nichts an den Server. Highscores und Spielstände liegen ausschließlich im Speicher
+          deines Browsers (localStorage) und lassen sich dort jederzeit löschen. Details in der
+          <a href="datenschutz.html">Datenschutzerklärung</a>.
+        </div>
+      </section>
+    </main>
+
+    <footer class="fuss">
+      <div class="container fuss-in">
+        <span>Browser-Arcade · Open Source</span>
+        <nav aria-label="Rechtliches">
+          <a href="impressum.html">Impressum</a>
+          <a href="datenschutz.html">Datenschutz</a>
+        </nav>
+      </div>
+    </footer>
+    <script type="module" src="assets/keks.js"></script>
+  </body>
 </html>

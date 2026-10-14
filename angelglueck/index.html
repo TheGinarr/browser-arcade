@@ -1,318 +1,982 @@
 <!doctype html>
 <html lang="de">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#07070f">
-  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="../assets/style.css">
-  <!-- Gewinnlinien-Tabs und Linien-Vorschau (gemeinsam mit Tempelschatz, Skript: ../assets/gewinnlinien.js) -->
-  <link rel="stylesheet" href="../assets/gewinnlinien.css">
-  <!-- spielspezifische Styles (Walzen, Linien, Fisch-Plaketten, Unterwasser-Bühne) – das gemeinsame Design bleibt in ../assets/style.css -->
-  <link rel="stylesheet" href="./spiel.css">
-  <title>Angelglück · Browser-Arcade</title>
-  <meta name="description" content="Angelglück: Slot mit Spielgeld, fünf Walzen, zehn Gewinnlinien und ein Angler, der in den Freispielen Fische einsammelt. Lerne nebenbei, wie Linien, Wild, Scatter und RTP funktionieren. Ohne Konto und Cookies.">
-</head>
-<body style="--ak:var(--gold)">
-  <div class="raster" aria-hidden="true"></div>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#07070f" />
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../assets/style.css" />
+    <!-- Gewinnlinien-Tabs und Linien-Vorschau (gemeinsam mit Tempelschatz, Skript: ../assets/gewinnlinien.js) -->
+    <link rel="stylesheet" href="../assets/gewinnlinien.css" />
+    <!-- spielspezifische Styles (Walzen, Linien, Fisch-Plaketten, Unterwasser-Bühne) – das gemeinsame Design bleibt in ../assets/style.css -->
+    <link rel="stylesheet" href="./spiel.css" />
+    <title>Angelglück · Browser-Arcade</title>
+    <meta
+      name="description"
+      content="Angelglück: Slot mit Spielgeld, fünf Walzen, zehn Gewinnlinien und ein Angler, der in den Freispielen Fische einsammelt. Lerne nebenbei, wie Linien, Wild, Scatter und RTP funktionieren. Ohne Konto und Cookies."
+    />
+  </head>
+  <body style="--ak: var(--gold)">
+    <div class="raster" aria-hidden="true"></div>
 
-  <!--
+    <!--
     SYMBOL-SPRITE: Alle Symbole werden EINMAL hier als <symbol> definiert (eigene Zeichnungen,
     maritime Eigengestaltung). game.js setzt sie per <use href="#sym-muschel"> beliebig oft ein
     (Walzen und Gewinntabelle). Der Sprite ist unsichtbar, aber NICHT mit display:none versteckt:
     Manche Browser zeichnen Farbverläufe (gradient) aus display:none-SVGs nicht. Darum 0x0 Pixel
     groß, absolut positioniert. Alle Symbole nutzen dasselbe 64x64-Raster (viewBox).
   -->
-  <svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true" focusable="false">
-    <defs>
-      <linearGradient id="ag-muschel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe3cf"/><stop offset=".55" stop-color="#ff9f8c"/><stop offset="1" stop-color="#d95c73"/></linearGradient>
-      <radialGradient id="ag-seestern" cx=".45" cy=".4" r=".7"><stop offset="0" stop-color="#ffc58a"/><stop offset=".6" stop-color="#ff7443"/><stop offset="1" stop-color="#c63c1e"/></radialGradient>
-      <linearGradient id="ag-stahl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f6fcff"/><stop offset=".5" stop-color="#a9cbe5"/><stop offset="1" stop-color="#6490b3"/></linearGradient>
-      <linearGradient id="ag-rot" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff7686"/><stop offset="1" stop-color="#d11a38"/></linearGradient>
-      <linearGradient id="ag-holz" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#e9b172"/><stop offset="1" stop-color="#94592b"/></linearGradient>
-      <linearGradient id="ag-weiss" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#c9d9ea"/></linearGradient>
-      <linearGradient id="ag-rumpf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e53553"/><stop offset="1" stop-color="#9c1730"/></linearGradient>
-      <linearGradient id="ag-gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffeaa6"/><stop offset=".55" stop-color="#ffc84d"/><stop offset="1" stop-color="#c98a1a"/></linearGradient>
-      <linearGradient id="ag-gelb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe777"/><stop offset="1" stop-color="#f0a400"/></linearGradient>
-      <radialGradient id="ag-meer" cx=".5" cy=".35" r=".75"><stop offset="0" stop-color="#2f8fd1"/><stop offset="1" stop-color="#0c3768"/></radialGradient>
-      <radialGradient id="ag-wild" cx=".5" cy=".35" r=".8"><stop offset="0" stop-color="#2fb7a6"/><stop offset="1" stop-color="#0a4d5c"/></radialGradient>
-      <linearGradient id="ag-fisch-klein" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e4f8ff"/><stop offset=".5" stop-color="#8fd2f2"/><stop offset="1" stop-color="#4a9fd6"/></linearGradient>
-      <linearGradient id="ag-fisch-mittel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe29a"/><stop offset=".5" stop-color="#ffa545"/><stop offset="1" stop-color="#e2641c"/></linearGradient>
-      <linearGradient id="ag-fisch-gross" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a6ffe0"/><stop offset=".5" stop-color="#2fd6a3"/><stop offset="1" stop-color="#0d8f77"/></linearGradient>
-    </defs>
+    <svg
+      width="0"
+      height="0"
+      style="position: absolute; overflow: hidden"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <defs>
+        <linearGradient id="ag-muschel" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#ffe3cf" />
+          <stop offset=".55" stop-color="#ff9f8c" />
+          <stop offset="1" stop-color="#d95c73" />
+        </linearGradient>
+        <radialGradient id="ag-seestern" cx=".45" cy=".4" r=".7">
+          <stop offset="0" stop-color="#ffc58a" />
+          <stop offset=".6" stop-color="#ff7443" />
+          <stop offset="1" stop-color="#c63c1e" />
+        </radialGradient>
+        <linearGradient id="ag-stahl" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#f6fcff" />
+          <stop offset=".5" stop-color="#a9cbe5" />
+          <stop offset="1" stop-color="#6490b3" />
+        </linearGradient>
+        <linearGradient id="ag-rot" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#ff7686" />
+          <stop offset="1" stop-color="#d11a38" />
+        </linearGradient>
+        <linearGradient id="ag-holz" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="#e9b172" />
+          <stop offset="1" stop-color="#94592b" />
+        </linearGradient>
+        <linearGradient id="ag-weiss" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#ffffff" />
+          <stop offset="1" stop-color="#c9d9ea" />
+        </linearGradient>
+        <linearGradient id="ag-rumpf" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#e53553" />
+          <stop offset="1" stop-color="#9c1730" />
+        </linearGradient>
+        <linearGradient id="ag-gold" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#ffeaa6" />
+          <stop offset=".55" stop-color="#ffc84d" />
+          <stop offset="1" stop-color="#c98a1a" />
+        </linearGradient>
+        <linearGradient id="ag-gelb" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#ffe777" />
+          <stop offset="1" stop-color="#f0a400" />
+        </linearGradient>
+        <radialGradient id="ag-meer" cx=".5" cy=".35" r=".75">
+          <stop offset="0" stop-color="#2f8fd1" />
+          <stop offset="1" stop-color="#0c3768" />
+        </radialGradient>
+        <radialGradient id="ag-wild" cx=".5" cy=".35" r=".8">
+          <stop offset="0" stop-color="#2fb7a6" />
+          <stop offset="1" stop-color="#0a4d5c" />
+        </radialGradient>
+        <linearGradient id="ag-fisch-klein" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#e4f8ff" />
+          <stop offset=".5" stop-color="#8fd2f2" />
+          <stop offset="1" stop-color="#4a9fd6" />
+        </linearGradient>
+        <linearGradient id="ag-fisch-mittel" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#ffe29a" />
+          <stop offset=".5" stop-color="#ffa545" />
+          <stop offset="1" stop-color="#e2641c" />
+        </linearGradient>
+        <linearGradient id="ag-fisch-gross" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#a6ffe0" />
+          <stop offset=".5" stop-color="#2fd6a3" />
+          <stop offset="1" stop-color="#0d8f77" />
+        </linearGradient>
+      </defs>
 
-    <!-- Muschel: Fächer mit Rippen und kleinem Schloss unten -->
-    <symbol id="sym-muschel" viewBox="0 0 64 64">
-      <path d="M32 54 C16 49 5 38 5 26 C5 15 14 9 23 12 C27 6 37 6 41 12 C50 9 59 15 59 26 C59 38 48 49 32 54 Z" fill="url(#ag-muschel)" stroke="#a63a52" stroke-width="1.8" stroke-linejoin="round"/>
-      <g fill="none" stroke="#b9455c" stroke-width="2" stroke-linecap="round" opacity=".7">
-        <path d="M32 52 V13"/><path d="M32 52 L21 15"/><path d="M32 52 L43 15"/><path d="M32 52 L12 23"/><path d="M32 52 L52 23"/><path d="M32 52 L8 34"/><path d="M32 52 L56 34"/>
-      </g>
-      <path d="M24 54 H40 L37 59 H27 Z" fill="#e58a7a" stroke="#a63a52" stroke-width="1.6" stroke-linejoin="round"/>
-      <path d="M13 28 C14 21 19 16 25 15" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="3" stroke-linecap="round"/>
-    </symbol>
-
-    <!-- Seestern: Fünfzack mit abgerundeten Armen und Punktreihen -->
-    <symbol id="sym-seestern" viewBox="0 0 64 64">
-      <polygon points="32.0,7.0 38.8,25.7 58.6,26.3 42.9,38.6 48.5,57.7 32.0,46.5 15.5,57.7 21.1,38.6 5.4,26.3 25.2,25.7" fill="url(#ag-seestern)" stroke="#c63c1e" stroke-width="5" stroke-linejoin="round"/>
-      <polygon points="32.0,7.0 38.8,25.7 58.6,26.3 42.9,38.6 48.5,57.7 32.0,46.5 15.5,57.7 21.1,38.6 5.4,26.3 25.2,25.7" fill="url(#ag-seestern)" stroke="url(#ag-seestern)" stroke-width="2.4" stroke-linejoin="round"/>
-      <g fill="#ffe2bf">
-        <circle cx="32" cy="25" r="1.7"/><circle cx="32" cy="18" r="1.5"/><circle cx="32" cy="12" r="1.3"/>
-        <circle cx="41.5" cy="31.9" r="1.7"/><circle cx="48.2" cy="29.7" r="1.5"/><circle cx="53.9" cy="27.9" r="1.3"/>
-        <circle cx="37.9" cy="43.1" r="1.7"/><circle cx="42" cy="48.8" r="1.5"/><circle cx="45.5" cy="53.6" r="1.3"/>
-        <circle cx="26.1" cy="43.1" r="1.7"/><circle cx="22" cy="48.8" r="1.5"/><circle cx="18.5" cy="53.6" r="1.3"/>
-        <circle cx="22.5" cy="31.9" r="1.7"/><circle cx="15.8" cy="29.7" r="1.5"/><circle cx="10.1" cy="27.9" r="1.3"/>
-      </g>
-      <circle cx="32" cy="35" r="3.2" fill="#c63c1e" opacity=".55"/>
-    </symbol>
-
-    <!-- Anker: Ring, Schaft, Querholz, geschwungene Arme mit Spitzen -->
-    <symbol id="sym-anker" viewBox="0 0 64 64">
-      <g fill="none" stroke-linecap="round" stroke-linejoin="round">
-        <g stroke="#27506f" stroke-width="8.5">
-          <circle cx="32" cy="10" r="5"/><path d="M32 16 V55"/><path d="M21 24 H43"/><path d="M10 38 C12 52 22 57 32 57 C42 57 52 52 54 38"/>
+      <!-- Muschel: Fächer mit Rippen und kleinem Schloss unten -->
+      <symbol id="sym-muschel" viewBox="0 0 64 64">
+        <path
+          d="M32 54 C16 49 5 38 5 26 C5 15 14 9 23 12 C27 6 37 6 41 12 C50 9 59 15 59 26 C59 38 48 49 32 54 Z"
+          fill="url(#ag-muschel)"
+          stroke="#a63a52"
+          stroke-width="1.8"
+          stroke-linejoin="round"
+        />
+        <g fill="none" stroke="#b9455c" stroke-width="2" stroke-linecap="round" opacity=".7">
+          <path d="M32 52 V13" />
+          <path d="M32 52 L21 15" />
+          <path d="M32 52 L43 15" />
+          <path d="M32 52 L12 23" />
+          <path d="M32 52 L52 23" />
+          <path d="M32 52 L8 34" />
+          <path d="M32 52 L56 34" />
         </g>
-        <g stroke="url(#ag-stahl)" stroke-width="5">
-          <circle cx="32" cy="10" r="5"/><path d="M32 16 V55"/><path d="M21 24 H43"/><path d="M10 38 C12 52 22 57 32 57 C42 57 52 52 54 38"/>
+        <path
+          d="M24 54 H40 L37 59 H27 Z"
+          fill="#e58a7a"
+          stroke="#a63a52"
+          stroke-width="1.6"
+          stroke-linejoin="round"
+        />
+        <path
+          d="M13 28 C14 21 19 16 25 15"
+          fill="none"
+          stroke="#fff"
+          stroke-opacity=".6"
+          stroke-width="3"
+          stroke-linecap="round"
+        />
+      </symbol>
+
+      <!-- Seestern: Fünfzack mit abgerundeten Armen und Punktreihen -->
+      <symbol id="sym-seestern" viewBox="0 0 64 64">
+        <polygon
+          points="32.0,7.0 38.8,25.7 58.6,26.3 42.9,38.6 48.5,57.7 32.0,46.5 15.5,57.7 21.1,38.6 5.4,26.3 25.2,25.7"
+          fill="url(#ag-seestern)"
+          stroke="#c63c1e"
+          stroke-width="5"
+          stroke-linejoin="round"
+        />
+        <polygon
+          points="32.0,7.0 38.8,25.7 58.6,26.3 42.9,38.6 48.5,57.7 32.0,46.5 15.5,57.7 21.1,38.6 5.4,26.3 25.2,25.7"
+          fill="url(#ag-seestern)"
+          stroke="url(#ag-seestern)"
+          stroke-width="2.4"
+          stroke-linejoin="round"
+        />
+        <g fill="#ffe2bf">
+          <circle cx="32" cy="25" r="1.7" />
+          <circle cx="32" cy="18" r="1.5" />
+          <circle cx="32" cy="12" r="1.3" />
+          <circle cx="41.5" cy="31.9" r="1.7" />
+          <circle cx="48.2" cy="29.7" r="1.5" />
+          <circle cx="53.9" cy="27.9" r="1.3" />
+          <circle cx="37.9" cy="43.1" r="1.7" />
+          <circle cx="42" cy="48.8" r="1.5" />
+          <circle cx="45.5" cy="53.6" r="1.3" />
+          <circle cx="26.1" cy="43.1" r="1.7" />
+          <circle cx="22" cy="48.8" r="1.5" />
+          <circle cx="18.5" cy="53.6" r="1.3" />
+          <circle cx="22.5" cy="31.9" r="1.7" />
+          <circle cx="15.8" cy="29.7" r="1.5" />
+          <circle cx="10.1" cy="27.9" r="1.3" />
         </g>
-      </g>
-      <polygon points="3,41 17,41 10,28" fill="url(#ag-stahl)" stroke="#27506f" stroke-width="2" stroke-linejoin="round"/>
-      <polygon points="47,41 61,41 54,28" fill="url(#ag-stahl)" stroke="#27506f" stroke-width="2" stroke-linejoin="round"/>
-    </symbol>
+        <circle cx="32" cy="35" r="3.2" fill="#c63c1e" opacity=".55" />
+      </symbol>
 
-    <!-- Rettungsring: roter Ring mit vier weißen Feldern (gestrichelter Kreis) -->
-    <symbol id="sym-rettungsring" viewBox="0 0 64 64">
-      <circle cx="32" cy="32" r="18.5" fill="none" stroke="url(#ag-rot)" stroke-width="15"/>
-      <circle cx="32" cy="32" r="18.5" fill="none" stroke="#fff" stroke-width="15" stroke-dasharray="14.53 14.53" transform="rotate(-101.25 32 32)"/>
-      <circle cx="32" cy="32" r="26" fill="none" stroke="#8f0f26" stroke-width="1.8"/>
-      <circle cx="32" cy="32" r="11" fill="none" stroke="#8f0f26" stroke-width="1.8"/>
-      <path d="M12 24 C15 16 22 11 30 10" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="2.6" stroke-linecap="round"/>
-    </symbol>
+      <!-- Anker: Ring, Schaft, Querholz, geschwungene Arme mit Spitzen -->
+      <symbol id="sym-anker" viewBox="0 0 64 64">
+        <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <g stroke="#27506f" stroke-width="8.5">
+            <circle cx="32" cy="10" r="5" />
+            <path d="M32 16 V55" />
+            <path d="M21 24 H43" />
+            <path d="M10 38 C12 52 22 57 32 57 C42 57 52 52 54 38" />
+          </g>
+          <g stroke="url(#ag-stahl)" stroke-width="5">
+            <circle cx="32" cy="10" r="5" />
+            <path d="M32 16 V55" />
+            <path d="M21 24 H43" />
+            <path d="M10 38 C12 52 22 57 32 57 C42 57 52 52 54 38" />
+          </g>
+        </g>
+        <polygon
+          points="3,41 17,41 10,28"
+          fill="url(#ag-stahl)"
+          stroke="#27506f"
+          stroke-width="2"
+          stroke-linejoin="round"
+        />
+        <polygon
+          points="47,41 61,41 54,28"
+          fill="url(#ag-stahl)"
+          stroke="#27506f"
+          stroke-width="2"
+          stroke-linejoin="round"
+        />
+      </symbol>
 
-    <!-- Angelrute: Rute mit Rolle, Schnur, Schwimmer und Haken -->
-    <symbol id="sym-angelrute" viewBox="0 0 64 64">
-      <path d="M8 58 L52 11" fill="none" stroke="#4a2c14" stroke-width="7" stroke-linecap="round"/>
-      <path d="M8 58 L52 11" fill="none" stroke="url(#ag-holz)" stroke-width="4.4" stroke-linecap="round"/>
-      <path d="M8 58 L19 46" fill="none" stroke="#3a2410" stroke-width="6.5" stroke-linecap="round"/>
-      <circle cx="27" cy="46" r="6" fill="url(#ag-gold)" stroke="#8a5a00" stroke-width="1.6"/>
-      <circle cx="27" cy="46" r="2" fill="#8a5a00"/>
-      <path d="M52 11 C60 16 61 28 58 36" fill="none" stroke="#e8f6ff" stroke-width="1.6" stroke-linecap="round"/>
-      <path d="M52.5 40 A5.5 5.5 0 0 1 63.5 40 Z" fill="#e8283f" stroke="#7a0f20" stroke-width="1.2"/>
-      <path d="M52.5 40 A5.5 5.5 0 0 0 63.5 40 Z" fill="#fff" stroke="#9aa9b8" stroke-width="1.2"/>
-      <path d="M58 46 V52 C58 56 52 56 52 52" fill="none" stroke="#cfe3f3" stroke-width="1.8" stroke-linecap="round"/>
-      <path d="M44 58 C47 55 50 55 53 58 C56 61 59 61 62 58" fill="none" stroke="#6fd4ff" stroke-width="2" stroke-linecap="round" opacity=".7"/>
-    </symbol>
+      <!-- Rettungsring: roter Ring mit vier weißen Feldern (gestrichelter Kreis) -->
+      <symbol id="sym-rettungsring" viewBox="0 0 64 64">
+        <circle cx="32" cy="32" r="18.5" fill="none" stroke="url(#ag-rot)" stroke-width="15" />
+        <circle
+          cx="32"
+          cy="32"
+          r="18.5"
+          fill="none"
+          stroke="#fff"
+          stroke-width="15"
+          stroke-dasharray="14.53 14.53"
+          transform="rotate(-101.25 32 32)"
+        />
+        <circle cx="32" cy="32" r="26" fill="none" stroke="#8f0f26" stroke-width="1.8" />
+        <circle cx="32" cy="32" r="11" fill="none" stroke="#8f0f26" stroke-width="1.8" />
+        <path
+          d="M12 24 C15 16 22 11 30 10"
+          fill="none"
+          stroke="#fff"
+          stroke-opacity=".6"
+          stroke-width="2.6"
+          stroke-linecap="round"
+        />
+      </symbol>
 
-    <!-- Möwe: von oben gesehen, Flügel gespreizt, gelber Schnabel -->
-    <symbol id="sym-moewe" viewBox="0 0 64 64">
-      <g transform="rotate(-24 32 34) translate(32 35) scale(.9) translate(-32 -35)">
-        <path d="M30 30 C20 20 9 17 1 24 C11 23 19 28 26 40 Z" fill="url(#ag-weiss)" stroke="#8fa3b8" stroke-width="1.4" stroke-linejoin="round"/>
-        <path d="M34 30 C44 20 55 17 63 24 C53 23 45 28 38 40 Z" fill="url(#ag-weiss)" stroke="#8fa3b8" stroke-width="1.4" stroke-linejoin="round"/>
-        <path d="M1 24 C5 21 8 20 11 19.5 C8 22 6 24 5 26 Z" fill="#3a4a5e"/>
-        <path d="M63 24 C59 21 56 20 53 19.5 C56 22 58 24 59 26 Z" fill="#3a4a5e"/>
-        <path d="M32 18 C38 18 40 28 39 40 C38 51 35 58 32 61 C29 58 26 51 25 40 C24 28 26 18 32 18 Z" fill="url(#ag-weiss)" stroke="#8fa3b8" stroke-width="1.4"/>
-        <circle cx="32" cy="17" r="6.5" fill="#fff" stroke="#8fa3b8" stroke-width="1.4"/>
-        <path d="M29 11.5 L32 6 L35 11.5 Z" fill="#ffb21e" stroke="#b86b00" stroke-width="1.2" stroke-linejoin="round"/>
-        <circle cx="32" cy="9.3" r=".9" fill="#e8283f"/>
-        <circle cx="29.6" cy="16" r="1.2" fill="#1b2430"/><circle cx="34.4" cy="16" r="1.2" fill="#1b2430"/>
-        <path d="M28 52 L32 62 L36 52 Z" fill="#3a4a5e"/>
-      </g>
-    </symbol>
+      <!-- Angelrute: Rute mit Rolle, Schnur, Schwimmer und Haken -->
+      <symbol id="sym-angelrute" viewBox="0 0 64 64">
+        <path
+          d="M8 58 L52 11"
+          fill="none"
+          stroke="#4a2c14"
+          stroke-width="7"
+          stroke-linecap="round"
+        />
+        <path
+          d="M8 58 L52 11"
+          fill="none"
+          stroke="url(#ag-holz)"
+          stroke-width="4.4"
+          stroke-linecap="round"
+        />
+        <path
+          d="M8 58 L19 46"
+          fill="none"
+          stroke="#3a2410"
+          stroke-width="6.5"
+          stroke-linecap="round"
+        />
+        <circle cx="27" cy="46" r="6" fill="url(#ag-gold)" stroke="#8a5a00" stroke-width="1.6" />
+        <circle cx="27" cy="46" r="2" fill="#8a5a00" />
+        <path
+          d="M52 11 C60 16 61 28 58 36"
+          fill="none"
+          stroke="#e8f6ff"
+          stroke-width="1.6"
+          stroke-linecap="round"
+        />
+        <path
+          d="M52.5 40 A5.5 5.5 0 0 1 63.5 40 Z"
+          fill="#e8283f"
+          stroke="#7a0f20"
+          stroke-width="1.2"
+        />
+        <path
+          d="M52.5 40 A5.5 5.5 0 0 0 63.5 40 Z"
+          fill="#fff"
+          stroke="#9aa9b8"
+          stroke-width="1.2"
+        />
+        <path
+          d="M58 46 V52 C58 56 52 56 52 52"
+          fill="none"
+          stroke="#cfe3f3"
+          stroke-width="1.8"
+          stroke-linecap="round"
+        />
+        <path
+          d="M44 58 C47 55 50 55 53 58 C56 61 59 61 62 58"
+          fill="none"
+          stroke="#6fd4ff"
+          stroke-width="2"
+          stroke-linecap="round"
+          opacity=".7"
+        />
+      </symbol>
 
-    <!-- Fischerboot (SCATTER): Boot auf blauer Medaille mit goldenem Rand -->
-    <symbol id="sym-boot" viewBox="0 0 64 64">
-      <circle cx="32" cy="32" r="29" fill="url(#ag-meer)" stroke="url(#ag-gold)" stroke-width="3.4"/>
-      <path d="M21 12 V37" stroke="#e9c58f" stroke-width="2.4" stroke-linecap="round"/>
-      <path d="M21 12 L33 17 L21 22 Z" fill="#ffd34d" stroke="#a8680f" stroke-width="1.2" stroke-linejoin="round"/>
-      <rect x="29" y="25" width="15" height="12" rx="2" fill="url(#ag-weiss)" stroke="#8fa3b8" stroke-width="1.2"/>
-      <rect x="32" y="28" width="4" height="4" rx="1" fill="#3aa4e8"/><rect x="38" y="28" width="3" height="4" rx="1" fill="#3aa4e8"/>
-      <path d="M9 36 H55 C52 46 46 52 38 52 H26 C18 52 12 46 9 36 Z" fill="url(#ag-rumpf)" stroke="#5e0c1d" stroke-width="1.6" stroke-linejoin="round"/>
-      <path d="M11 41 H53" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>
-      <path d="M6 55 C10 52 14 52 18 55 C22 58 26 58 30 55 C34 52 38 52 42 55 C46 58 50 58 58 54" fill="none" stroke="#bfe9ff" stroke-width="2.2" stroke-linecap="round"/>
-    </symbol>
+      <!-- Möwe: von oben gesehen, Flügel gespreizt, gelber Schnabel -->
+      <symbol id="sym-moewe" viewBox="0 0 64 64">
+        <g transform="rotate(-24 32 34) translate(32 35) scale(.9) translate(-32 -35)">
+          <path
+            d="M30 30 C20 20 9 17 1 24 C11 23 19 28 26 40 Z"
+            fill="url(#ag-weiss)"
+            stroke="#8fa3b8"
+            stroke-width="1.4"
+            stroke-linejoin="round"
+          />
+          <path
+            d="M34 30 C44 20 55 17 63 24 C53 23 45 28 38 40 Z"
+            fill="url(#ag-weiss)"
+            stroke="#8fa3b8"
+            stroke-width="1.4"
+            stroke-linejoin="round"
+          />
+          <path d="M1 24 C5 21 8 20 11 19.5 C8 22 6 24 5 26 Z" fill="#3a4a5e" />
+          <path d="M63 24 C59 21 56 20 53 19.5 C56 22 58 24 59 26 Z" fill="#3a4a5e" />
+          <path
+            d="M32 18 C38 18 40 28 39 40 C38 51 35 58 32 61 C29 58 26 51 25 40 C24 28 26 18 32 18 Z"
+            fill="url(#ag-weiss)"
+            stroke="#8fa3b8"
+            stroke-width="1.4"
+          />
+          <circle cx="32" cy="17" r="6.5" fill="#fff" stroke="#8fa3b8" stroke-width="1.4" />
+          <path
+            d="M29 11.5 L32 6 L35 11.5 Z"
+            fill="#ffb21e"
+            stroke="#b86b00"
+            stroke-width="1.2"
+            stroke-linejoin="round"
+          />
+          <circle cx="32" cy="9.3" r=".9" fill="#e8283f" />
+          <circle cx="29.6" cy="16" r="1.2" fill="#1b2430" />
+          <circle cx="34.4" cy="16" r="1.2" fill="#1b2430" />
+          <path d="M28 52 L32 62 L36 52 Z" fill="#3a4a5e" />
+        </g>
+      </symbol>
 
-    <!-- Angler (WILD): bärtiger Fischer mit gelbem Südwester vor türkiser Medaille, Schriftband "WILD" -->
-    <symbol id="sym-angler" viewBox="0 0 64 64">
-      <circle cx="32" cy="32" r="29" fill="url(#ag-wild)" stroke="url(#ag-gold)" stroke-width="3.4"/>
-      <path d="M12 54 C12 43 20 38 32 38 C44 38 52 43 52 54 Z" fill="url(#ag-gelb)" stroke="#a8680f" stroke-width="1.6" stroke-linejoin="round"/>
-      <circle cx="32" cy="45" r="1.6" fill="#a8680f"/><circle cx="32" cy="51" r="1.6" fill="#a8680f"/>
-      <circle cx="32" cy="29" r="9.5" fill="#f5c9a3" stroke="#a8683a" stroke-width="1.4"/>
-      <path d="M22.5 31 C23 43 41 43 41.5 31 C38 37 26 37 22.5 31 Z" fill="#eef2f8" stroke="#9aa9b8" stroke-width="1.2" stroke-linejoin="round"/>
-      <circle cx="28.3" cy="28" r="1.3" fill="#1b2430"/><circle cx="35.7" cy="28" r="1.3" fill="#1b2430"/>
-      <path d="M26 24 C26 12 38 12 38 24 Z" fill="url(#ag-gelb)" stroke="#a8680f" stroke-width="1.4" stroke-linejoin="round"/>
-      <path d="M17 23.5 H47 C45 27 19 27 17 23.5 Z" fill="url(#ag-gelb)" stroke="#a8680f" stroke-width="1.4" stroke-linejoin="round"/>
-      <path d="M45 52 L58 14" stroke="#4a2c14" stroke-width="3.2" stroke-linecap="round"/>
-      <path d="M58 14 C61 20 60 28 57 33" fill="none" stroke="#e8f6ff" stroke-width="1.2" stroke-linecap="round"/>
-      <rect x="9" y="50" width="46" height="12" rx="4" fill="#0a3a46" stroke="url(#ag-gold)" stroke-width="2"/>
-      <text x="32" y="59.4" text-anchor="middle" font-family="IBM Plex Sans, system-ui, sans-serif" font-size="9.5" font-weight="700" letter-spacing=".8" fill="#ffd978">WILD</text>
-    </symbol>
+      <!-- Fischerboot (SCATTER): Boot auf blauer Medaille mit goldenem Rand -->
+      <symbol id="sym-boot" viewBox="0 0 64 64">
+        <circle
+          cx="32"
+          cy="32"
+          r="29"
+          fill="url(#ag-meer)"
+          stroke="url(#ag-gold)"
+          stroke-width="3.4"
+        />
+        <path d="M21 12 V37" stroke="#e9c58f" stroke-width="2.4" stroke-linecap="round" />
+        <path
+          d="M21 12 L33 17 L21 22 Z"
+          fill="#ffd34d"
+          stroke="#a8680f"
+          stroke-width="1.2"
+          stroke-linejoin="round"
+        />
+        <rect
+          x="29"
+          y="25"
+          width="15"
+          height="12"
+          rx="2"
+          fill="url(#ag-weiss)"
+          stroke="#8fa3b8"
+          stroke-width="1.2"
+        />
+        <rect x="32" y="28" width="4" height="4" rx="1" fill="#3aa4e8" />
+        <rect x="38" y="28" width="3" height="4" rx="1" fill="#3aa4e8" />
+        <path
+          d="M9 36 H55 C52 46 46 52 38 52 H26 C18 52 12 46 9 36 Z"
+          fill="url(#ag-rumpf)"
+          stroke="#5e0c1d"
+          stroke-width="1.6"
+          stroke-linejoin="round"
+        />
+        <path d="M11 41 H53" stroke="#fff" stroke-width="2.4" stroke-linecap="round" />
+        <path
+          d="M6 55 C10 52 14 52 18 55 C22 58 26 58 30 55 C34 52 38 52 42 55 C46 58 50 58 58 54"
+          fill="none"
+          stroke="#bfe9ff"
+          stroke-width="2.2"
+          stroke-linecap="round"
+        />
+      </symbol>
 
-    <!-- Fisch in drei Größen (gleiche Form, anderer Maßstab + andere Farbe). Er schaut nach links. -->
-    <symbol id="sym-fisch-klein" viewBox="0 0 64 64">
-      <g transform="translate(32 30) scale(.62) translate(-32 -32)">
-        <path d="M6 32 C14 17 33 15 44 28 L60 16 C58 25 58 39 60 48 L44 36 C33 49 14 47 6 32 Z" fill="url(#ag-fisch-klein)" stroke="#2f75a6" stroke-width="3" stroke-linejoin="round"/>
-        <path d="M25 18 C30 11 37 12 40 19" fill="#6fbbe6" stroke="#2f75a6" stroke-width="2.4" stroke-linejoin="round"/>
-        <path d="M28 25 C30 31 30 36 28 41" fill="none" stroke="#2f75a6" stroke-width="2.4" stroke-linecap="round"/>
-        <circle cx="16" cy="29" r="3.6" fill="#fff" stroke="#1b4a6d" stroke-width="1.6"/><circle cx="15.4" cy="29" r="1.6" fill="#10233a"/>
-      </g>
-    </symbol>
-    <symbol id="sym-fisch-mittel" viewBox="0 0 64 64">
-      <g transform="translate(32 31) scale(.82) translate(-32 -32)">
-        <path d="M6 32 C14 17 33 15 44 28 L60 16 C58 25 58 39 60 48 L44 36 C33 49 14 47 6 32 Z" fill="url(#ag-fisch-mittel)" stroke="#a8430f" stroke-width="2.8" stroke-linejoin="round"/>
-        <path d="M25 18 C30 10 38 11 41 19" fill="#ff8a3d" stroke="#a8430f" stroke-width="2.4" stroke-linejoin="round"/>
-        <path d="M29 24 C31 31 31 37 29 42" fill="none" stroke="#a8430f" stroke-width="2.4" stroke-linecap="round"/>
-        <path d="M34 28 q3 4 0 8 M39 29 q3 3 0 7" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="1.8" stroke-linecap="round"/>
-        <circle cx="16" cy="29" r="3.6" fill="#fff" stroke="#6b2a08" stroke-width="1.6"/><circle cx="15.4" cy="29" r="1.6" fill="#10233a"/>
-      </g>
-    </symbol>
-    <symbol id="sym-fisch-gross" viewBox="0 0 64 64">
-      <g transform="translate(32 32) scale(1) translate(-32 -32)">
-        <path d="M5 32 C13 16 34 14 45 27 L61 14 C59 24 59 40 61 50 L45 37 C34 50 13 48 5 32 Z" fill="url(#ag-fisch-gross)" stroke="#07614f" stroke-width="2.8" stroke-linejoin="round"/>
-        <path d="M24 17 C29 8 39 9 42 18" fill="#18b58c" stroke="#07614f" stroke-width="2.4" stroke-linejoin="round"/>
-        <path d="M27 44 C31 51 38 52 40 45" fill="#18b58c" stroke="#07614f" stroke-width="2.2" stroke-linejoin="round"/>
-        <path d="M29 23 C32 31 32 38 29 44" fill="none" stroke="#07614f" stroke-width="2.4" stroke-linecap="round"/>
-        <path d="M34 26 q3 5 0 10 M40 27 q3 4 0 9" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="1.8" stroke-linecap="round"/>
-        <circle cx="15" cy="29" r="4" fill="#fff" stroke="#07614f" stroke-width="1.6"/><circle cx="14.4" cy="29" r="1.8" fill="#10233a"/>
-        <path d="M5 33 C8 35 10 35 12 34" fill="none" stroke="#07614f" stroke-width="1.8" stroke-linecap="round"/>
-      </g>
-    </symbol>
-  </svg>
+      <!-- Angler (WILD): bärtiger Fischer mit gelbem Südwester vor türkiser Medaille, Schriftband "WILD" -->
+      <symbol id="sym-angler" viewBox="0 0 64 64">
+        <circle
+          cx="32"
+          cy="32"
+          r="29"
+          fill="url(#ag-wild)"
+          stroke="url(#ag-gold)"
+          stroke-width="3.4"
+        />
+        <path
+          d="M12 54 C12 43 20 38 32 38 C44 38 52 43 52 54 Z"
+          fill="url(#ag-gelb)"
+          stroke="#a8680f"
+          stroke-width="1.6"
+          stroke-linejoin="round"
+        />
+        <circle cx="32" cy="45" r="1.6" fill="#a8680f" />
+        <circle cx="32" cy="51" r="1.6" fill="#a8680f" />
+        <circle cx="32" cy="29" r="9.5" fill="#f5c9a3" stroke="#a8683a" stroke-width="1.4" />
+        <path
+          d="M22.5 31 C23 43 41 43 41.5 31 C38 37 26 37 22.5 31 Z"
+          fill="#eef2f8"
+          stroke="#9aa9b8"
+          stroke-width="1.2"
+          stroke-linejoin="round"
+        />
+        <circle cx="28.3" cy="28" r="1.3" fill="#1b2430" />
+        <circle cx="35.7" cy="28" r="1.3" fill="#1b2430" />
+        <path
+          d="M26 24 C26 12 38 12 38 24 Z"
+          fill="url(#ag-gelb)"
+          stroke="#a8680f"
+          stroke-width="1.4"
+          stroke-linejoin="round"
+        />
+        <path
+          d="M17 23.5 H47 C45 27 19 27 17 23.5 Z"
+          fill="url(#ag-gelb)"
+          stroke="#a8680f"
+          stroke-width="1.4"
+          stroke-linejoin="round"
+        />
+        <path d="M45 52 L58 14" stroke="#4a2c14" stroke-width="3.2" stroke-linecap="round" />
+        <path
+          d="M58 14 C61 20 60 28 57 33"
+          fill="none"
+          stroke="#e8f6ff"
+          stroke-width="1.2"
+          stroke-linecap="round"
+        />
+        <rect
+          x="9"
+          y="50"
+          width="46"
+          height="12"
+          rx="4"
+          fill="#0a3a46"
+          stroke="url(#ag-gold)"
+          stroke-width="2"
+        />
+        <text
+          x="32"
+          y="59.4"
+          text-anchor="middle"
+          font-family="IBM Plex Sans, system-ui, sans-serif"
+          font-size="9.5"
+          font-weight="700"
+          letter-spacing=".8"
+          fill="#ffd978"
+        >
+          WILD
+        </text>
+      </symbol>
 
-  <a class="skip-link" href="#main">Zum Inhalt springen</a>
-  <header class="kopf"><nav class="container nav" aria-label="Hauptnavigation">
-    <a class="marke" href="../index.html"><span class="logo">▶</span>GAMES</a>
-    <div class="nav-links"><a href="../index.html">Spiele</a><a href="../impressum.html">Impressum</a><a href="../datenschutz.html">Datenschutz</a></div>
-  </nav></header>
-  <main id="main" class="container">
-    <div class="spiel-kopf"><div><h1>ANGELGLÜCK</h1><p class="unterzeile">Fünf Walzen, zehn Linien, ein Angler mit Netz. In den Freispielen sammelt er die Fische ein.</p><p class="alters-hinweis">Simuliertes Glücksspiel mit Spielgeld · ab 16</p></div></div>
+      <!-- Fisch in drei Größen (gleiche Form, anderer Maßstab + andere Farbe). Er schaut nach links. -->
+      <symbol id="sym-fisch-klein" viewBox="0 0 64 64">
+        <g transform="translate(32 30) scale(.62) translate(-32 -32)">
+          <path
+            d="M6 32 C14 17 33 15 44 28 L60 16 C58 25 58 39 60 48 L44 36 C33 49 14 47 6 32 Z"
+            fill="url(#ag-fisch-klein)"
+            stroke="#2f75a6"
+            stroke-width="3"
+            stroke-linejoin="round"
+          />
+          <path
+            d="M25 18 C30 11 37 12 40 19"
+            fill="#6fbbe6"
+            stroke="#2f75a6"
+            stroke-width="2.4"
+            stroke-linejoin="round"
+          />
+          <path
+            d="M28 25 C30 31 30 36 28 41"
+            fill="none"
+            stroke="#2f75a6"
+            stroke-width="2.4"
+            stroke-linecap="round"
+          />
+          <circle cx="16" cy="29" r="3.6" fill="#fff" stroke="#1b4a6d" stroke-width="1.6" />
+          <circle cx="15.4" cy="29" r="1.6" fill="#10233a" />
+        </g>
+      </symbol>
+      <symbol id="sym-fisch-mittel" viewBox="0 0 64 64">
+        <g transform="translate(32 31) scale(.82) translate(-32 -32)">
+          <path
+            d="M6 32 C14 17 33 15 44 28 L60 16 C58 25 58 39 60 48 L44 36 C33 49 14 47 6 32 Z"
+            fill="url(#ag-fisch-mittel)"
+            stroke="#a8430f"
+            stroke-width="2.8"
+            stroke-linejoin="round"
+          />
+          <path
+            d="M25 18 C30 10 38 11 41 19"
+            fill="#ff8a3d"
+            stroke="#a8430f"
+            stroke-width="2.4"
+            stroke-linejoin="round"
+          />
+          <path
+            d="M29 24 C31 31 31 37 29 42"
+            fill="none"
+            stroke="#a8430f"
+            stroke-width="2.4"
+            stroke-linecap="round"
+          />
+          <path
+            d="M34 28 q3 4 0 8 M39 29 q3 3 0 7"
+            fill="none"
+            stroke="#fff"
+            stroke-opacity=".55"
+            stroke-width="1.8"
+            stroke-linecap="round"
+          />
+          <circle cx="16" cy="29" r="3.6" fill="#fff" stroke="#6b2a08" stroke-width="1.6" />
+          <circle cx="15.4" cy="29" r="1.6" fill="#10233a" />
+        </g>
+      </symbol>
+      <symbol id="sym-fisch-gross" viewBox="0 0 64 64">
+        <g transform="translate(32 32) scale(1) translate(-32 -32)">
+          <path
+            d="M5 32 C13 16 34 14 45 27 L61 14 C59 24 59 40 61 50 L45 37 C34 50 13 48 5 32 Z"
+            fill="url(#ag-fisch-gross)"
+            stroke="#07614f"
+            stroke-width="2.8"
+            stroke-linejoin="round"
+          />
+          <path
+            d="M24 17 C29 8 39 9 42 18"
+            fill="#18b58c"
+            stroke="#07614f"
+            stroke-width="2.4"
+            stroke-linejoin="round"
+          />
+          <path
+            d="M27 44 C31 51 38 52 40 45"
+            fill="#18b58c"
+            stroke="#07614f"
+            stroke-width="2.2"
+            stroke-linejoin="round"
+          />
+          <path
+            d="M29 23 C32 31 32 38 29 44"
+            fill="none"
+            stroke="#07614f"
+            stroke-width="2.4"
+            stroke-linecap="round"
+          />
+          <path
+            d="M34 26 q3 5 0 10 M40 27 q3 4 0 9"
+            fill="none"
+            stroke="#fff"
+            stroke-opacity=".55"
+            stroke-width="1.8"
+            stroke-linecap="round"
+          />
+          <circle cx="15" cy="29" r="4" fill="#fff" stroke="#07614f" stroke-width="1.6" />
+          <circle cx="14.4" cy="29" r="1.8" fill="#10233a" />
+          <path
+            d="M5 33 C8 35 10 35 12 34"
+            fill="none"
+            stroke="#07614f"
+            stroke-width="1.8"
+            stroke-linecap="round"
+          />
+        </g>
+      </symbol>
+    </svg>
 
-    <!-- HUD: Wallet-Leiste (von wallet.js gefüllt) + Feld für den letzten bezahlten Dreh.
+    <a class="skip-link" href="#main">Zum Inhalt springen</a>
+    <header class="kopf">
+      <nav class="container nav" aria-label="Hauptnavigation">
+        <a class="marke" href="../index.html"><span class="logo">▶</span>GAMES</a>
+        <div class="nav-links">
+          <a href="../index.html">Spiele</a><a href="../impressum.html">Impressum</a
+          ><a href="../datenschutz.html">Datenschutz</a>
+        </div>
+      </nav>
+    </header>
+    <main id="main" class="container">
+      <div class="spiel-kopf">
+        <div>
+          <h1>ANGELGLÜCK</h1>
+          <p class="unterzeile">
+            Fünf Walzen, zehn Linien, ein Angler mit Netz. In den Freispielen sammelt er die Fische
+            ein.
+          </p>
+          <p class="alters-hinweis">Simuliertes Glücksspiel mit Spielgeld · ab 16</p>
+        </div>
+      </div>
+
+      <!-- HUD: Wallet-Leiste (von wallet.js gefüllt) + Feld für den letzten bezahlten Dreh.
          #wallet-hud hat display:contents (siehe spiel.css), damit seine drei Felder
          direkt in der .hud-Flexbox mitlaufen. -->
-    <div class="hud">
-      <div id="wallet-hud"></div>
-      <div class="hud-feld"><div class="label">Letzter Dreh</div><div class="wert" id="hud-letzter">–</div></div>
-    </div>
-
-    <div class="buehne" id="buehne">
-      <!-- Freispiel-Leiste: nur sichtbar, solange Freispiele laufen (game.js setzt hidden) -->
-      <div class="fs-leiste" id="fs-leiste" hidden>
-        <span class="fs-titel">FREISPIELE</span>
-        <span id="fs-zaehler">–</span>
-        <span id="fs-gewinn" class="fs-gewinn">+0</span>
+      <div class="hud">
+        <div id="wallet-hud"></div>
+        <div class="hud-feld">
+          <div class="label">Letzter Dreh</div>
+          <div class="wert" id="hud-letzter">–</div>
+        </div>
       </div>
 
-      <!-- Das 5x3-Fenster: fünf Walzen, jede zeigt 3 Symbole. Die Bänder füllt game.js.
+      <div class="buehne" id="buehne">
+        <!-- Freispiel-Leiste: nur sichtbar, solange Freispiele laufen (game.js setzt hidden) -->
+        <div class="fs-leiste" id="fs-leiste" hidden>
+          <span class="fs-titel">FREISPIELE</span>
+          <span id="fs-zaehler">–</span>
+          <span id="fs-gewinn" class="fs-gewinn">+0</span>
+        </div>
+
+        <!-- Das 5x3-Fenster: fünf Walzen, jede zeigt 3 Symbole. Die Bänder füllt game.js.
            Das SVG darüber zeichnet die Gewinnlinien (Koordinaten: Spalte 0-5, Reihe 0-3).
            Links und rechts daneben sitzen die Nummern-Tabs der 10 Gewinnlinien (leer, game.js baut sie aus LINIEN). -->
-      <div class="fenster-zeile" id="fenster-zeile">
-        <div class="linien-tabs links" id="tabs-links"></div>
-        <div class="walzenfenster" id="fenster" role="img" aria-label="Walzen" data-gewinnfeier-fokus>
-          <div class="walzen-reihe" id="walzen-reihe">
-            <div class="walze"><div class="band"></div></div>
-            <div class="walze"><div class="band"></div></div>
-            <div class="walze"><div class="band"></div></div>
-            <div class="walze"><div class="band"></div></div>
-            <div class="walze"><div class="band"></div></div>
-            <svg class="linien-overlay" id="linien-overlay" viewBox="0 0 5 3" preserveAspectRatio="none" aria-hidden="true"></svg>
+        <div class="fenster-zeile" id="fenster-zeile">
+          <div class="linien-tabs links" id="tabs-links"></div>
+          <div
+            class="walzenfenster"
+            id="fenster"
+            role="img"
+            aria-label="Walzen"
+            data-gewinnfeier-fokus
+          >
+            <div class="walzen-reihe" id="walzen-reihe">
+              <div class="walze"><div class="band"></div></div>
+              <div class="walze"><div class="band"></div></div>
+              <div class="walze"><div class="band"></div></div>
+              <div class="walze"><div class="band"></div></div>
+              <div class="walze"><div class="band"></div></div>
+              <svg
+                class="linien-overlay"
+                id="linien-overlay"
+                viewBox="0 0 5 3"
+                preserveAspectRatio="none"
+                aria-hidden="true"
+              ></svg>
+            </div>
+          </div>
+          <div class="linien-tabs rechts" id="tabs-rechts"></div>
+        </div>
+
+        <p class="gewinn-anzeige" id="gewinn-anzeige"></p>
+        <p class="dreh-info" id="dreh-info" aria-live="polite">
+          Wähle deinen Einsatz und dreh die Walzen.
+        </p>
+
+        <div class="einsatz-zeile">
+          <span class="einsatz-label" id="einsatz-label">Gesamteinsatz</span>
+          <div class="chips" role="group" aria-labelledby="einsatz-label">
+            <button class="chip" type="button" data-einsatz="10" aria-pressed="false">10</button>
+            <button class="chip" type="button" data-einsatz="25" aria-pressed="false">25</button>
+            <button class="chip" type="button" data-einsatz="50" aria-pressed="false">50</button>
+            <button class="chip" type="button" data-einsatz="100" aria-pressed="false">100</button>
           </div>
         </div>
-        <div class="linien-tabs rechts" id="tabs-rechts"></div>
-      </div>
+        <div class="dreh-zeile">
+          <button class="knopf primaer dreh-knopf" id="dreh-knopf" type="button">DREHEN</button>
+        </div>
 
-      <p class="gewinn-anzeige" id="gewinn-anzeige"></p>
-      <p class="dreh-info" id="dreh-info" aria-live="polite">Wähle deinen Einsatz und dreh die Walzen.</p>
-
-      <div class="einsatz-zeile">
-        <span class="einsatz-label" id="einsatz-label">Gesamteinsatz</span>
-        <div class="chips" role="group" aria-labelledby="einsatz-label">
-          <button class="chip" type="button" data-einsatz="10" aria-pressed="false">10</button>
-          <button class="chip" type="button" data-einsatz="25" aria-pressed="false">25</button>
-          <button class="chip" type="button" data-einsatz="50" aria-pressed="false">50</button>
-          <button class="chip" type="button" data-einsatz="100" aria-pressed="false">100</button>
+        <div class="tabelle" data-gewinnfeier-bis>
+          <h2>Gewinntabelle</h2>
+          <p class="klein" id="tabelle-hinweis"></p>
+          <table class="quoten-tabelle">
+            <thead>
+              <tr>
+                <th scope="col">Symbol</th>
+                <th scope="col">3 gleiche</th>
+                <th scope="col">4 gleiche</th>
+                <th scope="col">5 gleiche</th>
+              </tr>
+            </thead>
+            <tbody id="gewinntabelle"></tbody>
+          </table>
+          <ul class="sonderliste" id="sonderliste"></ul>
+          <h2 class="unter">Fisch-Werte in den Freispielen</h2>
+          <ul class="fischwerte" id="fischwerte"></ul>
         </div>
       </div>
-      <div class="dreh-zeile"><button class="knopf primaer dreh-knopf" id="dreh-knopf" type="button">DREHEN</button></div>
 
-      <div class="tabelle" data-gewinnfeier-bis>
-        <h2>Gewinntabelle</h2>
-        <p class="klein" id="tabelle-hinweis"></p>
-        <table class="quoten-tabelle">
-          <thead><tr><th scope="col">Symbol</th><th scope="col">3 gleiche</th><th scope="col">4 gleiche</th><th scope="col">5 gleiche</th></tr></thead>
-          <tbody id="gewinntabelle"></tbody>
-        </table>
-        <ul class="sonderliste" id="sonderliste"></ul>
-        <h2 class="unter">Fisch-Werte in den Freispielen</h2>
-        <ul class="fischwerte" id="fischwerte"></ul>
+      <p class="steuerung">
+        Steuerung: <kbd>Leertaste</kbd> dreht die Walzen, <kbd>1</kbd> bis <kbd>4</kbd> wählen den
+        Gesamteinsatz (10 / 25 / 50 / 100). Am Handy einfach die Knöpfe antippen. Die Freispiele
+        laufen von selbst.
+      </p>
+
+      <div class="hinweis hinweis-casino">
+        <strong>Nur Spielgeld</strong> – kein Echtgeld, keine Kaufmöglichkeit.
       </div>
-    </div>
 
-    <p class="steuerung">Steuerung: <kbd>Leertaste</kbd> dreht die Walzen, <kbd>1</kbd> bis <kbd>4</kbd> wählen den Gesamteinsatz (10 / 25 / 50 / 100). Am Handy einfach die Knöpfe antippen. Die Freispiele laufen von selbst.</p>
+      <section style="max-width: 420px; margin-top: 36px">
+        <h2 style="font-family: var(--pixel); font-weight: 400; font-size: 0.85rem">
+          Lokale Top 3
+        </h2>
+        <p class="klein">
+          Die höchsten Netto-Gewinne einzelner bezahlter Drehs, Freispiele eingerechnet (Auszahlung
+          minus Einsatz).
+        </p>
+        <div id="topliste"></div>
+        <div class="knopf-reihe">
+          <button class="knopf" id="reset" type="button">Topliste zurücksetzen</button>
+          <button class="knopf" id="konto-reset" type="button">Konto zurücksetzen</button>
+        </div>
+        <p class="klein" id="konto-info"></p>
+      </section>
 
-    <div class="hinweis hinweis-casino"><strong>Nur Spielgeld</strong> – kein Echtgeld, keine Kaufmöglichkeit.</div>
+      <section class="lernbox">
+        <details open>
+          <summary>Anleitung &amp; Regeln</summary>
+          <p>
+            <strong>Ziel:</strong> Bring auf den Gewinnlinien gleiche Symbole zusammen, löse die
+            Freispiele aus und lass den Angler die Fische einsammeln.
+          </p>
+          <ul>
+            <li>
+              Wähle einen Gesamteinsatz (10, 25, 50 oder 100) und drücke DREHEN. Der Einsatz wird
+              sofort von deinem Konto abgebucht und gilt für alle zehn Linien zusammen.
+            </li>
+            <li>
+              Die Walzen stoppen von links nach rechts. Gewertet werden zehn feste Linien (siehe
+              Bild unten), immer von der linken Walze aus: mindestens drei gleiche Symbole
+              nebeneinander gewinnen.
+            </li>
+            <li>
+              <strong>Linien-Tabs:</strong> Die farbigen Nummern links (1 bis 5) und rechts (6 bis
+              10) neben den Walzen sind die zehn Gewinnlinien. Fahr mit der Maus über einen Tab oder
+              tipp ihn am Handy an (2 Sekunden, erneutes Tippen blendet aus), dann läuft die Linie
+              in ihrer Farbe über die Walzen. Gewinnt eine Linie, leuchten ihr Tab und ihre Linie
+              auf. Die Boote zählen überall und haben darum keine Linie.
+            </li>
+            <li>
+              Der Linien-Gewinn ist die Quote aus der Gewinntabelle mal ein Zehntel des Einsatzes,
+              gerundet. Beispiel: Drei Möwen (Quote 10) bei 50 Einsatz zahlen 10 × 5 = 50.
+            </li>
+            <li>
+              <strong>Angler = Wild:</strong> Er ersetzt jedes Symbol außer dem Fischerboot und
+              hilft so, Linien zu vervollständigen.
+            </li>
+            <li>
+              <strong>Fischerboot = Scatter:</strong> Drei oder mehr Boote irgendwo im Fenster
+              zahlen den doppelten Gesamteinsatz und starten 10 Freispiele. Erneut drei Boote in den
+              Freispielen bringen weitere 10.
+            </li>
+            <li>
+              <strong>Spannung:</strong> Liegen nach den ersten Walzen schon 2 Boote, drehen die
+              übrigen Walzen länger und bremsen langsamer, die Boote leuchten golden. Erst das
+              dritte Boot (oder sein Ausbleiben) entscheidet. Fehlt es, meldet das Spiel „So
+              knapp!“. Auch vier gleiche hohe Symbole mit dem fünften direkt daneben bekommen dieses
+              Signal. Das Ergebnis stand da längst fest, mehr dazu unter „Die Psychologie echter
+              Automaten“.
+            </li>
+            <li>
+              <strong>Ton:</strong> Oben rechts schaltest du die Klänge ein und aus. Jeder
+              Linien-Gewinn läuft als Lichtband über die Linie und spielt einen kurzen Jingle, auch
+              wenn er weniger als dein Einsatz beträgt. Das Netto zeigt dir immer ehrlich, was
+              unterm Strich bleibt.
+            </li>
+            <li>
+              <strong>Sammel-Feature (nur Freispiele):</strong> Jeder Fisch trägt jetzt einen
+              Geldwert (0,5 bis 10 mal Gesamteinsatz). Landet ein Angler im Fenster, sammelt er die
+              Werte aller sichtbaren Fische ein. Mehrere Angler sammeln mehrfach. Ohne Angler
+              verfallen die Werte.
+            </li>
+            <li>
+              Die Freispiele laufen automatisch, und dein Gewinn wird erst am Ende gutgeschrieben.
+              Verlässt du die Seite mittendrin, geht es beim nächsten Besuch genau dort weiter.
+            </li>
+            <li>
+              Das Spielgeld teilt sich diese Seite mit den anderen Casino-Spielen. Ist dein Konto
+              unter 10 gerutscht, gibt es neues Startgeld.
+            </li>
+            <li>
+              Ein bezahlter Dreh landet in der Top 3, wenn sein Netto-Gewinn (inklusive Freispiele)
+              mindestens 100 beträgt und unter den drei besten bisher liegt.
+            </li>
+          </ul>
+          <p class="klein">Die zehn Gewinnlinien:</p>
+          <div class="linien-bilder" id="linien-bilder"></div>
+        </details>
+      </section>
 
-    <section style="max-width:420px;margin-top:36px"><h2 style="font-family:var(--pixel);font-weight:400;font-size:.85rem">Lokale Top 3</h2>
-      <p class="klein">Die höchsten Netto-Gewinne einzelner bezahlter Drehs, Freispiele eingerechnet (Auszahlung minus Einsatz).</p>
-      <div id="topliste"></div>
-      <div class="knopf-reihe">
-        <button class="knopf" id="reset" type="button">Topliste zurücksetzen</button>
-        <button class="knopf" id="konto-reset" type="button">Konto zurücksetzen</button>
+      <section class="lernbox">
+        <details>
+          <summary>Die Psychologie echter Automaten</summary>
+          <p>
+            Echte Spielautomaten sind nicht nur Zufallsgeneratoren, sie sind sorgfältig gebaute
+            Wahrnehmungsmaschinen: Licht, Ton und Tempo sollen dafür sorgen, dass sich ein Dreh
+            bedeutsamer anfühlt, als er mathematisch ist. Dieses Spiel setzt einige dieser Mittel
+            offen ein, damit du sie wiedererkennst, und lässt andere bewusst weg. Der entscheidende
+            Unterschied: Das Ergebnis steht bei uns fest, bevor sich eine Walze dreht, und alle
+            Effekte lesen es nur ab. Sie verändern keinen Stopp.
+          </p>
+          <p><strong>Das tun wir (und so wirkt es):</strong></p>
+          <ul>
+            <li>
+              <strong>Scatter-Spannung (Anticipation):</strong> Sind nach den ersten Walzen 2 Boote
+              da, drehen die restlichen länger, die Boote pulsieren, ein Ton steigt. Dein Gehirn
+              deutet das als „fast geschafft“, obwohl die Chance auf das dritte Boot klein bleibt.
+              Diese Spannung gibt es bei etwa jedem 19. Dreh (5,2 %), und sie endet meist ohne
+              Freispiele.
+            </li>
+            <li>
+              <strong>Beinahe-Treffer („So knapp!“):</strong> Genau 2 Boote (etwa jeder 14. Dreh,
+              7,3 %) oder 4 gleiche hohe Symbole mit dem fünften daneben werden betont. Ein
+              Fast-Gewinn fühlt sich ähnlich an wie ein Gewinn, bringt aber nichts. Wir betonen nur,
+              was der Zufall wirklich geliefert hat.
+            </li>
+            <li>
+              <strong>Kleine Gewinne feiern:</strong> Im Basisspiel zahlen 44 % aller Treffer
+              weniger als der Einsatz, trotzdem laufen Licht und Jingle. Der Reiz entsteht, weil
+              „etwas passiert“, obwohl du unterm Strich verlierst. Das ist ein milder Verwandter der
+              „Verluste als Gewinn“ echter Geräte. Wir zeigen darum daneben immer das ehrliche
+              Netto.
+            </li>
+            <li>
+              <strong>Ton:</strong> Surren, Stopp-Ticks, Münzen und Jingles sind das
+              Belohnungssystem eines Automaten. Ohne Ton wirkt dasselbe Spiel deutlich nüchterner,
+              probier es mit dem Ton-Knopf aus.
+            </li>
+            <li>
+              <strong>Der Freispiel-Traum:</strong> Die Freispiele sind im Mittel rund 38 Einsätze
+              wert und machen gut ein Drittel der gesamten Auszahlung aus, kommen aber nur etwa alle
+              117 Drehs. Der seltene große Fang bleibt im Kopf, die vielen Drehs dazwischen
+              verblassen.
+            </li>
+          </ul>
+          <p><strong>Das tun wir bewusst nicht (echte Geräte schon):</strong></p>
+          <ul>
+            <li>
+              <strong>Manipulierte Beinahe-Treffer:</strong> Echte Automaten lassen Scatter
+              auffällig oft knapp über oder unter dem Fenster stoppen und gewichten ihre Walzen
+              virtuell, sodass das dritte Symbol seltener fällt, als es aussieht. Bei uns ist jeder
+              Stopp gleich wahrscheinlich, 2 Boote ohne drittes sind nur so häufig, wie es die
+              Rechnung vorgibt.
+            </li>
+            <li>
+              <strong>Verschleierte Verluste:</strong> Viele Geräte zeigen Credits statt Geld und
+              nennen nur den Gewinn, nicht das Netto, sodass sich ein Verlustdreh wie ein Treffer
+              anfühlt. Bei uns steht das Netto immer da, auch wenn der Gewinn unter dem Einsatz
+              liegt.
+            </li>
+            <li>
+              <strong>Echtes Geld:</strong> Hier gibt es nur Spielgeld und keine Zahlungsfunktion.
+              An echten Automaten treffen dieselben Mittel auf echte Verluste, und genau das macht
+              sie riskant.
+            </li>
+          </ul>
+        </details>
+      </section>
+
+      <section class="lernbox">
+        <details>
+          <summary>Wie funktioniert der Code?</summary>
+          <p>
+            <strong>Zehn Linien als Daten.</strong> Die Linien stehen in der Konstante
+            <code>LINIEN</code>, einem Array aus zehn Arrays mit je fünf Zahlen: eine Zahl pro
+            Walze, und die Zahl sagt, in welcher Reihe die Linie dort liegt (0 oben, 1 Mitte, 2
+            unten). <code>[0, 1, 2, 1, 0]</code> ist das „V“. Die Auswertung baut daraus für jede
+            Linie die fünf Symbole:
+            <code>reihen.map((zeile, spalte) =&gt; fenster[spalte][zeile])</code>. Wer eine elfte
+            Linie will, hängt einfach ein Array an: Der Linieneinsatz wird aus
+            <code>LINIEN.length</code> berechnet und passt sich von selbst an (danach muss man die
+            Auszahlungsquote allerdings neu messen). Das Bild in der Anleitung wird übrigens aus
+            genau dieser Konstante gezeichnet, es kann also nie von den echten Linien abweichen.
+            Dasselbe gilt für die Tabs neben den Walzen: <code>linienAnzeigeBauen()</code> in
+            <code>assets/gewinnlinien.js</code> bekommt <code>LINIEN</code> übergeben, misst die
+            Felder in Pixeln und zeichnet die Vorschau als SVG-<code>&lt;polyline&gt;</code> in der
+            festen Farbe der Linie. Beim Gewinn leuchtet derselbe Tab in dieser Farbe auf.
+          </p>
+          <p>
+            <strong>Das Walzenband.</strong> Jede Walze ist ein festes Array mit 30 Feldern. Gedreht
+            wird mit einem zufälligen Stopp-Index pro Walze. Das Symbol dort liegt in der mittleren
+            Reihe, die Nachbarn davor und danach oben und unten (das Band ist ringförmig). Wie oft
+            ein Symbol im Array steht, ist seine Wahrscheinlichkeit. Das Fischerboot steht nur
+            einmal pro Walze im Band: Pro Walze ist also nie mehr als ein Boot sichtbar. Alle fünf
+            Walzen haben dieselbe Zusammensetzung (6× Muschel, 5× Seestern, 4× Anker, 4×
+            Rettungsring, 3× Angelrute, 3× Möwe, 2× Fisch, 2× Angler, 1× Boot), nur die Reihenfolge
+            unterscheidet sich, und gleiche Symbole stehen nie direkt nebeneinander.
+          </p>
+          <p>
+            <strong>Wild richtig auswerten.</strong> <code>linieAuswerten()</code> geht von links
+            nach rechts. Erst zählt sie, wie viele Angler ganz links stehen. Dann bestimmt das erste
+            Nicht-Angler-Symbol die Kette, und danach zählen gleiche Symbole oder Angler weiter. Das
+            Boot ist als Scatter nie Teil einer Kette und beendet sie. Beginnt die Linie mit drei
+            oder mehr Anglern, gibt es zwei Möglichkeiten (reine Angler-Kette oder Kette des ersten
+            echten Symbols), und die bessere gewinnt. Beispiel: Angler, Angler, Möwe, Möwe, Anker
+            zählt als vier Möwen.
+          </p>
+          <p>
+            <strong>Scatter zählt überall.</strong> Linien brauchen Nachbarn, der Scatter nicht:
+            <code>scatterAuswerten()</code> geht einfach durch alle 15 Felder und zählt Boote. Ab
+            drei gibt es den doppelten Gesamteinsatz und 10 Freispiele.
+          </p>
+          <p>
+            <strong>Das Sammel-Feature und die Fische.</strong> Im Basisspiel ist der Fisch ein ganz
+            normales Symbol mit eigener Zeile in der Gewinntabelle und trägt keinen Geldwert. Erst
+            in den Freispielen würfelt <code>fischeWuerfeln()</code> für jeden sichtbaren Fisch
+            einen Wert aus der gewichteten Liste <code>FISCH_WERTE</code> (kleine Werte häufig,
+            große selten). Dann addiert <code>fischeSammeln()</code>, was die Angler einsammeln:
+            Summe aller Fischwerte mal Anzahl der Angler. Warum diese Trennung? Erstens bleibt das
+            Basisspiel überschaubar, und die Freispiele fühlen sich wirklich besonders an. Zweitens
+            lässt sich das Basisspiel dadurch <em>exakt</em> durchrechnen, während die zufälligen
+            Fischwerte und die Wiederholung der Freispiele nur per Simulation messbar sind. Drittens
+            steuern wir den Reiz über die Freispiel-Bänder: Dort liegen mehr Fische (Walze 1) und
+            mehr Angler (Walze 5) als im Basisspiel.
+          </p>
+          <p>
+            <strong>Die Auszahlungsquote (RTP).</strong> RTP heißt „Return to Player“: Wie viel vom
+            Einsatz kommt auf lange Sicht zurück? Das Basisspiel hat 30⁵ = 24.300.000 mögliche
+            Stopp-Kombinationen. Ein Programm kann sie alle einmal durchspielen (das geht in
+            Sekunden) und kommt exakt auf 62,28 % aus Linien und Scatter-Gewinn. Die Abstimmung
+            zielt auf eine RTP von 95 %, mit mehr niedrigen Symbolen im Band (19 von 30 Feldern)
+            fällt öfter ein kleiner Treffer: Die Trefferquote im Basisspiel liegt bei 42,1 %. Die
+            Freispiele kommen on top: Ein Auslöser kommt etwa jeden 117. Dreh, und jede Serie ist im
+            Schnitt rund 11 Freispiele lang, weil 3 Boote in den Freispielen die Serie verlängern
+            können (rechnerisch 10 ÷ (1 − 10 × p), mit p als Chance auf 3+ Boote pro Freispiel).
+            Eine Simulation mit 120 Millionen bezahlten Drehs ergab insgesamt 95,13 %: rund 62,3 %
+            aus dem Basisspiel und 32,9 % aus den Freispielen (also gut ein Drittel der
+            Auszahlungen). Kurzfristig schwankt das stark: 58 % der bezahlten Drehs zahlen gar
+            nichts, 44 % der Treffer liegen unter dem Einsatz, und eine ausgelöste Serie bringt
+            meist das 25- bis 51-Fache des Einsatzes (in einem von hundert Fällen mehr als das
+            118-Fache).
+          </p>
+          <p>
+            <strong>Spannung, Beinahe-Treffer und Ton.</strong> Alles Folgende liest nur das fertige
+            Ergebnis. <code>spannungErmitteln(fenster)</code> schaut Walze für Walze, ob nach den
+            ersten 2 bis 4 Walzen schon 2 Boote liegen, und gibt die erste Walze zurück, die länger
+            dreht. <code>laufPlanErstellen(…, spannungAb)</code> plant danach die Stoppzeiten: Jede
+            betroffene Walze wartet 0,8, 1,15 und 1,5 Sekunden länger und bremst langsamer aus. Bei
+            „Bewegung reduzieren“ beträgt die Verzögerung höchstens 0,3 Sekunden.
+            <code>fastGewinnErmitteln()</code> erkennt „So knapp!“: genau 2 Boote oder 4 gleiche
+            hohe Symbole (Angelrute, Möwe, Fisch, Angler) mit dem fünften Symbol direkt daneben. Den
+            Klang erzeugt <code>assets/klang.js</code> aus Oszillatoren der Web-Audio-API, es gibt
+            keine Audiodatei. Der Lauflicht-Rahmen ums Walzenfenster ist reines CSS (wandernde
+            Farbverläufe), im Leerlauf langsam, beim Drehen schneller, bei einem Gewinn golden.
+          </p>
+          <p>
+            <strong>Erst entscheiden, dann animieren.</strong> Das Ergebnis eines Drehs steht fest,
+            bevor sich die Walzen bewegen. Die Animation ist nur Show. Die Walzenbänder stehen
+            dreifach hintereinander im DOM, ihre Position wird als <code>translateY</code> in
+            Prozent gesetzt. Die Fische des Zielfensters bekommen ihre Wert-Plaketten schon vor dem
+            Dreh, deshalb sieht man sie beim Auslaufen der Walze. Beim Einsammeln fliegen kleine
+            Plaketten zum Angler (<code>element.animate()</code>, die Web-Animations-API), und die
+            laufende Summe tickt hoch. Wer „Bewegung reduzieren“ eingestellt hat, sieht die Summe
+            sofort.
+          </p>
+          <p>
+            <strong>Der Weg des Geldes.</strong> <code>einsatzAbbuchen()</code> passiert nur beim
+            bezahlten Dreh. Alle Freispiele sind kostenlos und laufen mit demselben Einsatz. Am Ende
+            der ganzen Runde (Dreh plus Freispiele) ruft das Spiel
+            <code>rundeAbschliessen(einsatz, gesamtAuszahlung)</code> einmal auf. Dadurch zählt die
+            Topliste den Netto-Gewinn der kompletten Runde. Läuft eine Serie, speichert das Spiel
+            nach jedem Freispiel den Zustand (<code>rest</code>, <code>einsatz</code>,
+            <code>summe</code>) im localStorage, bevor die Walzen loslaufen. Wer die Seite schließt
+            oder neu lädt, bekommt dasselbe Ergebnis und macht beim nächsten Besuch weiter. Ein
+            Neuwürfeln durch Neuladen gibt es nicht.
+          </p>
+
+          <p>
+            <strong>Gewinne feiern.</strong> Je größer der Gewinn im Verhältnis zum Einsatz, desto
+            wilder die Animation. Gemessen wird der Faktor <code>Auszahlung ÷ Gesamteinsatz</code>,
+            deshalb skaliert alles mit deinem Einsatz: ab ×5 „Schöner Gewinn“ (Banner), ab ×15
+            „Großer Gewinn“ (Overlay mit Funken), ab ×40 „Mega Gewinn“ (Münzregen und blitzender
+            Rand). Gefeiert wird jeder einzelne Dreh (in den Freispielen inklusive der
+            eingesammelten Fische), am Ende einer Freispiel-Serie zusätzlich der
+            <em>Gesamtgewinn</em> der Serie, aber nur, wenn er eine höhere Stufe erreicht als jeder
+            Einzeldreh. Dafür merkt sich <code>game.js</code> die höchste bereits gezeigte Stufe.
+            Die Stufenwahl ist die reine Funktion <code>stufeBestimmen(betrag, einsatz)</code> in
+            <code>assets/gewinnfeier.js</code>, die Münzen entstehen in einer eigenen
+            Mini-Partikel-Engine auf einem <code>&lt;canvas&gt;</code>. Ein Klick oder Tastendruck
+            überspringt die Feier sofort, bei „Bewegung reduzieren“ bleibt nur ein ruhiges Banner.
+            An der Auszahlung ändert die Feier nichts.
+          </p>
+        </details>
+      </section>
+    </main>
+    <footer class="fuss">
+      <div class="container fuss-in">
+        <span>Browser-Arcade · Open Source</span>
+        <nav aria-label="Rechtliches">
+          <a href="../impressum.html">Impressum</a><a href="../datenschutz.html">Datenschutz</a>
+        </nav>
       </div>
-      <p class="klein" id="konto-info"></p>
-    </section>
-
-    <section class="lernbox"><details open><summary>Anleitung &amp; Regeln</summary>
-      <p><strong>Ziel:</strong> Bring auf den Gewinnlinien gleiche Symbole zusammen, löse die Freispiele aus und lass den Angler die Fische einsammeln.</p>
-      <ul>
-        <li>Wähle einen Gesamteinsatz (10, 25, 50 oder 100) und drücke DREHEN. Der Einsatz wird sofort von deinem Konto abgebucht und gilt für alle zehn Linien zusammen.</li>
-        <li>Die Walzen stoppen von links nach rechts. Gewertet werden zehn feste Linien (siehe Bild unten), immer von der linken Walze aus: mindestens drei gleiche Symbole nebeneinander gewinnen.</li>
-        <li><strong>Linien-Tabs:</strong> Die farbigen Nummern links (1 bis 5) und rechts (6 bis 10) neben den Walzen sind die zehn Gewinnlinien. Fahr mit der Maus über einen Tab oder tipp ihn am Handy an (2 Sekunden, erneutes Tippen blendet aus), dann läuft die Linie in ihrer Farbe über die Walzen. Gewinnt eine Linie, leuchten ihr Tab und ihre Linie auf. Die Boote zählen überall und haben darum keine Linie.</li>
-        <li>Der Linien-Gewinn ist die Quote aus der Gewinntabelle mal ein Zehntel des Einsatzes, gerundet. Beispiel: Drei Möwen (Quote 10) bei 50 Einsatz zahlen 10 × 5 = 50.</li>
-        <li><strong>Angler = Wild:</strong> Er ersetzt jedes Symbol außer dem Fischerboot und hilft so, Linien zu vervollständigen.</li>
-        <li><strong>Fischerboot = Scatter:</strong> Drei oder mehr Boote irgendwo im Fenster zahlen den doppelten Gesamteinsatz und starten 10 Freispiele. Erneut drei Boote in den Freispielen bringen weitere 10.</li>
-        <li><strong>Spannung:</strong> Liegen nach den ersten Walzen schon 2 Boote, drehen die übrigen Walzen länger und bremsen langsamer, die Boote leuchten golden. Erst das dritte Boot (oder sein Ausbleiben) entscheidet. Fehlt es, meldet das Spiel „So knapp!“. Auch vier gleiche hohe Symbole mit dem fünften direkt daneben bekommen dieses Signal. Das Ergebnis stand da längst fest, mehr dazu unter „Die Psychologie echter Automaten“.</li>
-        <li><strong>Ton:</strong> Oben rechts schaltest du die Klänge ein und aus. Jeder Linien-Gewinn läuft als Lichtband über die Linie und spielt einen kurzen Jingle, auch wenn er weniger als dein Einsatz beträgt. Das Netto zeigt dir immer ehrlich, was unterm Strich bleibt.</li>
-        <li><strong>Sammel-Feature (nur Freispiele):</strong> Jeder Fisch trägt jetzt einen Geldwert (0,5 bis 10 mal Gesamteinsatz). Landet ein Angler im Fenster, sammelt er die Werte aller sichtbaren Fische ein. Mehrere Angler sammeln mehrfach. Ohne Angler verfallen die Werte.</li>
-        <li>Die Freispiele laufen automatisch, und dein Gewinn wird erst am Ende gutgeschrieben. Verlässt du die Seite mittendrin, geht es beim nächsten Besuch genau dort weiter.</li>
-        <li>Das Spielgeld teilt sich diese Seite mit den anderen Casino-Spielen. Ist dein Konto unter 10 gerutscht, gibt es neues Startgeld.</li>
-        <li>Ein bezahlter Dreh landet in der Top 3, wenn sein Netto-Gewinn (inklusive Freispiele) mindestens 100 beträgt und unter den drei besten bisher liegt.</li>
-      </ul>
-      <p class="klein">Die zehn Gewinnlinien:</p>
-      <div class="linien-bilder" id="linien-bilder"></div>
-    </details></section>
-
-    <section class="lernbox"><details><summary>Die Psychologie echter Automaten</summary>
-      <p>Echte Spielautomaten sind nicht nur Zufallsgeneratoren, sie sind sorgfältig gebaute Wahrnehmungsmaschinen: Licht, Ton und Tempo sollen dafür sorgen, dass sich ein Dreh bedeutsamer anfühlt, als er mathematisch ist. Dieses Spiel setzt einige dieser Mittel offen ein, damit du sie wiedererkennst, und lässt andere bewusst weg. Der entscheidende Unterschied: Das Ergebnis steht bei uns fest, bevor sich eine Walze dreht, und alle Effekte lesen es nur ab. Sie verändern keinen Stopp.</p>
-      <p><strong>Das tun wir (und so wirkt es):</strong></p>
-      <ul>
-        <li><strong>Scatter-Spannung (Anticipation):</strong> Sind nach den ersten Walzen 2 Boote da, drehen die restlichen länger, die Boote pulsieren, ein Ton steigt. Dein Gehirn deutet das als „fast geschafft“, obwohl die Chance auf das dritte Boot klein bleibt. Diese Spannung gibt es bei etwa jedem 19. Dreh (5,2 %), und sie endet meist ohne Freispiele.</li>
-        <li><strong>Beinahe-Treffer („So knapp!“):</strong> Genau 2 Boote (etwa jeder 14. Dreh, 7,3 %) oder 4 gleiche hohe Symbole mit dem fünften daneben werden betont. Ein Fast-Gewinn fühlt sich ähnlich an wie ein Gewinn, bringt aber nichts. Wir betonen nur, was der Zufall wirklich geliefert hat.</li>
-        <li><strong>Kleine Gewinne feiern:</strong> Im Basisspiel zahlen 44 % aller Treffer weniger als der Einsatz, trotzdem laufen Licht und Jingle. Der Reiz entsteht, weil „etwas passiert“, obwohl du unterm Strich verlierst. Das ist ein milder Verwandter der „Verluste als Gewinn“ echter Geräte. Wir zeigen darum daneben immer das ehrliche Netto.</li>
-        <li><strong>Ton:</strong> Surren, Stopp-Ticks, Münzen und Jingles sind das Belohnungssystem eines Automaten. Ohne Ton wirkt dasselbe Spiel deutlich nüchterner, probier es mit dem Ton-Knopf aus.</li>
-        <li><strong>Der Freispiel-Traum:</strong> Die Freispiele sind im Mittel rund 38 Einsätze wert und machen gut ein Drittel der gesamten Auszahlung aus, kommen aber nur etwa alle 117 Drehs. Der seltene große Fang bleibt im Kopf, die vielen Drehs dazwischen verblassen.</li>
-      </ul>
-      <p><strong>Das tun wir bewusst nicht (echte Geräte schon):</strong></p>
-      <ul>
-        <li><strong>Manipulierte Beinahe-Treffer:</strong> Echte Automaten lassen Scatter auffällig oft knapp über oder unter dem Fenster stoppen und gewichten ihre Walzen virtuell, sodass das dritte Symbol seltener fällt, als es aussieht. Bei uns ist jeder Stopp gleich wahrscheinlich, 2 Boote ohne drittes sind nur so häufig, wie es die Rechnung vorgibt.</li>
-        <li><strong>Verschleierte Verluste:</strong> Viele Geräte zeigen Credits statt Geld und nennen nur den Gewinn, nicht das Netto, sodass sich ein Verlustdreh wie ein Treffer anfühlt. Bei uns steht das Netto immer da, auch wenn der Gewinn unter dem Einsatz liegt.</li>
-        <li><strong>Echtes Geld:</strong> Hier gibt es nur Spielgeld und keine Zahlungsfunktion. An echten Automaten treffen dieselben Mittel auf echte Verluste, und genau das macht sie riskant.</li>
-      </ul>
-    </details></section>
-
-    <section class="lernbox"><details><summary>Wie funktioniert der Code?</summary>
-      <p><strong>Zehn Linien als Daten.</strong> Die Linien stehen in der Konstante <code>LINIEN</code>, einem Array aus zehn Arrays mit je fünf Zahlen: eine Zahl pro Walze, und die Zahl sagt, in welcher Reihe die Linie dort liegt (0 oben, 1 Mitte, 2 unten). <code>[0, 1, 2, 1, 0]</code> ist das „V“. Die Auswertung baut daraus für jede Linie die fünf Symbole: <code>reihen.map((zeile, spalte) =&gt; fenster[spalte][zeile])</code>. Wer eine elfte Linie will, hängt einfach ein Array an: Der Linieneinsatz wird aus <code>LINIEN.length</code> berechnet und passt sich von selbst an (danach muss man die Auszahlungsquote allerdings neu messen). Das Bild in der Anleitung wird übrigens aus genau dieser Konstante gezeichnet, es kann also nie von den echten Linien abweichen. Dasselbe gilt für die Tabs neben den Walzen: <code>linienAnzeigeBauen()</code> in <code>assets/gewinnlinien.js</code> bekommt <code>LINIEN</code> übergeben, misst die Felder in Pixeln und zeichnet die Vorschau als SVG-<code>&lt;polyline&gt;</code> in der festen Farbe der Linie. Beim Gewinn leuchtet derselbe Tab in dieser Farbe auf.</p>
-      <p><strong>Das Walzenband.</strong> Jede Walze ist ein festes Array mit 30 Feldern. Gedreht wird mit einem zufälligen Stopp-Index pro Walze. Das Symbol dort liegt in der mittleren Reihe, die Nachbarn davor und danach oben und unten (das Band ist ringförmig). Wie oft ein Symbol im Array steht, ist seine Wahrscheinlichkeit. Das Fischerboot steht nur einmal pro Walze im Band: Pro Walze ist also nie mehr als ein Boot sichtbar. Alle fünf Walzen haben dieselbe Zusammensetzung (6× Muschel, 5× Seestern, 4× Anker, 4× Rettungsring, 3× Angelrute, 3× Möwe, 2× Fisch, 2× Angler, 1× Boot), nur die Reihenfolge unterscheidet sich, und gleiche Symbole stehen nie direkt nebeneinander.</p>
-      <p><strong>Wild richtig auswerten.</strong> <code>linieAuswerten()</code> geht von links nach rechts. Erst zählt sie, wie viele Angler ganz links stehen. Dann bestimmt das erste Nicht-Angler-Symbol die Kette, und danach zählen gleiche Symbole oder Angler weiter. Das Boot ist als Scatter nie Teil einer Kette und beendet sie. Beginnt die Linie mit drei oder mehr Anglern, gibt es zwei Möglichkeiten (reine Angler-Kette oder Kette des ersten echten Symbols), und die bessere gewinnt. Beispiel: Angler, Angler, Möwe, Möwe, Anker zählt als vier Möwen.</p>
-      <p><strong>Scatter zählt überall.</strong> Linien brauchen Nachbarn, der Scatter nicht: <code>scatterAuswerten()</code> geht einfach durch alle 15 Felder und zählt Boote. Ab drei gibt es den doppelten Gesamteinsatz und 10 Freispiele.</p>
-      <p><strong>Das Sammel-Feature und die Fische.</strong> Im Basisspiel ist der Fisch ein ganz normales Symbol mit eigener Zeile in der Gewinntabelle und trägt keinen Geldwert. Erst in den Freispielen würfelt <code>fischeWuerfeln()</code> für jeden sichtbaren Fisch einen Wert aus der gewichteten Liste <code>FISCH_WERTE</code> (kleine Werte häufig, große selten). Dann addiert <code>fischeSammeln()</code>, was die Angler einsammeln: Summe aller Fischwerte mal Anzahl der Angler. Warum diese Trennung? Erstens bleibt das Basisspiel überschaubar, und die Freispiele fühlen sich wirklich besonders an. Zweitens lässt sich das Basisspiel dadurch <em>exakt</em> durchrechnen, während die zufälligen Fischwerte und die Wiederholung der Freispiele nur per Simulation messbar sind. Drittens steuern wir den Reiz über die Freispiel-Bänder: Dort liegen mehr Fische (Walze 1) und mehr Angler (Walze 5) als im Basisspiel.</p>
-      <p><strong>Die Auszahlungsquote (RTP).</strong> RTP heißt „Return to Player“: Wie viel vom Einsatz kommt auf lange Sicht zurück? Das Basisspiel hat 30⁵ = 24.300.000 mögliche Stopp-Kombinationen. Ein Programm kann sie alle einmal durchspielen (das geht in Sekunden) und kommt exakt auf 62,28 % aus Linien und Scatter-Gewinn. Die Abstimmung zielt auf eine RTP von 95 %, mit mehr niedrigen Symbolen im Band (19 von 30 Feldern) fällt öfter ein kleiner Treffer: Die Trefferquote im Basisspiel liegt bei 42,1 %. Die Freispiele kommen on top: Ein Auslöser kommt etwa jeden 117. Dreh, und jede Serie ist im Schnitt rund 11 Freispiele lang, weil 3 Boote in den Freispielen die Serie verlängern können (rechnerisch 10 ÷ (1 − 10 × p), mit p als Chance auf 3+ Boote pro Freispiel). Eine Simulation mit 120 Millionen bezahlten Drehs ergab insgesamt 95,13 %: rund 62,3 % aus dem Basisspiel und 32,9 % aus den Freispielen (also gut ein Drittel der Auszahlungen). Kurzfristig schwankt das stark: 58 % der bezahlten Drehs zahlen gar nichts, 44 % der Treffer liegen unter dem Einsatz, und eine ausgelöste Serie bringt meist das 25- bis 51-Fache des Einsatzes (in einem von hundert Fällen mehr als das 118-Fache).</p>
-      <p><strong>Spannung, Beinahe-Treffer und Ton.</strong> Alles Folgende liest nur das fertige Ergebnis. <code>spannungErmitteln(fenster)</code> schaut Walze für Walze, ob nach den ersten 2 bis 4 Walzen schon 2 Boote liegen, und gibt die erste Walze zurück, die länger dreht. <code>laufPlanErstellen(…, spannungAb)</code> plant danach die Stoppzeiten: Jede betroffene Walze wartet 0,8, 1,15 und 1,5 Sekunden länger und bremst langsamer aus. Bei „Bewegung reduzieren“ beträgt die Verzögerung höchstens 0,3 Sekunden. <code>fastGewinnErmitteln()</code> erkennt „So knapp!“: genau 2 Boote oder 4 gleiche hohe Symbole (Angelrute, Möwe, Fisch, Angler) mit dem fünften Symbol direkt daneben. Den Klang erzeugt <code>assets/klang.js</code> aus Oszillatoren der Web-Audio-API, es gibt keine Audiodatei. Der Lauflicht-Rahmen ums Walzenfenster ist reines CSS (wandernde Farbverläufe), im Leerlauf langsam, beim Drehen schneller, bei einem Gewinn golden.</p>
-      <p><strong>Erst entscheiden, dann animieren.</strong> Das Ergebnis eines Drehs steht fest, bevor sich die Walzen bewegen. Die Animation ist nur Show. Die Walzenbänder stehen dreifach hintereinander im DOM, ihre Position wird als <code>translateY</code> in Prozent gesetzt. Die Fische des Zielfensters bekommen ihre Wert-Plaketten schon vor dem Dreh, deshalb sieht man sie beim Auslaufen der Walze. Beim Einsammeln fliegen kleine Plaketten zum Angler (<code>element.animate()</code>, die Web-Animations-API), und die laufende Summe tickt hoch. Wer „Bewegung reduzieren“ eingestellt hat, sieht die Summe sofort.</p>
-      <p><strong>Der Weg des Geldes.</strong> <code>einsatzAbbuchen()</code> passiert nur beim bezahlten Dreh. Alle Freispiele sind kostenlos und laufen mit demselben Einsatz. Am Ende der ganzen Runde (Dreh plus Freispiele) ruft das Spiel <code>rundeAbschliessen(einsatz, gesamtAuszahlung)</code> einmal auf. Dadurch zählt die Topliste den Netto-Gewinn der kompletten Runde. Läuft eine Serie, speichert das Spiel nach jedem Freispiel den Zustand (<code>rest</code>, <code>einsatz</code>, <code>summe</code>) im localStorage, bevor die Walzen loslaufen. Wer die Seite schließt oder neu lädt, bekommt dasselbe Ergebnis und macht beim nächsten Besuch weiter. Ein Neuwürfeln durch Neuladen gibt es nicht.</p>
-
-      <p><strong>Gewinne feiern.</strong> Je größer der Gewinn im Verhältnis zum Einsatz, desto wilder die Animation. Gemessen wird der Faktor <code>Auszahlung ÷ Gesamteinsatz</code>, deshalb skaliert alles mit deinem Einsatz: ab ×5 „Schöner Gewinn“ (Banner), ab ×15 „Großer Gewinn“ (Overlay mit Funken), ab ×40 „Mega Gewinn“ (Münzregen und blitzender Rand). Gefeiert wird jeder einzelne Dreh (in den Freispielen inklusive der eingesammelten Fische), am Ende einer Freispiel-Serie zusätzlich der <em>Gesamtgewinn</em> der Serie, aber nur, wenn er eine höhere Stufe erreicht als jeder Einzeldreh. Dafür merkt sich <code>game.js</code> die höchste bereits gezeigte Stufe. Die Stufenwahl ist die reine Funktion <code>stufeBestimmen(betrag, einsatz)</code> in <code>assets/gewinnfeier.js</code>, die Münzen entstehen in einer eigenen Mini-Partikel-Engine auf einem <code>&lt;canvas&gt;</code>. Ein Klick oder Tastendruck überspringt die Feier sofort, bei „Bewegung reduzieren“ bleibt nur ein ruhiges Banner. An der Auszahlung ändert die Feier nichts.</p>
-    </details></section>
-  </main>
-  <footer class="fuss"><div class="container fuss-in"><span>Browser-Arcade · Open Source</span><nav aria-label="Rechtliches"><a href="../impressum.html">Impressum</a><a href="../datenschutz.html">Datenschutz</a></nav></div></footer>
-  <script type="module" src="./game.js"></script>
-</body>
+    </footer>
+    <script type="module" src="./game.js"></script>
+  </body>
 </html>

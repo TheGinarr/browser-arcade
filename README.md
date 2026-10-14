@@ -133,6 +133,12 @@ für diese Seite löschen. Es existiert keine Kopie auf dem Server.
 Welle 4 (optional): Hot-Seat-Brettspiele (Schach, Dame, Ludo) –
 abwechselnd am selben Gerät, weiterhin ohne Server.
 
+## Code-Stil
+
+Der Code ist mit [Prettier](https://prettier.io) formatiert (Einstellungen in `.prettierrc.json`,
+Editor-Grundlagen in `.editorconfig`): 2 Leerzeichen Einrückung, eine CSS-Regel pro Zeile,
+höchstens 100 Zeichen pro Zeile. Vor einem Commit einfach `npx prettier --write .` ausführen.
+
 ## Lizenz
 
 Code: MIT, siehe `LICENSE`. Schriften in `assets/fonts/`: SIL Open Font License 1.1

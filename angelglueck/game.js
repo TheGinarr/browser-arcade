@@ -101,17 +101,30 @@
 import { bewegungReduziert, toplisteAnzeigen, stillEintragen } from "../assets/ui.js";
 import { gewinnFeiern, stufeBestimmen, STUFEN } from "../assets/gewinnfeier.js";
 import {
-  tonKnopf, klangSpinStart, klangWalzenStopp, klangSpannung, klangFastGewinn, klangGewinn, klangMuenzTick,
+  tonKnopf,
+  klangSpinStart,
+  klangWalzenStopp,
+  klangSpannung,
+  klangFastGewinn,
+  klangGewinn,
+  klangMuenzTick,
 } from "../assets/klang.js";
 import { linienAnzeigeBauen, linienFarbe } from "../assets/gewinnlinien.js";
 import { lade, speichere, entferne } from "../assets/storage.js";
 import {
-  STARTGELD, kontostand, statistik, einsatzAbbuchen, rundeAbschliessen,
-  istPleite, pleiteNeustart, walletHud, walletHudAktualisieren,
+  STARTGELD,
+  kontostand,
+  statistik,
+  einsatzAbbuchen,
+  rundeAbschliessen,
+  istPleite,
+  pleiteNeustart,
+  walletHud,
+  walletHudAktualisieren,
 } from "../assets/wallet.js";
 
-const SPIEL = "angelglueck";                    // Schlüssel für storage.js (Topliste, Einsatz, Freispiel-Stand)
-const FS_SCHLUESSEL = "freispiele";             // darunter liegt der Zustand einer laufenden Freispiel-Serie
+const SPIEL = "angelglueck"; // Schlüssel für storage.js (Topliste, Einsatz, Freispiel-Stand)
+const FS_SCHLUESSEL = "freispiele"; // darunter liegt der Zustand einer laufenden Freispiel-Serie
 
 /* ============================================================
    TEIL 1: REINE SPIELLOGIK (ohne DOM)
@@ -144,8 +157,8 @@ export const RETTUNGSRING = "rettungsring";
 export const ANGELRUTE = "angelrute";
 export const MOEWE = "moewe";
 export const FISCH = "fisch";
-export const BOOT = "boot";        // SCATTER: zählt überall im Fenster, nicht nur auf Linien
-export const ANGLER = "angler";    // WILD: ersetzt alles außer dem Scatter (und sammelt in Freispielen)
+export const BOOT = "boot"; // SCATTER: zählt überall im Fenster, nicht nur auf Linien
+export const ANGLER = "angler"; // WILD: ersetzt alles außer dem Scatter (und sammelt in Freispielen)
 
 /** Anzeigenamen der Symbole (für Screenreader und Meldungen). */
 export const SYMBOL_NAMEN = {
@@ -168,16 +181,16 @@ export const SYMBOL_NAMEN = {
  * Gewertet wird immer von links (Walze 1) nach rechts.
  */
 export const LINIEN = [
-  [1, 1, 1, 1, 1],   // 1: mittlere Reihe
-  [0, 0, 0, 0, 0],   // 2: obere Reihe
-  [2, 2, 2, 2, 2],   // 3: untere Reihe
-  [0, 1, 2, 1, 0],   // 4: "V"
-  [2, 1, 0, 1, 2],   // 5: umgedrehtes "V"
-  [0, 0, 1, 2, 2],   // 6: Treppe nach unten
-  [2, 2, 1, 0, 0],   // 7: Treppe nach oben
-  [1, 0, 0, 0, 1],   // 8: oben gewölbt
-  [1, 2, 2, 2, 1],   // 9: unten gewölbt
-  [2, 1, 1, 1, 2],   // 10: Mulde
+  [1, 1, 1, 1, 1], // 1: mittlere Reihe
+  [0, 0, 0, 0, 0], // 2: obere Reihe
+  [2, 2, 2, 2, 2], // 3: untere Reihe
+  [0, 1, 2, 1, 0], // 4: "V"
+  [2, 1, 0, 1, 2], // 5: umgedrehtes "V"
+  [0, 0, 1, 2, 2], // 6: Treppe nach unten
+  [2, 2, 1, 0, 0], // 7: Treppe nach oben
+  [1, 0, 0, 0, 1], // 8: oben gewölbt
+  [1, 2, 2, 2, 1], // 9: unten gewölbt
+  [2, 1, 1, 1, 2], // 10: Mulde
 ];
 
 /** Der Gesamteinsatz verteilt sich auf alle Linien: Linieneinsatz = Einsatz / LINIEN_ANZAHL (hier 10). */
@@ -217,8 +230,15 @@ const FISCH_GEWICHT_SUMME = FISCH_WERTE.reduce((summe, w) => summe + w.gewicht, 
 /*
  * Kurznamen, damit die Walzenbänder unten lesbar bleiben.
  */
-const MUS = MUSCHEL, SEE = SEESTERN, ANK = ANKER, RET = RETTUNGSRING, RUT = ANGELRUTE, MOE = MOEWE;
-const FIS = FISCH, BOO = BOOT, ANG = ANGLER;
+const MUS = MUSCHEL,
+  SEE = SEESTERN,
+  ANK = ANKER,
+  RET = RETTUNGSRING,
+  RUT = ANGELRUTE,
+  MOE = MOEWE;
+const FIS = FISCH,
+  BOO = BOOT,
+  ANG = ANGLER;
 
 /**
  * Die fünf Walzenbänder des BASISSPIELS, je 30 Felder. Das Band ist RINGFÖRMIG
@@ -237,11 +257,166 @@ const FIS = FISCH, BOO = BOOT, ANG = ANGLER;
  * gleichzeitig sichtbar, und 3 Boote brauchen 3 verschiedene Walzen.
  */
 export const BAENDER_BASIS = [
-  [ANK, MUS, FIS, RET, ANG, SEE, MOE, SEE, MUS, RET, ANK, MUS, RUT, SEE, MOE, ANG, RUT, SEE, MUS, ANK, RET, MUS, FIS, ANK, MOE, BOO, MUS, RUT, RET, SEE],
-  [BOO, MUS, SEE, MUS, RET, RUT, SEE, ANK, RET, ANK, ANG, RET, RUT, MUS, RUT, FIS, SEE, ANK, SEE, ANG, MUS, RET, MOE, SEE, FIS, ANK, MOE, MUS, MOE, MUS],
-  [FIS, BOO, SEE, RET, FIS, RUT, MUS, RET, MOE, MUS, ANG, MUS, ANK, RET, ANG, MOE, SEE, ANK, SEE, RUT, MOE, RET, MUS, ANK, MUS, SEE, MUS, ANK, RUT, SEE],
-  [MOE, SEE, MOE, SEE, MUS, ANK, FIS, SEE, RET, MOE, ANG, RUT, MUS, RUT, SEE, ANK, RET, MUS, ANG, MUS, BOO, MUS, ANK, SEE, RUT, RET, MUS, ANK, FIS, RET],
-  [FIS, MUS, ANG, MUS, SEE, ANK, RET, ANK, RET, ANK, BOO, MUS, SEE, FIS, RUT, MUS, RET, MOE, ANG, SEE, RUT, ANK, MUS, RET, MOE, RUT, SEE, MOE, SEE, MUS],
+  [
+    ANK,
+    MUS,
+    FIS,
+    RET,
+    ANG,
+    SEE,
+    MOE,
+    SEE,
+    MUS,
+    RET,
+    ANK,
+    MUS,
+    RUT,
+    SEE,
+    MOE,
+    ANG,
+    RUT,
+    SEE,
+    MUS,
+    ANK,
+    RET,
+    MUS,
+    FIS,
+    ANK,
+    MOE,
+    BOO,
+    MUS,
+    RUT,
+    RET,
+    SEE,
+  ],
+  [
+    BOO,
+    MUS,
+    SEE,
+    MUS,
+    RET,
+    RUT,
+    SEE,
+    ANK,
+    RET,
+    ANK,
+    ANG,
+    RET,
+    RUT,
+    MUS,
+    RUT,
+    FIS,
+    SEE,
+    ANK,
+    SEE,
+    ANG,
+    MUS,
+    RET,
+    MOE,
+    SEE,
+    FIS,
+    ANK,
+    MOE,
+    MUS,
+    MOE,
+    MUS,
+  ],
+  [
+    FIS,
+    BOO,
+    SEE,
+    RET,
+    FIS,
+    RUT,
+    MUS,
+    RET,
+    MOE,
+    MUS,
+    ANG,
+    MUS,
+    ANK,
+    RET,
+    ANG,
+    MOE,
+    SEE,
+    ANK,
+    SEE,
+    RUT,
+    MOE,
+    RET,
+    MUS,
+    ANK,
+    MUS,
+    SEE,
+    MUS,
+    ANK,
+    RUT,
+    SEE,
+  ],
+  [
+    MOE,
+    SEE,
+    MOE,
+    SEE,
+    MUS,
+    ANK,
+    FIS,
+    SEE,
+    RET,
+    MOE,
+    ANG,
+    RUT,
+    MUS,
+    RUT,
+    SEE,
+    ANK,
+    RET,
+    MUS,
+    ANG,
+    MUS,
+    BOO,
+    MUS,
+    ANK,
+    SEE,
+    RUT,
+    RET,
+    MUS,
+    ANK,
+    FIS,
+    RET,
+  ],
+  [
+    FIS,
+    MUS,
+    ANG,
+    MUS,
+    SEE,
+    ANK,
+    RET,
+    ANK,
+    RET,
+    ANK,
+    BOO,
+    MUS,
+    SEE,
+    FIS,
+    RUT,
+    MUS,
+    RET,
+    MOE,
+    ANG,
+    SEE,
+    RUT,
+    ANK,
+    MUS,
+    RET,
+    MOE,
+    RUT,
+    SEE,
+    MOE,
+    SEE,
+    MUS,
+  ],
 ];
 
 /**
@@ -259,11 +434,166 @@ export const BAENDER_BASIS = [
  *   Walze 5:   5   5   4   4   2   2   4   3   1
  */
 export const BAENDER_FREISPIEL = [
-  [SEE, RUT, MUS, FIS, MUS, RET, RET, FIS, RUT, BOO, SEE, MOE, ANG, MUS, ANK, RUT, RET, ANK, FIS, MOE, FIS, FIS, SEE, MUS, MUS, FIS, FIS, ANK, FIS, SEE],
-  [RET, ANK, MUS, SEE, MOE, SEE, ANK, FIS, SEE, RET, MUS, RUT, SEE, FIS, MUS, SEE, FIS, RUT, MUS, ANK, ANG, RET, ANK, BOO, MOE, RET, MUS, RUT, FIS, FIS],
-  [MOE, MUS, FIS, ANG, ANK, MUS, RUT, RET, SEE, RUT, RUT, SEE, FIS, SEE, MUS, MUS, RET, MOE, ANK, FIS, RET, MUS, BOO, FIS, FIS, ANK, SEE, SEE, ANK, RET],
-  [FIS, SEE, RET, FIS, RET, MOE, SEE, FIS, RET, ANG, FIS, RUT, MUS, RUT, SEE, ANK, BOO, ANK, RUT, SEE, MUS, RET, MUS, MUS, FIS, SEE, ANK, MUS, ANK, MOE],
-  [SEE, MUS, ANK, MUS, FIS, RET, BOO, MOE, MUS, MOE, ANG, SEE, ANG, FIS, RET, ANG, FIS, RUT, MUS, ANK, SEE, ANK, RET, ANK, SEE, MUS, SEE, FIS, RET, RUT],
+  [
+    SEE,
+    RUT,
+    MUS,
+    FIS,
+    MUS,
+    RET,
+    RET,
+    FIS,
+    RUT,
+    BOO,
+    SEE,
+    MOE,
+    ANG,
+    MUS,
+    ANK,
+    RUT,
+    RET,
+    ANK,
+    FIS,
+    MOE,
+    FIS,
+    FIS,
+    SEE,
+    MUS,
+    MUS,
+    FIS,
+    FIS,
+    ANK,
+    FIS,
+    SEE,
+  ],
+  [
+    RET,
+    ANK,
+    MUS,
+    SEE,
+    MOE,
+    SEE,
+    ANK,
+    FIS,
+    SEE,
+    RET,
+    MUS,
+    RUT,
+    SEE,
+    FIS,
+    MUS,
+    SEE,
+    FIS,
+    RUT,
+    MUS,
+    ANK,
+    ANG,
+    RET,
+    ANK,
+    BOO,
+    MOE,
+    RET,
+    MUS,
+    RUT,
+    FIS,
+    FIS,
+  ],
+  [
+    MOE,
+    MUS,
+    FIS,
+    ANG,
+    ANK,
+    MUS,
+    RUT,
+    RET,
+    SEE,
+    RUT,
+    RUT,
+    SEE,
+    FIS,
+    SEE,
+    MUS,
+    MUS,
+    RET,
+    MOE,
+    ANK,
+    FIS,
+    RET,
+    MUS,
+    BOO,
+    FIS,
+    FIS,
+    ANK,
+    SEE,
+    SEE,
+    ANK,
+    RET,
+  ],
+  [
+    FIS,
+    SEE,
+    RET,
+    FIS,
+    RET,
+    MOE,
+    SEE,
+    FIS,
+    RET,
+    ANG,
+    FIS,
+    RUT,
+    MUS,
+    RUT,
+    SEE,
+    ANK,
+    BOO,
+    ANK,
+    RUT,
+    SEE,
+    MUS,
+    RET,
+    MUS,
+    MUS,
+    FIS,
+    SEE,
+    ANK,
+    MUS,
+    ANK,
+    MOE,
+  ],
+  [
+    SEE,
+    MUS,
+    ANK,
+    MUS,
+    FIS,
+    RET,
+    BOO,
+    MOE,
+    MUS,
+    MOE,
+    ANG,
+    SEE,
+    ANG,
+    FIS,
+    RET,
+    ANG,
+    FIS,
+    RUT,
+    MUS,
+    ANK,
+    SEE,
+    ANK,
+    RET,
+    ANK,
+    SEE,
+    MUS,
+    SEE,
+    FIS,
+    RET,
+    RUT,
+  ],
 ];
 
 /* ------------------------------------------------------------
@@ -356,7 +686,14 @@ export function linienAuswerten(fenster, einsatz) {
     const betrag = linienBetrag(treffer.quote, einsatz);
     const zellen = [];
     for (let spalte = 0; spalte < treffer.anzahl; spalte++) zellen.push([spalte, reihen[spalte]]);
-    gewinne.push({ linie: linienNr, symbol: treffer.symbol, anzahl: treffer.anzahl, quote: treffer.quote, betrag, zellen });
+    gewinne.push({
+      linie: linienNr,
+      symbol: treffer.symbol,
+      anzahl: treffer.anzahl,
+      quote: treffer.quote,
+      betrag,
+      zellen,
+    });
     summe += betrag;
   });
   return { gewinne, summe };
@@ -368,7 +705,11 @@ export function linienAuswerten(fenster, einsatz) {
  */
 export function scatterAuswerten(fenster, einsatz) {
   const zellen = [];
-  fenster.forEach((spalte, s) => spalte.forEach((symbol, z) => { if (symbol === BOOT) zellen.push([s, z]); }));
+  fenster.forEach((spalte, s) =>
+    spalte.forEach((symbol, z) => {
+      if (symbol === BOOT) zellen.push([s, z]);
+    }),
+  );
   const ausgeloest = zellen.length >= SCATTER_MINDESTENS;
   return {
     anzahl: zellen.length,
@@ -401,7 +742,9 @@ export const SPANNUNG_AB = 2;
 export function spannungErmitteln(fenster) {
   const scatter = [];
   for (let spalte = 0; spalte < SPALTEN - 1; spalte++) {
-    fenster[spalte].forEach((symbol, zeile) => { if (symbol === BOOT) scatter.push([spalte, zeile]); });
+    fenster[spalte].forEach((symbol, zeile) => {
+      if (symbol === BOOT) scatter.push([spalte, zeile]);
+    });
     if (scatter.length >= SPANNUNG_AB) return { ab: spalte + 1, scatter };
   }
   return { ab: -1, scatter: [] };
@@ -432,7 +775,8 @@ export function fastGewinnErmitteln(fenster, linien, scatter) {
     const zellen = [];
     for (let zeile = 0; zeile < ZEILEN; zeile++) {
       const symbol = fenster[letzte][zeile];
-      if (zeile !== LINIEN[g.linie][letzte] && (symbol === g.symbol || symbol === ANGLER)) zellen.push([letzte, zeile]);
+      if (zeile !== LINIEN[g.linie][letzte] && (symbol === g.symbol || symbol === ANGLER))
+        zellen.push([letzte, zeile]);
     }
     if (zellen.length > 0) return { art: "linie", symbol: g.symbol, zellen };
   }
@@ -450,7 +794,7 @@ export function fischWertWuerfeln(zufall = Math.random) {
     if (rest < wert.gewicht) return wert;
     rest -= wert.gewicht;
   }
-  return FISCH_WERTE[FISCH_WERTE.length - 1];     // Sicherheitsnetz gegen Rundungsfehler
+  return FISCH_WERTE[FISCH_WERTE.length - 1]; // Sicherheitsnetz gegen Rundungsfehler
 }
 
 /** Geldwert eines Fisches: Faktor x Gesamteinsatz, gerundet (0,5 x 25 = 12,5 -> 13). */
@@ -465,11 +809,19 @@ export function fischBetrag(faktor, einsatz) {
  */
 export function fischeWuerfeln(fenster, einsatz, zufall = Math.random) {
   const fische = [];
-  fenster.forEach((spalte, s) => spalte.forEach((symbol, z) => {
-    if (symbol !== FISCH) return;
-    const wert = fischWertWuerfeln(zufall);
-    fische.push({ spalte: s, zeile: z, faktor: wert.faktor, groesse: wert.groesse, betrag: fischBetrag(wert.faktor, einsatz) });
-  }));
+  fenster.forEach((spalte, s) =>
+    spalte.forEach((symbol, z) => {
+      if (symbol !== FISCH) return;
+      const wert = fischWertWuerfeln(zufall);
+      fische.push({
+        spalte: s,
+        zeile: z,
+        faktor: wert.faktor,
+        groesse: wert.groesse,
+        betrag: fischBetrag(wert.faktor, einsatz),
+      });
+    }),
+  );
   return fische;
 }
 
@@ -486,10 +838,20 @@ export function fischeWuerfeln(fenster, einsatz, zufall = Math.random) {
  */
 export function fischeSammeln(fenster, fische) {
   const angler = [];
-  fenster.forEach((spalte, s) => spalte.forEach((symbol, z) => { if (symbol === ANGLER) angler.push({ spalte: s, zeile: z }); }));
+  fenster.forEach((spalte, s) =>
+    spalte.forEach((symbol, z) => {
+      if (symbol === ANGLER) angler.push({ spalte: s, zeile: z });
+    }),
+  );
   const fischSumme = fische.reduce((summe, f) => summe + f.betrag, 0);
-  const einsammlungen = fische.length > 0 ? angler.map((a) => ({ angler: a, summe: fischSumme })) : [];
-  return { angler, fische, einsammlungen, betrag: einsammlungen.reduce((summe, e) => summe + e.summe, 0) };
+  const einsammlungen =
+    fische.length > 0 ? angler.map((a) => ({ angler: a, summe: fischSumme })) : [];
+  return {
+    angler,
+    fische,
+    einsammlungen,
+    betrag: einsammlungen.reduce((summe, e) => summe + e.summe, 0),
+  };
 }
 
 /* ------------------------------------------------------------
@@ -509,7 +871,9 @@ export function drehAuswerten(baender, einsatz, mitSammeln, zufall = Math.random
   const fenster = fensterAusStopps(gestoppt, baender);
   const linien = linienAuswerten(fenster, einsatz);
   const scatter = scatterAuswerten(fenster, einsatz);
-  const sammeln = mitSammeln ? fischeSammeln(fenster, fischeWuerfeln(fenster, einsatz, zufall)) : null;
+  const sammeln = mitSammeln
+    ? fischeSammeln(fenster, fischeWuerfeln(fenster, einsatz, zufall))
+    : null;
   const gesamt = linien.summe + scatter.betrag + (sammeln ? sammeln.betrag : 0);
   return { stopps: gestoppt, fenster, linien, scatter, sammeln, gesamt };
 }
@@ -562,7 +926,12 @@ export function bezahltenDrehSimulieren(einsatz, zufall, baenderBasis, baenderFr
   while (zustand.rest > 0) {
     zustand = freispielVerbuchen(zustand, drehAuswerten(baenderFreispiel, einsatz, true, zufall));
   }
-  return { auszahlung: zustand.summe, basis: start.gesamt, freispielAuszahlung: zustand.summe - start.gesamt, freispiele: zustand.gespielt };
+  return {
+    auszahlung: zustand.summe,
+    basis: start.gesamt,
+    freispielAuszahlung: zustand.summe - start.gesamt,
+    freispiele: zustand.gespielt,
+  };
 }
 
 /* ------------------------------------------------------------
@@ -601,9 +970,9 @@ export function freispielZustandPruefen(roh) {
    (Laufzeit + Bremsanteil). Der Bremsweg ergibt sich aus dem Tempo, damit
    der Übergang von "rollen" zu "bremsen" ohne Ruck klappt. */
 
-const BREMS_ZEIT = 0.5;      // Sekunden für die Bremsphase
-const BOUNCE = 1.3;          // Stärke des Überschwingens (0 = gar nicht, 1,7 = deutlich)
-const MIN_TEMPO = 22;        // so schnell (Felder pro Sekunde) rollt jede Walze mindestens
+const BREMS_ZEIT = 0.5; // Sekunden für die Bremsphase
+const BOUNCE = 1.3; // Stärke des Überschwingens (0 = gar nicht, 1,7 = deutlich)
+const MIN_TEMPO = 22; // so schnell (Felder pro Sekunde) rollt jede Walze mindestens
 /* Die Ableitung von easeOutBack bei x=0 ist BOUNCE+3: Wer den Bremsweg
    so wählt, dass Anfangsgeschwindigkeit = Rolltempo, bremst ohne Ruck. */
 const BREMS_FAKTOR = BREMS_ZEIT / (BOUNCE + 3);
@@ -612,8 +981,8 @@ const BREMS_FAKTOR = BREMS_ZEIT / (BOUNCE + 3);
    Liegen nach den ersten Walzen schon SPANNUNG_AB Boote im Fenster, drehen die VERBLEIBENDEN Walzen
    länger und bremsen langsamer aus: Jede betroffene Walze wartet SPANNUNG_EXTRA Sekunden länger als
    normal (1., 2., 3. betroffene Walze: steigend), und ihre Bremsphase dauert doppelt so lang. */
-const SPANNUNG_EXTRA = [0.8, 1.15, 1.5];      // Zusatz-Sekunden je betroffener Walze (steigend)
-const BREMS_ZEIT_SPANNUNG = 1.0;              // langsames Ausdrehen
+const SPANNUNG_EXTRA = [0.8, 1.15, 1.5]; // Zusatz-Sekunden je betroffener Walze (steigend)
+const BREMS_ZEIT_SPANNUNG = 1.0; // langsames Ausdrehen
 
 /** easeOutBack: läuft von 0 nach 1, überschwingt kurz über 1 und federt zurück. */
 function easeOutBack(x) {
@@ -636,11 +1005,18 @@ function easeOutBack(x) {
  * von links nach rechts. Ab `spannungAb` (siehe spannungErmitteln, -1 = nie) kommt für jede
  * Walze der Spannungs-Zuschlag dazu.
  */
-export function laufPlanErstellen(start, ziel, laengen, ersteStoppZeit = 0.45, abstand = 0.2, spannungAb = -1) {
+export function laufPlanErstellen(
+  start,
+  ziel,
+  laengen,
+  ersteStoppZeit = 0.45,
+  abstand = 0.2,
+  spannungAb = -1,
+) {
   let vorherEnde = 0;
   return ziel.map((z, i) => {
     const n = laengen[i];
-    const rest = (((start[i] - z) % n) + n) % n;               // Rest-Strecke bis zum Ziel (immer 0 … n-1)
+    const rest = (((start[i] - z) % n) + n) % n; // Rest-Strecke bis zum Ziel (immer 0 … n-1)
     const spannung = spannungAb >= 0 && i >= spannungAb;
     const bremsZeit = spannung ? BREMS_ZEIT_SPANNUNG : BREMS_ZEIT;
     const bremsFaktor = bremsZeit / (BOUNCE + 3);
@@ -648,13 +1024,20 @@ export function laufPlanErstellen(start, ziel, laengen, ersteStoppZeit = 0.45, a
       ? vorherEnde + abstand + SPANNUNG_EXTRA[Math.min(i - spannungAb, SPANNUNG_EXTRA.length - 1)]
       : ersteStoppZeit + i * abstand + BREMS_ZEIT;
     const laufzeit = ende - bremsZeit;
-    const teiler = laufzeit + bremsFaktor;                     // strecke = tempo x teiler
+    const teiler = laufzeit + bremsFaktor; // strecke = tempo x teiler
     let strecke = rest;
-    while (strecke / teiler < MIN_TEMPO) strecke += n;         // so viele ganze Runden, bis das Tempo reicht
+    while (strecke / teiler < MIN_TEMPO) strecke += n; // so viele ganze Runden, bis das Tempo reicht
     const tempo = strecke / teiler;
     const plan = {
-      start: start[i], strecke, tempo, laufzeit, bremsZeit, bremsWeg: tempo * bremsFaktor, ende: laufzeit + bremsZeit,
-      spannung, spannungStart: spannung ? vorherEnde : null,
+      start: start[i],
+      strecke,
+      tempo,
+      laufzeit,
+      bremsZeit,
+      bremsWeg: tempo * bremsFaktor,
+      ende: laufzeit + bremsZeit,
+      spannung,
+      spannungStart: spannung ? vorherEnde : null,
     };
     vorherEnde = plan.ende;
     return plan;
@@ -663,8 +1046,8 @@ export function laufPlanErstellen(start, ziel, laengen, ersteStoppZeit = 0.45, a
 
 /** Zurückgelegte Strecke (in Feldern) einer Walze zum Zeitpunkt t (Sekunden seit Start). */
 export function vorschubZurZeit(plan, t) {
-  if (t <= plan.laufzeit) return plan.tempo * Math.max(t, 0);                      // Phase 1: gleichmäßig rollen
-  const x = Math.min((t - plan.laufzeit) / plan.bremsZeit, 1);                     // Phase 2: Fortschritt 0 … 1
+  if (t <= plan.laufzeit) return plan.tempo * Math.max(t, 0); // Phase 1: gleichmäßig rollen
+  const x = Math.min((t - plan.laufzeit) / plan.bremsZeit, 1); // Phase 2: Fortschritt 0 … 1
   return plan.tempo * plan.laufzeit + plan.bremsWeg * easeOutBack(x);
 }
 
@@ -679,7 +1062,16 @@ export function faktorText(faktor) {
 }
 
 /** Reihenfolge der Symbole in der Gewinntabelle (wertvollstes zuerst). */
-export const TABELLEN_REIHENFOLGE = [ANGLER, FISCH, ANGELRUTE, MOEWE, ANKER, RETTUNGSRING, MUSCHEL, SEESTERN];
+export const TABELLEN_REIHENFOLGE = [
+  ANGLER,
+  FISCH,
+  ANGELRUTE,
+  MOEWE,
+  ANKER,
+  RETTUNGSRING,
+  MUSCHEL,
+  SEESTERN,
+];
 
 /* Die Farben der Gewinnlinien (je Linie eine feste Farbe) stehen in assets/gewinnlinien.js (linienFarbe):
    Tabs, Vorschau, Gewinn-Überlagerung und die Bilder der Anleitung benutzen dieselbe Palette. */
@@ -718,7 +1110,12 @@ function warte(ms) {
  * fortgesetzte Freispiel-Serie (nach dem Neuladen) eine Konsolen-Warnung erzeugen.
  */
 function klang(funktion, ...argumente) {
-  if (typeof navigator !== "undefined" && navigator.userActivation && !navigator.userActivation.hasBeenActive) return;
+  if (
+    typeof navigator !== "undefined" &&
+    navigator.userActivation &&
+    !navigator.userActivation.hasBeenActive
+  )
+    return;
   funktion(...argumente);
 }
 
@@ -756,7 +1153,10 @@ function linienBildBauen(reihen, nummer) {
   const svg = document.createElementNS(SVG_NS, "svg");
   svg.setAttribute("viewBox", "0 0 5 3");
   svg.setAttribute("role", "img");
-  svg.setAttribute("aria-label", `Linie ${nummer}: Reihen ${reihen.map((r) => r + 1).join(", ")} (von oben gezählt)`);
+  svg.setAttribute(
+    "aria-label",
+    `Linie ${nummer}: Reihen ${reihen.map((r) => r + 1).join(", ")} (von oben gezählt)`,
+  );
   for (let spalte = 0; spalte < SPALTEN; spalte++) {
     for (let zeile = 0; zeile < ZEILEN; zeile++) {
       const feld = document.createElementNS(SVG_NS, "rect");
@@ -770,7 +1170,10 @@ function linienBildBauen(reihen, nummer) {
     }
   }
   const linie = document.createElementNS(SVG_NS, "polyline");
-  linie.setAttribute("points", reihen.map((zeile, spalte) => `${spalte + 0.5},${zeile + 0.5}`).join(" "));
+  linie.setAttribute(
+    "points",
+    reihen.map((zeile, spalte) => `${spalte + 0.5},${zeile + 0.5}`).join(" "),
+  );
   linie.setAttribute("fill", "none");
   linie.setAttribute("stroke", linienFarbe(nummer - 1));
   linie.setAttribute("stroke-width", "0.2");
@@ -823,17 +1226,19 @@ function starteSpiel() {
   const laengen = BAENDER_BASIS.map((band) => band.length);
 
   // ----- Spielzustand -----
-  let laeuft = false;                       // true, solange gedreht wird (auch in Freispielen): alles gesperrt
-  let modus = "basis";                      // "basis" oder "freispiel": bestimmt Bänder und Bühnen-Optik
-  let aktuelleBaender = BAENDER_BASIS;      // die Bänder, die gerade im DOM stehen
-  let stopps = zufallsStopps(BAENDER_BASIS);// aktuelle Stopp-Indizes (Startbild: zufällig, kein Einfluss aufs Geld)
-  let offeneRunde = null;                   // { einsatz, auszahlung, abgerechnet } während eines bezahlten Drehs
-  let fsZustand = null;                     // Freispiel-Zustand (auch im localStorage), null = keine Serie
-  let angezeigteSumme = 0;                  // Brutto-Auszahlung der laufenden Runde, wie sie gerade angezeigt wird
-  let hoechsteStufe = 0;                    // höchste Feier-Stufe (0 bis 3), die in dieser Runde schon gezeigt wurde (siehe freispieleAbspielen)
-  let fischZellen = [];                     // Zellen mit Fisch-Plakette (zum Aufräumen)
+  let laeuft = false; // true, solange gedreht wird (auch in Freispielen): alles gesperrt
+  let modus = "basis"; // "basis" oder "freispiel": bestimmt Bänder und Bühnen-Optik
+  let aktuelleBaender = BAENDER_BASIS; // die Bänder, die gerade im DOM stehen
+  let stopps = zufallsStopps(BAENDER_BASIS); // aktuelle Stopp-Indizes (Startbild: zufällig, kein Einfluss aufs Geld)
+  let offeneRunde = null; // { einsatz, auszahlung, abgerechnet } während eines bezahlten Drehs
+  let fsZustand = null; // Freispiel-Zustand (auch im localStorage), null = keine Serie
+  let angezeigteSumme = 0; // Brutto-Auszahlung der laufenden Runde, wie sie gerade angezeigt wird
+  let hoechsteStufe = 0; // höchste Feier-Stufe (0 bis 3), die in dieser Runde schon gezeigt wurde (siehe freispieleAbspielen)
+  let fischZellen = []; // Zellen mit Fisch-Plakette (zum Aufräumen)
   const gespeicherterEinsatz = lade(SPIEL, "einsatz", EINSATZSTUFEN[0]);
-  let gewaehlterEinsatz = EINSATZSTUFEN.includes(gespeicherterEinsatz) ? gespeicherterEinsatz : EINSATZSTUFEN[0];
+  let gewaehlterEinsatz = EINSATZSTUFEN.includes(gespeicherterEinsatz)
+    ? gespeicherterEinsatz
+    : EINSATZSTUFEN[0];
 
   // ---------------------------------------------------------
   // Walzen aufbauen und positionieren
@@ -877,7 +1282,8 @@ function starteSpiel() {
     const n = laengen[walzenNr];
     const m = ((position % n) + n) % n;
     const prozent = ((m + n - 1) / (3 * n)) * 100;
-    walzenElemente[walzenNr].querySelector(".band").style.transform = `translate3d(0, ${-prozent}%, 0)`;
+    walzenElemente[walzenNr].querySelector(".band").style.transform =
+      `translate3d(0, ${-prozent}%, 0)`;
   }
 
   function alleWalzenSetzen() {
@@ -894,7 +1300,9 @@ function starteSpiel() {
   /** Screenreader-Beschriftung des Fensters: nennt die Symbole jeder Walze von oben nach unten. */
   function fensterBeschriften() {
     const fenster = fensterAusStopps(stopps, aktuelleBaender);
-    const text = fenster.map((spalte, i) => `Walze ${i + 1}: ${spalte.map((id) => SYMBOL_NAMEN[id]).join(", ")}`).join(". ");
+    const text = fenster
+      .map((spalte, i) => `Walze ${i + 1}: ${spalte.map((id) => SYMBOL_NAMEN[id]).join(", ")}`)
+      .join(". ");
     fensterElement.setAttribute("aria-label", text);
   }
 
@@ -927,7 +1335,8 @@ function starteSpiel() {
     alleWalzenSetzen();
     buehne.classList.toggle("unterwasser", neu === "freispiel");
     fsLeiste.hidden = neu !== "freispiel";
-    if (neu === "freispiel") blasenAnlegen(); else blasenEntfernen();
+    if (neu === "freispiel") blasenAnlegen();
+    else blasenEntfernen();
   }
 
   function fsZaehlerAnzeigen(nummer, gesamt) {
@@ -950,7 +1359,7 @@ function starteSpiel() {
    * ist er also wieder da.
    */
   function wirksamerEinsatz() {
-    if (offeneRunde) return offeneRunde.einsatz;       // mitten im Dreh gilt der bereits abgebuchte Einsatz
+    if (offeneRunde) return offeneRunde.einsatz; // mitten im Dreh gilt der bereits abgebuchte Einsatz
     const stand = kontostand();
     if (gewaehlterEinsatz <= stand) return gewaehlterEinsatz;
     const leistbar = EINSATZSTUFEN.filter((stufe) => stufe <= stand);
@@ -963,7 +1372,7 @@ function starteSpiel() {
     chipKnoepfe.forEach((chip) => {
       const wert = Number(chip.dataset.einsatz);
       chip.setAttribute("aria-pressed", String(wert === wirksam));
-      chip.disabled = laeuft || wert > stand;          // gesperrt beim Drehen oder wenn zu teuer
+      chip.disabled = laeuft || wert > stand; // gesperrt beim Drehen oder wenn zu teuer
     });
     drehKnopf.disabled = laeuft || wirksam === 0;
     resetKnopf.disabled = laeuft;
@@ -981,7 +1390,7 @@ function starteSpiel() {
   // ---------------------------------------------------------
   // Gewinntabelle (wird aus QUOTEN gebaut: eine Quelle der Wahrheit)
   // ---------------------------------------------------------
-  const betragElemente = [];      // { quote, element } für die Linien-Beträge
+  const betragElemente = []; // { quote, element } für die Linien-Beträge
   const fischBetragElemente = []; // { faktor, element } für die Fisch-Werte
   let scatterBetragElement = null;
 
@@ -1022,14 +1431,22 @@ function starteSpiel() {
     const bootTitel = document.createElement("strong");
     bootTitel.textContent = "Fischerboot (Scatter): ";
     scatterBetragElement = document.createElement("span");
-    bootText.append(bootTitel, `${SCATTER_MINDESTENS} oder mehr irgendwo im Fenster zahlen den doppelten Gesamteinsatz (`, scatterBetragElement, `) und starten ${FREISPIELE_PRO_AUSLOESUNG} Freispiele. Auf Linien zahlt es nicht.`);
+    bootText.append(
+      bootTitel,
+      `${SCATTER_MINDESTENS} oder mehr irgendwo im Fenster zahlen den doppelten Gesamteinsatz (`,
+      scatterBetragElement,
+      `) und starten ${FREISPIELE_PRO_AUSLOESUNG} Freispiele. Auf Linien zahlt es nicht.`,
+    );
     boot.append(bootText);
     const angler = document.createElement("li");
     angler.append(symbolElement(ANGLER));
     const anglerText = document.createElement("span");
     const anglerTitel = document.createElement("strong");
     anglerTitel.textContent = "Angler (Wild): ";
-    anglerText.append(anglerTitel, "Ersetzt jedes Symbol außer dem Boot. In den Freispielen sammelt er die Geldwerte aller sichtbaren Fische ein.");
+    anglerText.append(
+      anglerTitel,
+      "Ersetzt jedes Symbol außer dem Boot. In den Freispielen sammelt er die Geldwerte aller sichtbaren Fische ein.",
+    );
     angler.append(anglerText);
     sonderListe.append(boot, angler);
 
@@ -1057,8 +1474,10 @@ function starteSpiel() {
     tabelleHinweis.textContent =
       `Linien-Gewinn = Quote × ein Zehntel des Gesamteinsatzes. Die großen Zahlen zeigen ihn für deinen Einsatz von ${zahlText(einsatz)} ` +
       `(Netto-Gewinn = Auszahlung minus Einsatz). Gewertet wird immer von der linken Walze aus.`;
-    for (const { quote, element } of betragElemente) element.textContent = zahlText(linienBetrag(quote, einsatz));
-    for (const { faktor, element } of fischBetragElemente) element.textContent = zahlText(fischBetrag(faktor, einsatz));
+    for (const { quote, element } of betragElemente)
+      element.textContent = zahlText(linienBetrag(quote, einsatz));
+    for (const { faktor, element } of fischBetragElemente)
+      element.textContent = zahlText(fischBetrag(faktor, einsatz));
     if (scatterBetragElement) scatterBetragElement.textContent = zahlText(SCATTER_FAKTOR * einsatz);
   }
 
@@ -1077,7 +1496,8 @@ function starteSpiel() {
   /** Setzt Text und Farbe (plus/minus) von Gewinn-Anzeige und HUD-Feld. */
   function ergebnisAnzeigen(netto) {
     // Netto 0 ist hier möglich (z. B. 3 Muscheln bei Einsatz 10 zahlen genau den Einsatz zurück): neutral anzeigen
-    const text = netto > 0 ? `+${zahlText(netto)}` : netto < 0 ? `−${zahlText(Math.abs(netto))}` : "±0";   // echtes Minuszeichen
+    const text =
+      netto > 0 ? `+${zahlText(netto)}` : netto < 0 ? `−${zahlText(Math.abs(netto))}` : "±0"; // echtes Minuszeichen
     const art = netto > 0 ? "plus" : netto < 0 ? "minus" : "";
     gewinnAnzeige.textContent = text;
     gewinnAnzeige.className = `gewinn-anzeige ${art}`.trim();
@@ -1097,8 +1517,20 @@ function starteSpiel() {
   function effekteLoeschen() {
     overlay.replaceChildren();
     linienAnzeige.zuruecksetzen();
-    fensterElement.querySelectorAll(".zelle.gewinn-blinken, .zelle.scatter-treffer, .zelle.scatter-spannung, .zelle.knapp, .zelle.sammelt, .zelle.eingesammelt")
-      .forEach((z) => z.classList.remove("gewinn-blinken", "scatter-treffer", "scatter-spannung", "knapp", "sammelt", "eingesammelt"));
+    fensterElement
+      .querySelectorAll(
+        ".zelle.gewinn-blinken, .zelle.scatter-treffer, .zelle.scatter-spannung, .zelle.knapp, .zelle.sammelt, .zelle.eingesammelt",
+      )
+      .forEach((z) =>
+        z.classList.remove(
+          "gewinn-blinken",
+          "scatter-treffer",
+          "scatter-spannung",
+          "knapp",
+          "sammelt",
+          "eingesammelt",
+        ),
+      );
     // Lauflicht-Rahmen zurück in den Leerlauf (siehe spiel.css: .dreht = schnell, .gewinn = golden)
     fensterElement.classList.remove("dreht", "gewinn", "spannung");
     buehne.classList.remove("spannung");
@@ -1161,10 +1593,13 @@ function starteSpiel() {
       licht.style.animationDelay = `${((gewinn.linie % 5) * 0.11).toFixed(2)}s`;
       overlay.append(licht);
       tabelleKoerper.querySelector(`tr[data-symbol="${gewinn.symbol}"]`)?.classList.add("treffer");
-      if (deko) for (const [spalte, zeile] of gewinn.zellen) zelleFuer(spalte, zeile, ergebnis.stopps).classList.add("gewinn-blinken");
+      if (deko)
+        for (const [spalte, zeile] of gewinn.zellen)
+          zelleFuer(spalte, zeile, ergebnis.stopps).classList.add("gewinn-blinken");
     }
     if (deko && ergebnis.scatter.freispiele > 0) {
-      for (const [spalte, zeile] of ergebnis.scatter.zellen) zelleFuer(spalte, zeile, ergebnis.stopps).classList.add("scatter-treffer");
+      for (const [spalte, zeile] of ergebnis.scatter.zellen)
+        zelleFuer(spalte, zeile, ergebnis.stopps).classList.add("scatter-treffer");
     }
   }
 
@@ -1174,7 +1609,8 @@ function starteSpiel() {
 
   /** Markiert Felder (zellen = Liste von [spalte, zeile]) des Ziel-Fensters mit einer Klasse oder nimmt sie weg. */
   function zellenMarkieren(zellen, stoppWerte, klasse, an = true) {
-    for (const [spalte, zeile] of zellen) zelleFuer(spalte, zeile, stoppWerte)?.classList.toggle(klasse, an);
+    for (const [spalte, zeile] of zellen)
+      zelleFuer(spalte, zeile, stoppWerte)?.classList.toggle(klasse, an);
   }
 
   /**
@@ -1203,7 +1639,7 @@ function starteSpiel() {
   function walzenLaufenLassen(ziel, schnell = false) {
     const zielFenster = fensterAusStopps(ziel, aktuelleBaender);
     const spannung = spannungErmitteln(zielFenster);
-    klang(klangSpinStart);      // läuft noch synchron im Klick: erlaubt dem Browser den Ton zu starten
+    klang(klangSpinStart); // läuft noch synchron im Klick: erlaubt dem Browser den Ton zu starten
 
     // Reduzierte Bewegung: kein Lauf, Ergebnis fast sofort. Die Spannung schrumpft auf höchstens 0,3 s Wartezeit.
     if (bewegungReduziert()) {
@@ -1243,13 +1679,15 @@ function starteSpiel() {
             klang(klangSpannung);
           }
           if (t >= plan.ende) {
-            positionSetzen(i, ziel[i]);                      // exakt aufs Ziel (keine Rundungsreste)
+            positionSetzen(i, ziel[i]); // exakt aufs Ziel (keine Rundungsreste)
             walzenElemente[i].classList.remove("laeuft", "spannung-walze");
             ruht[i] = true;
             klang(klangWalzenStopp, i);
             // Fällt auf einer Walze mit Spannung ein Boot, leuchtet es sofort golden mit.
             if (plan.spannung) {
-              zielFenster[i].forEach((symbol, zeile) => { if (symbol === BOOT) zellenMarkieren([[i, zeile]], ziel, "scatter-spannung"); });
+              zielFenster[i].forEach((symbol, zeile) => {
+                if (symbol === BOOT) zellenMarkieren([[i, zeile]], ziel, "scatter-spannung");
+              });
             }
             return;
           }
@@ -1284,9 +1722,10 @@ function starteSpiel() {
     zellenMarkieren(fast.zellen, ergebnis.stopps, "scatter-spannung", false);
     zellenMarkieren(fast.zellen, ergebnis.stopps, "knapp");
     klang(klangFastGewinn);
-    const text = fast.art === "scatter"
-      ? "So knapp! Zwei Boote liegen, für die Freispiele fehlt das dritte."
-      : "So knapp! Das fünfte passende Symbol liegt direkt daneben.";
+    const text =
+      fast.art === "scatter"
+        ? "So knapp! Zwei Boote liegen, für die Freispiele fehlt das dritte."
+        : "So knapp! Das fünfte passende Symbol liegt direkt daneben.";
     drehInfo.textContent = text;
     await warte(reduziert ? 150 : 1000);
     return text;
@@ -1315,7 +1754,10 @@ function starteSpiel() {
   function mitteInBuehne(element) {
     const b = buehne.getBoundingClientRect();
     const r = element.getBoundingClientRect();
-    return { x: r.left + r.width / 2 - b.left - buehne.clientLeft, y: r.top + r.height / 2 - b.top - buehne.clientTop };
+    return {
+      x: r.left + r.width / 2 - b.left - buehne.clientLeft,
+      y: r.top + r.height / 2 - b.top - buehne.clientTop,
+    };
   }
 
   /**
@@ -1331,7 +1773,11 @@ function starteSpiel() {
     fensterElement.classList.add("gewinn");
 
     for (const einsammlung of sammeln.einsammlungen) {
-      const anglerZelle = zelleFuer(einsammlung.angler.spalte, einsammlung.angler.zeile, ergebnis.stopps);
+      const anglerZelle = zelleFuer(
+        einsammlung.angler.spalte,
+        einsammlung.angler.zeile,
+        ergebnis.stopps,
+      );
       drehInfo.textContent = `Der Angler sammelt ${sammeln.fische.length} ${sammeln.fische.length === 1 ? "Fisch" : "Fische"} ein: +${zahlText(einsammlung.summe)}`;
 
       if (reduziert) {
@@ -1351,15 +1797,21 @@ function starteSpiel() {
         const halbB = marke.offsetWidth / 2;
         const halbH = marke.offsetHeight / 2;
         // Web-Animations-API: zwei Schlüsselbilder (Start am Fisch, Ziel am Angler), der Browser rechnet dazwischen.
-        const animation = marke.animate([
-          { transform: `translate(${von.x - halbB}px, ${von.y - halbH}px) scale(1)`, opacity: 1 },
-          { transform: `translate(${ziel.x - halbB}px, ${ziel.y - halbH}px) scale(.45)`, opacity: 0.9 },
-        ], { duration: 520, delay: i * 90, easing: "cubic-bezier(.4,0,.2,1)", fill: "both" });
+        const animation = marke.animate(
+          [
+            { transform: `translate(${von.x - halbB}px, ${von.y - halbH}px) scale(1)`, opacity: 1 },
+            {
+              transform: `translate(${ziel.x - halbB}px, ${ziel.y - halbH}px) scale(.45)`,
+              opacity: 0.9,
+            },
+          ],
+          { duration: 520, delay: i * 90, easing: "cubic-bezier(.4,0,.2,1)", fill: "both" },
+        );
         setTimeout(() => fischZelle.classList.add("eingesammelt"), i * 90);
         return animation.finished.then(() => {
           marke.remove();
           summeAnzeigen(angezeigteSumme + fisch.betrag);
-          klang(klangMuenzTick);                      // jede landende Plakette "klingelt" (die Landungen kommen im Abstand von 90 ms)
+          klang(klangMuenzTick); // jede landende Plakette "klingelt" (die Landungen kommen im Abstand von 90 ms)
         });
       });
       await Promise.all(fluege);
@@ -1420,7 +1872,7 @@ function starteSpiel() {
     dialog.append(titel, text, betrag, aktionen);
 
     dialog.addEventListener("close", () => {
-      pleiteNeustart();                    // Konto zurück auf Startgeld, Pleiten-Zähler +1
+      pleiteNeustart(); // Konto zurück auf Startgeld, Pleiten-Zähler +1
       walletHudAktualisieren();
       dialog.remove();
       seiteAktualisieren();
@@ -1446,7 +1898,7 @@ function starteSpiel() {
    */
   async function freispieleAbspielen() {
     modusSetzen("freispiel");
-    summeAnzeigen(fsZustand.summe);                     // Startwert: was der bezahlte Dreh (und frühere Freispiele) schon gebracht hat
+    summeAnzeigen(fsZustand.summe); // Startwert: was der bezahlte Dreh (und frühere Freispiele) schon gebracht hat
 
     while (fsZustand.rest > 0) {
       const einsatz = fsZustand.einsatz;
@@ -1470,13 +1922,17 @@ function starteSpiel() {
       treffernZeigen(ergebnis);
       const teile = [linienText(ergebnis.linien)];
       if (ergebnis.scatter.freispiele > 0) {
-        teile.push(`${ergebnis.scatter.anzahl} Boote: +${FREISPIELE_PRO_AUSLOESUNG} Freispiele und +${zahlText(ergebnis.scatter.betrag)}`);
-        klang(klangGewinn, 2);                          // erneut 3 Boote: der große Jingle noch einmal
+        teile.push(
+          `${ergebnis.scatter.anzahl} Boote: +${FREISPIELE_PRO_AUSLOESUNG} Freispiele und +${zahlText(ergebnis.scatter.betrag)}`,
+        );
+        klang(klangGewinn, 2); // erneut 3 Boote: der große Jingle noch einmal
       }
       const anzeigeText = teile.filter(Boolean).join(" · ");
       if (anzeigeText) drehInfo.textContent = anzeigeText;
-      else if (ergebnis.sammeln.fische.length === 0) drehInfo.textContent = `Freispiel ${nummer}: kein Treffer.`;
-      if (ergebnis.scatter.freispiele > 0) fsZaehlerAnzeigen(nummer, fsZustand.gespielt + fsZustand.rest);
+      else if (ergebnis.sammeln.fische.length === 0)
+        drehInfo.textContent = `Freispiel ${nummer}: kein Treffer.`;
+      if (ergebnis.scatter.freispiele > 0)
+        fsZaehlerAnzeigen(nummer, fsZustand.gespielt + fsZustand.rest);
       await warte(anzeigeText ? 750 : 300);
       const knappText = await knappZeigen(ergebnis);
       if (knappText) drehInfo.textContent = anzeigeText ? `${anzeigeText} ${knappText}` : knappText;
@@ -1528,12 +1984,17 @@ function starteSpiel() {
     laeuft = false;
     steuerungAktualisieren();
     // Der Knopf war beim Sperren fokussiert und hat den Fokus verloren: Tastatur-Nutzer zurück an die Stelle holen
-    if (fokusWar instanceof HTMLButtonElement && document.activeElement === document.body && !fokusWar.disabled) {
+    if (
+      fokusWar instanceof HTMLButtonElement &&
+      document.activeElement === document.body &&
+      !fokusWar.disabled
+    ) {
       fokusWar.focus({ preventScroll: true });
     }
     // Topliste: Netto-Gewinne ab der Mindesthöhe werden STILL eingetragen (zuletzt benutzte
     // Initialen) – kein Dialog, keine Aufforderung.
-    if (netto >= MINDEST_NETTO_FUER_TOPLISTE && stillEintragen(SPIEL, netto) !== null) seiteAktualisieren();
+    if (netto >= MINDEST_NETTO_FUER_TOPLISTE && stillEintragen(SPIEL, netto) !== null)
+      seiteAktualisieren();
     // Pleite? (Konto unter dem kleinsten Einsatz)
     if (istPleite(EINSATZSTUFEN[0])) pleiteDialogZeigen();
   }
@@ -1541,12 +2002,12 @@ function starteSpiel() {
   async function drehen() {
     if (laeuft) return;
     const einsatz = wirksamerEinsatz();
-    if (einsatz === 0 || !einsatzAbbuchen(einsatz)) return;      // Konto reicht nicht: Dreh startet nicht
+    if (einsatz === 0 || !einsatzAbbuchen(einsatz)) return; // Konto reicht nicht: Dreh startet nicht
 
     laeuft = true;
     hoechsteStufe = 0;
     const fokusWar = document.activeElement;
-    walletHudAktualisieren();                                    // der Einsatz verschwindet sofort vom Konto
+    walletHudAktualisieren(); // der Einsatz verschwindet sofort vom Konto
     steuerungAktualisieren();
     effekteLoeschen();
     gewinnAnzeige.textContent = "";
@@ -1575,7 +2036,8 @@ function starteSpiel() {
       rundeAbrechnen();
       walletHudAktualisieren();
       ergebnisAnzeigen(netto);
-      const grundText = ergebnis.linien.gewinne.length > 0 ? linienText(ergebnis.linien) : "Leider kein Treffer.";
+      const grundText =
+        ergebnis.linien.gewinne.length > 0 ? linienText(ergebnis.linien) : "Leider kein Treffer.";
       drehInfo.textContent = knappText ? `${grundText} ${knappText}` : grundText;
       // Große Gewinne feiern (ab x5 vom Einsatz) VOR dem Entsperren; ein Klick überspringt die Feier.
       await feiern({ betrag: ergebnis.gesamt, einsatz });
@@ -1586,7 +2048,7 @@ function starteSpiel() {
     // 4. Scatter: Freispiele starten, am Ende die ganze Runde abrechnen.
     //    Auch der auslösende Dreh selbst wird gefeiert (Linien + Scatter-Gewinn), falls er groß genug ist.
     hoechsteStufe = await feiern({ betrag: ergebnis.gesamt, einsatz });
-    klang(klangGewinn, 2);                                          // Freispiel-Start: der große Jingle (Stufe 2)
+    klang(klangGewinn, 2); // Freispiel-Start: der große Jingle (Stufe 2)
     drehInfo.textContent = `${ergebnis.scatter.anzahl} Fischerboote! Gesamteinsatz ×${SCATTER_FAKTOR} (+${zahlText(ergebnis.scatter.betrag)}) und ${FREISPIELE_PRO_AUSLOESUNG} Freispiele.`;
     await warte(bewegungReduziert() ? 600 : 1700);
     const netto = await freispieleAbspielen();
@@ -1624,8 +2086,8 @@ function starteSpiel() {
   });
 
   document.addEventListener("keydown", (e) => {
-    if (e.ctrlKey || e.metaKey || e.altKey || e.repeat) return;   // Browser-Kürzel nicht stören, Dauerdruck ignorieren
-    if (document.querySelector("dialog[open]")) return;           // Dialog offen -> Tasten gehören ihm
+    if (e.ctrlKey || e.metaKey || e.altKey || e.repeat) return; // Browser-Kürzel nicht stören, Dauerdruck ignorieren
+    if (document.querySelector("dialog[open]")) return; // Dialog offen -> Tasten gehören ihm
     const tag = e.target instanceof Element ? e.target.tagName : "";
     if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
 
@@ -1633,10 +2095,10 @@ function starteSpiel() {
       // Auf einem fokussierten Knopf/Link/Aufklapper macht die Leertaste schon etwas
       // (anklicken). Dort NICHT zusätzlich drehen, sonst würde es doppelt ausgelöst.
       if (tag === "BUTTON" || tag === "A" || tag === "SUMMARY") return;
-      e.preventDefault();                                          // Seite nicht scrollen
+      e.preventDefault(); // Seite nicht scrollen
       drehen();
     } else if (/^[1-9]$/.test(e.key) && Number(e.key) <= EINSATZSTUFEN.length) {
-      einsatzWaehlen(EINSATZSTUFEN[Number(e.key) - 1]);       // Taste 1 = erster Chip, 2 = zweiter …
+      einsatzWaehlen(EINSATZSTUFEN[Number(e.key) - 1]); // Taste 1 = erster Chip, 2 = zweiter …
     }
   });
 
@@ -1677,11 +2139,11 @@ function starteSpiel() {
 
   // ----- Start -----
   const kopfElement = document.querySelector(".spiel-kopf");
-  if (kopfElement) tonKnopf(kopfElement);                         // Ton an/aus, gilt für alle Casino-Spiele
+  if (kopfElement) tonKnopf(kopfElement); // Ton an/aus, gilt für alle Casino-Spiele
   walletHud(document.getElementById("wallet-hud"));
   LINIEN.forEach((reihen, i) => linienBilder.append(linienBildBauen(reihen, i + 1)));
   fsZustand = freispielZustandPruefen(lade(SPIEL, FS_SCHLUESSEL, null));
-  if (!fsZustand) entferne(SPIEL, FS_SCHLUESSEL);               // kaputten oder veralteten Stand wegräumen
+  if (!fsZustand) entferne(SPIEL, FS_SCHLUESSEL); // kaputten oder veralteten Stand wegräumen
   baenderAufbauen();
   alleWalzenSetzen();
   tabelleAufbauen();
@@ -1690,7 +2152,7 @@ function starteSpiel() {
   if (fsZustand) {
     freispieleFortsetzen();
   } else if (istPleite(EINSATZSTUFEN[0])) {
-    pleiteDialogZeigen();                                       // z. B. nach Seitenwechsel mit leerem Konto
+    pleiteDialogZeigen(); // z. B. nach Seitenwechsel mit leerem Konto
   }
 }
 
