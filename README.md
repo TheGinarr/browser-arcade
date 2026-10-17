@@ -58,21 +58,21 @@ games/
     ├── game.js           komplette Spiellogik, ausführlich kommentiert
     └── spiel.css         nur die spielspezifischen Styles (Brett, Karten, …)
 ```
+
 (Wortfuchs hat zusätzlich eine `woerter.js` mit den Wortlisten; Pixelrex,
 Flattervogel, Meteorsturm und Mauerbrecher lagern ihre testbaren Rechenfunktionen
 in eine eigene `logik.js` aus.)
 
-
 ## Arcade-Spiele: Level und Looks
 
-| Spiel | Level | Look im Spielfeld |
-|---|---|---|
-| Snake | 8 Labyrinth-Karten (je 10 Happen), danach endlos schneller | LCD eines alten Handys |
-| Pixelrex | 5 Welten nach Metern (Lava ab Welt 3, Eiszapfen ab Welt 4) | 2x-Pixelraster |
-| Flattervogel | 5 Abschnitte à 10 Säulen (enger, schwingend, Tageszeiten) | 2x-Pixelraster |
-| Froschsprung | 10 Level (Krokodile, Schlange, Fliege, Zeitbalken, Nacht), danach endlos | 8-Bit-Raster (16 px je Zelle) |
-| Mauerbrecher | 12 Karten aus Textzeilen, harte/feste Steine, Power-ups | flache Farbbänder der späten 70er |
-| Meteorsturm | Wellen, UFOs, Extraleben alle 10.000 | Vektorlinien mit Nachschein |
+| Spiel        | Level                                                                    | Look im Spielfeld                 |
+| ------------ | ------------------------------------------------------------------------ | --------------------------------- |
+| Snake        | 8 Labyrinth-Karten (je 10 Happen), danach endlos schneller               | LCD eines alten Handys            |
+| Pixelrex     | 5 Welten nach Metern (Lava ab Welt 3, Eiszapfen ab Welt 4)               | 2x-Pixelraster                    |
+| Flattervogel | 5 Abschnitte à 10 Säulen (enger, schwingend, Tageszeiten)                | 2x-Pixelraster                    |
+| Froschsprung | 10 Level (Krokodile, Schlange, Fliege, Zeitbalken, Nacht), danach endlos | 8-Bit-Raster (16 px je Zelle)     |
+| Mauerbrecher | 12 Karten aus Textzeilen, harte/feste Steine, Power-ups                  | flache Farbbänder der späten 70er |
+| Meteorsturm  | Wellen, UFOs, Extraleben alle 10.000                                     | Vektorlinien mit Nachschein       |
 
 **Ära-Regel:** Im Canvas gilt der Look der jeweiligen Ära, außerhalb (Rahmen, HUD,
 Gamepad, Dialoge) immer das Neon-Design. Spielmechaniken sind frei, Namen, Logos,
@@ -142,6 +142,8 @@ höchstens 100 Zeichen pro Zeile. Vor einem Commit einfach `npx prettier --write
 ## Lizenz
 
 Code: MIT, siehe `LICENSE`. Schriften in `assets/fonts/`: SIL Open Font License 1.1
-(siehe `assets/fonts/OFL-LIZENZ.txt`). Alle Grafiken entstehen per Canvas, CSS oder
+(Press Start 2P und IBM Plex, siehe `assets/fonts/OFL-LIZENZ.txt`). Die Rate-Wortliste `wortfuchs/woerter-haeufig.js` stammt aus
+[FrequencyWords](https://github.com/hermitdave/FrequencyWords) (Hermit Dave) und steht unter
+CC BY-SA 4.0. Alle Grafiken entstehen per Canvas, CSS oder
 Inline-SVG im Code, es gibt keine fremden Bilddateien. Die Spiele sind eigene Umsetzungen
 bekannter Spielprinzipien, ohne Originalnamen, -grafiken oder -sounds.
