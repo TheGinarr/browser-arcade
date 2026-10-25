@@ -3,9 +3,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <meta name="theme-color" content="#07070f" />
+    <meta name="theme-color" content="#07070f" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f2f3f9" media="(prefers-color-scheme: light)" />
     <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="../assets/style.css" />
+    <script src="../assets/thema.js?v=20261024"></script>
+    <link rel="stylesheet" href="../assets/style.css?v=20261024w" />
+    <link rel="stylesheet" href="../assets/automat.css?v=20261024" />
     <title>FLATTERVOGEL · Browser-Arcade</title>
     <meta
       name="description"
@@ -45,17 +48,37 @@
           <div class="wert" id="hud-abschnitt">1</div>
         </div>
       </div>
-      <div class="buehne">
-        <!-- Logisch 360x540 Pixel. Die CSS-Breite (100%, max. 380px) skaliert das Bild nur;
+      <div class="automat automat-flattervogel">
+        <div class="aut-kopf" aria-hidden="true">
+          <svg viewBox="0 0 64 64">
+            <ellipse
+              cx="30"
+              cy="34"
+              rx="18"
+              ry="14"
+              fill="#ffd23f"
+              stroke="#000"
+              stroke-width="2"
+            />
+            <path d="M16 34q-10-8-4-16q8 4 12 12z" fill="#fff" stroke="#000" stroke-width="2" />
+            <circle cx="38" cy="29" r="5" fill="#fff" stroke="#000" stroke-width="2" />
+            <circle cx="39.5" cy="29" r="2" fill="#000" />
+            <path d="M45 35l12 2-12 5z" fill="#ff7a1a" stroke="#000" stroke-width="2" /></svg
+          ><span class="aut-titel">FLATTERVOGEL<small>FLIEG DURCH DIE RÖHREN</small></span>
+        </div>
+        <div class="buehne">
+          <!-- Logisch 360x540 Pixel. Die CSS-Breite (100%, max. 380px) skaliert das Bild nur;
            die Spiellogik rechnet immer in den 360x540-Koordinaten. -->
-        <canvas
-          id="leinwand"
-          width="360"
-          height="540"
-          role="img"
-          aria-label="Flattervogel-Spielfeld: ein pinker Vogel fliegt durch die Lücken von Energiesäulen"
-          style="max-width: 380px; margin-inline: auto; image-rendering: pixelated"
-        ></canvas>
+          <canvas
+            id="leinwand"
+            width="360"
+            height="540"
+            role="img"
+            aria-label="Flattervogel-Spielfeld: ein pinker Vogel fliegt durch die Lücken von Energiesäulen"
+            style="max-width: 380px; margin-inline: auto; image-rendering: pixelated"
+          ></canvas>
+        </div>
+        <div class="aut-muenze" aria-hidden="true"><span></span><span></span></div>
       </div>
       <p class="steuerung">
         <span class="nur-tastatur"
@@ -67,9 +90,7 @@
         >
       </p>
       <section style="max-width: 420px; margin-top: 36px">
-        <h2 style="font-family: var(--pixel); font-weight: 400; font-size: 0.85rem">
-          Lokale Top 3
-        </h2>
+        <h2 style="font-family: var(--pixel); font-weight: 400; font-size: 0.85rem">Topliste</h2>
         <div id="topliste"></div>
         <button class="knopf" id="reset" style="margin-top: 10px">Spielstand zurücksetzen</button>
       </section>

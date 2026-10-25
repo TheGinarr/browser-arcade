@@ -18,6 +18,10 @@
       sichtbaren Fische ein, zusätzlich zu den normalen Liniengewinnen. Mehrere
       Angler sammeln mehrfach, Fische ohne Angler zahlen nichts extra.
       Drei Boote in den Freispielen bringen weitere 10 Freispiele.
+      SAMMEL-MULTIPLIKATOR (seit 2026-10-23): Jeder Angler, der in einer Freispiel-Serie
+      landet, zählt mit. Jeder 4. Angler hebt den Multiplikator für die gesammelten
+      Fischwerte eine Stufe an (MULTI_STUFEN: ×1 -> ×2 -> ×3 -> ×10). Die neue Stufe gilt
+      ab dem NÄCHSTEN Freispiel. Linien- und Scatter-Gewinne bleiben unverändert.
    5. Jede Walze ist ein festes Array (das "Walzenband") mit 30 Feldern. Wie
       oft ein Symbol im Array steht, bestimmt seine Wahrscheinlichkeit. In
       den Freispielen gelten leicht angepasste Bänder (BAENDER_FREISPIEL):
@@ -48,7 +52,18 @@
       gezeichnet. Gewinnt eine Linie, leuchten Tab und Linie in derselben Farbe. Reine Anzeige: Auszahlung,
       RTP und Freispiele bleiben unberührt.
 
-   AUSZAHLUNGSQUOTE (RTP) – ERGEBNIS
+   AUSZAHLUNGSQUOTE (RTP) – STAND 2026-10-23 (mit Sammel-Multiplikator)
+   Mit dem Multiplikator ×1/×2/×3/×10 (je 4 Angler eine Stufe) wurden die Fisch-Gewichte gesenkt
+   (FISCH_WERTE 128/48/18/5/1 statt 46/28/15/8/3 von 100). Basisspiel und Bänder unverändert.
+   Simulation mulberry32, Einsatz 10, 24 Läufe à 2.000.000 = 48 Mio. bezahlte Drehs:
+     RTP gesamt = 0,9781 (97,8 %), davon Basisspiel 0,6227, Freispiele 0,3557
+     Einsatz 25 / 50 / 100 (je 5 Mio.): 98,55 % / 97,35 % / 97,35 %
+     Serien (20 Mio. Drehs, 171.568 Serien, Einsatz-Vielfache): Median 31,5-fach, mittlere Hälfte
+     20,5- bis 49-fach, 90 % unter 77-fach, 99 % unter 267-fach, Höchstwert 1247-fach.
+     Erreichter End-Multiplikator: ×1 6,5 %, ×2 48 %, ×3 35 %, ×10 10,4 % der Serien.
+   Die Angaben im folgenden Absatz beschreiben den Stand VOR dem Multiplikator (95,13 %).
+
+   AUSZAHLUNGSQUOTE (RTP) – ERGEBNIS (bis 2026-10-22)
    Die Abstimmung zielt auf eine RTP von 95,0 % (Korridor 94,5 bis 95,5 %), leicht über den üblichen
    Werten echter Geräte, und auf eine spürbar höhere Trefferquote im Basisspiel (rund 42 % statt vorher
    rund 39 %). Erreicht wurde das über MEHR NIEDRIGE SYMBOLE im Band (19 von 30 Feldern) und eine
@@ -111,6 +126,7 @@ import {
 } from "../assets/klang.js";
 import { linienAnzeigeBauen, linienFarbe } from "../assets/gewinnlinien.js";
 import { lade, speichere, entferne } from "../assets/storage.js";
+import { autoDrehEinrichten } from "../assets/autodreh.js";
 import {
   STARTGELD,
   kontostand,
@@ -219,13 +235,23 @@ export const QUOTEN = {
  * häufig, große selten. "groesse" bestimmt nur, welches Fisch-Bild gezeigt wird.
  */
 export const FISCH_WERTE = [
-  { faktor: 0.5, gewicht: 46, groesse: "klein" },
-  { faktor: 1, gewicht: 28, groesse: "klein" },
-  { faktor: 2, gewicht: 15, groesse: "mittel" },
-  { faktor: 5, gewicht: 8, groesse: "gross" },
-  { faktor: 10, gewicht: 3, groesse: "gross" },
+  // Gewichte seit 2026-10-23 (Sammel-Multiplikator): vorher 46 / 28 / 15 / 8 / 3 von 100
+  { faktor: 0.5, gewicht: 128, groesse: "klein" },
+  { faktor: 1, gewicht: 48, groesse: "klein" },
+  { faktor: 2, gewicht: 18, groesse: "mittel" },
+  { faktor: 5, gewicht: 5, groesse: "gross" },
+  { faktor: 10, gewicht: 1, groesse: "gross" },
 ];
 const FISCH_GEWICHT_SUMME = FISCH_WERTE.reduce((summe, w) => summe + w.gewicht, 0);
+
+/** Sammel-Multiplikator in Freispielen: Stufe i gilt ab i x ANGLER_JE_STUFE gelandeten Anglern. */
+export const MULTI_STUFEN = [1, 2, 3, 10];
+export const ANGLER_JE_STUFE = 4;
+
+/** Multiplikator zu einer Anzahl in dieser Serie gelandeter Angler. */
+export function multiAusAnglern(angler) {
+  return MULTI_STUFEN[Math.min(MULTI_STUFEN.length - 1, Math.floor(angler / ANGLER_JE_STUFE))];
+}
 
 /*
  * Kurznamen, damit die Walzenbänder unten lesbar bleiben.
@@ -832,11 +858,12 @@ export function fischeWuerfeln(fenster, einsatz, zufall = Math.random) {
  *  - Ein Angler: er sammelt alle Fische einmal ein.
  *  - Zwei oder mehr Angler: JEDER sammelt alle Fische ein, die Fische werden
  *    also mehrfach bezahlt (2 Angler = doppelte Summe).
- * Rückgabe: { angler, fische, einsammlungen, betrag }
+ * `multi` ist der Sammel-Multiplikator der Freispiel-Serie (siehe MULTI_STUFEN).
+ * Rückgabe: { angler, fische, multi, einsammlungen, betrag }
  *   einsammlungen  pro Angler { angler, summe }  (für die Animation)
  *   betrag         Gesamtsumme aller Einsammlungen
  */
-export function fischeSammeln(fenster, fische) {
+export function fischeSammeln(fenster, fische, multi = 1) {
   const angler = [];
   fenster.forEach((spalte, s) =>
     spalte.forEach((symbol, z) => {
@@ -845,10 +872,11 @@ export function fischeSammeln(fenster, fische) {
   );
   const fischSumme = fische.reduce((summe, f) => summe + f.betrag, 0);
   const einsammlungen =
-    fische.length > 0 ? angler.map((a) => ({ angler: a, summe: fischSumme })) : [];
+    fische.length > 0 ? angler.map((a) => ({ angler: a, summe: fischSumme * multi })) : [];
   return {
     angler,
     fische,
+    multi,
     einsammlungen,
     betrag: einsammlungen.reduce((summe, e) => summe + e.summe, 0),
   };
@@ -866,13 +894,20 @@ export function fischeSammeln(fenster, fische) {
  * "gesamt" = Linien + Scatter + gesammelte Fischwerte (Brutto-Auszahlung).
  * `stopps` kann übergeben werden (Tests, präparierter Zufall), sonst wird gewürfelt.
  */
-export function drehAuswerten(baender, einsatz, mitSammeln, zufall = Math.random, stopps = null) {
+export function drehAuswerten(
+  baender,
+  einsatz,
+  mitSammeln,
+  zufall = Math.random,
+  stopps = null,
+  multi = 1,
+) {
   const gestoppt = stopps ?? zufallsStopps(baender, zufall);
   const fenster = fensterAusStopps(gestoppt, baender);
   const linien = linienAuswerten(fenster, einsatz);
   const scatter = scatterAuswerten(fenster, einsatz);
   const sammeln = mitSammeln
-    ? fischeSammeln(fenster, fischeWuerfeln(fenster, einsatz, zufall))
+    ? fischeSammeln(fenster, fischeWuerfeln(fenster, einsatz, zufall), multi)
     : null;
   const gesamt = linien.summe + scatter.betrag + (sammeln ? sammeln.betrag : 0);
   return { stopps: gestoppt, fenster, linien, scatter, sammeln, gesamt };
@@ -890,9 +925,18 @@ export function drehAuswerten(baender, einsatz, mitSammeln, zufall = Math.random
  *   summe     bisherige BRUTTO-Auszahlung des ganzen bezahlten Drehs
  *             (Basis-Dreh inklusive Scatter-Gewinn, danach alle Freispiele)
  *   gespielt  wie viele Freispiele schon gespielt wurden
+ *   angler    wie viele Angler in dieser Serie schon gelandet sind (-> multi)
+ *   multi     aktueller Sammel-Multiplikator (gilt für das nächste Freispiel)
  */
 export function freispielStarten(einsatz, basisAuszahlung) {
-  return { rest: FREISPIELE_PRO_AUSLOESUNG, einsatz, summe: basisAuszahlung, gespielt: 0 };
+  return {
+    rest: FREISPIELE_PRO_AUSLOESUNG,
+    einsatz,
+    summe: basisAuszahlung,
+    gespielt: 0,
+    angler: 0,
+    multi: 1,
+  };
 }
 
 /**
@@ -901,11 +945,14 @@ export function freispielStarten(einsatz, basisAuszahlung) {
  * (das alte Objekt bleibt unverändert, das macht Fehler seltener).
  */
 export function freispielVerbuchen(zustand, ergebnis) {
+  const angler = zustand.angler + (ergebnis.sammeln ? ergebnis.sammeln.angler.length : 0);
   return {
     rest: zustand.rest - 1 + ergebnis.scatter.freispiele,
     einsatz: zustand.einsatz,
     summe: zustand.summe + ergebnis.gesamt,
     gespielt: zustand.gespielt + 1,
+    angler,
+    multi: multiAusAnglern(angler),
   };
 }
 
@@ -924,9 +971,13 @@ export function bezahltenDrehSimulieren(einsatz, zufall, baenderBasis, baenderFr
     return { auszahlung: start.gesamt, basis: start.gesamt, freispielAuszahlung: 0, freispiele: 0 };
   }
   while (zustand.rest > 0) {
-    zustand = freispielVerbuchen(zustand, drehAuswerten(baenderFreispiel, einsatz, true, zufall));
+    zustand = freispielVerbuchen(
+      zustand,
+      drehAuswerten(baenderFreispiel, einsatz, true, zufall, null, zustand.multi),
+    );
   }
   return {
+    multi: zustand.multi,
     auszahlung: zustand.summe,
     basis: start.gesamt,
     freispielAuszahlung: zustand.summe - start.gesamt,
@@ -950,10 +1001,12 @@ export function bezahltenDrehSimulieren(einsatz, zufall, baenderBasis, baenderFr
 export function freispielZustandPruefen(roh) {
   if (!roh || typeof roh !== "object") return null;
   const { rest, einsatz, summe, gespielt } = roh;
+  const angler = roh.angler ?? 0; // Stände von vor 2026-10-23 kennen noch keine Angler-Zählung
   const ganz = (x, max) => Number.isInteger(x) && x >= 0 && x <= max;
-  if (!ganz(rest, 10000) || !ganz(summe, 1e9) || !ganz(gespielt, 10000)) return null;
+  if (!ganz(rest, 10000) || !ganz(summe, 1e9) || !ganz(gespielt, 10000) || !ganz(angler, 100000))
+    return null;
   if (!EINSATZSTUFEN.includes(einsatz)) return null;
-  return { rest, einsatz, summe, gespielt };
+  return { rest, einsatz, summe, gespielt, angler, multi: multiAusAnglern(angler) };
 }
 
 /* ------------------------------------------------------------
@@ -1196,6 +1249,7 @@ function starteSpiel() {
   const fsLeiste = document.getElementById("fs-leiste");
   const fsZaehler = document.getElementById("fs-zaehler");
   const fsGewinn = document.getElementById("fs-gewinn");
+  const fsMulti = document.getElementById("fs-multi");
   const fensterElement = document.getElementById("fenster");
   const walzenElemente = [...fensterElement.querySelectorAll(".walze")];
   const overlay = document.getElementById("linien-overlay");
@@ -1227,6 +1281,7 @@ function starteSpiel() {
 
   // ----- Spielzustand -----
   let laeuft = false; // true, solange gedreht wird (auch in Freispielen): alles gesperrt
+  let autoDreh = null; // Auto-Drehen (assets/autodreh.js), wird beim Start eingerichtet
   let modus = "basis"; // "basis" oder "freispiel": bestimmt Bänder und Bühnen-Optik
   let aktuelleBaender = BAENDER_BASIS; // die Bänder, die gerade im DOM stehen
   let stopps = zufallsStopps(BAENDER_BASIS); // aktuelle Stopp-Indizes (Startbild: zufällig, kein Einfluss aufs Geld)
@@ -1341,6 +1396,23 @@ function starteSpiel() {
 
   function fsZaehlerAnzeigen(nummer, gesamt) {
     fsZaehler.textContent = `${nummer} / ${gesamt}`;
+    multiAnzeigen();
+  }
+
+  /** Sammel-Multiplikator und Fortschritt zur nächsten Stufe (z. B. "×2 · 1/4 Angler"). */
+  function multiAnzeigen(hochgestuft = false) {
+    if (!fsZustand) return;
+    const naechste = fsZustand.multi < MULTI_STUFEN[MULTI_STUFEN.length - 1];
+    const fortschritt = naechste
+      ? ` · ${fsZustand.angler % ANGLER_JE_STUFE}/${ANGLER_JE_STUFE} Angler`
+      : " · max";
+    fsMulti.textContent = `×${fsZustand.multi}${fortschritt}`;
+    fsMulti.classList.toggle("hoch", fsZustand.multi > 1);
+    if (hochgestuft && !bewegungReduziert()) {
+      fsMulti.classList.remove("puls");
+      void fsMulti.offsetWidth;
+      fsMulti.classList.add("puls");
+    }
   }
 
   function summeAnzeigen(wert) {
@@ -1372,16 +1444,17 @@ function starteSpiel() {
     chipKnoepfe.forEach((chip) => {
       const wert = Number(chip.dataset.einsatz);
       chip.setAttribute("aria-pressed", String(wert === wirksam));
-      chip.disabled = laeuft || wert > stand; // gesperrt beim Drehen oder wenn zu teuer
+      chip.disabled = laeuft || Boolean(autoDreh?.aktiv()) || wert > stand; // gesperrt beim Drehen oder wenn zu teuer
     });
-    drehKnopf.disabled = laeuft || wirksam === 0;
-    resetKnopf.disabled = laeuft;
-    kontoResetKnopf.disabled = laeuft;
+    drehKnopf.disabled = laeuft || Boolean(autoDreh?.aktiv()) || wirksam === 0;
+    resetKnopf.disabled = laeuft || Boolean(autoDreh?.aktiv());
+    kontoResetKnopf.disabled = laeuft || Boolean(autoDreh?.aktiv());
     tabelleBetraegeAktualisieren();
+    autoDreh?.aktualisieren();
   }
 
   function einsatzWaehlen(wert) {
-    if (laeuft || !EINSATZSTUFEN.includes(wert) || wert > kontostand()) return;
+    if (laeuft || autoDreh?.aktiv() || !EINSATZSTUFEN.includes(wert) || wert > kontostand()) return;
     gewaehlterEinsatz = wert;
     speichere(SPIEL, "einsatz", wert);
     steuerungAktualisieren();
@@ -1778,7 +1851,7 @@ function starteSpiel() {
         einsammlung.angler.zeile,
         ergebnis.stopps,
       );
-      drehInfo.textContent = `Der Angler sammelt ${sammeln.fische.length} ${sammeln.fische.length === 1 ? "Fisch" : "Fische"} ein: +${zahlText(einsammlung.summe)}`;
+      drehInfo.textContent = `Der Angler sammelt ${sammeln.fische.length} ${sammeln.fische.length === 1 ? "Fisch" : "Fische"} ein${sammeln.multi > 1 ? ` (×${sammeln.multi})` : ""}: +${zahlText(einsammlung.summe)}`;
 
       if (reduziert) {
         summeAnzeigen(angezeigteSumme + einsammlung.summe);
@@ -1906,7 +1979,15 @@ function starteSpiel() {
       fsZaehlerAnzeigen(nummer, fsZustand.gespielt + fsZustand.rest);
 
       // 1. Auswürfeln, verbuchen, speichern (alles noch vor der Animation)
-      const ergebnis = drehAuswerten(BAENDER_FREISPIEL, einsatz, true);
+      const ergebnis = drehAuswerten(
+        BAENDER_FREISPIEL,
+        einsatz,
+        true,
+        Math.random,
+        null,
+        fsZustand.multi,
+      );
+      const vorherMulti = fsZustand.multi;
       const vorherSumme = angezeigteSumme;
       fsZustand = freispielVerbuchen(fsZustand, ergebnis);
       speichere(SPIEL, FS_SCHLUESSEL, fsZustand);
@@ -1943,6 +2024,12 @@ function starteSpiel() {
         await warte(500);
       }
       await einsammeln(ergebnis);
+      multiAnzeigen(fsZustand.multi > vorherMulti);
+      if (fsZustand.multi > vorherMulti) {
+        drehInfo.textContent = `${fsZustand.angler} Angler gelandet: Fische zählen ab jetzt ×${fsZustand.multi}!`;
+        klang(klangGewinn, 1);
+        await warte(700);
+      }
 
       // 5. Große Gewinne feiern (ab x5 vom Gesamteinsatz, siehe assets/gewinnfeier.js): die Auszahlung
       //    dieses Freispiels inklusive gesammelter Fische. Ein Klick überspringt die Feier.
@@ -2042,7 +2129,7 @@ function starteSpiel() {
       // Große Gewinne feiern (ab x5 vom Einsatz) VOR dem Entsperren; ein Klick überspringt die Feier.
       await feiern({ betrag: ergebnis.gesamt, einsatz });
       rundeNachbereiten(netto, fokusWar);
-      return;
+      return { einsatz, auszahlung: ergebnis.gesamt, netto, freispiele: false }; // für das Auto-Drehen
     }
 
     // 4. Scatter: Freispiele starten, am Ende die ganze Runde abrechnen.
@@ -2053,6 +2140,7 @@ function starteSpiel() {
     await warte(bewegungReduziert() ? 600 : 1700);
     const netto = await freispieleAbspielen();
     rundeNachbereiten(netto, fokusWar);
+    return { einsatz, auszahlung: netto + einsatz, netto, freispiele: true }; // für das Auto-Drehen
   }
 
   /**
@@ -2096,7 +2184,8 @@ function starteSpiel() {
       // (anklicken). Dort NICHT zusätzlich drehen, sonst würde es doppelt ausgelöst.
       if (tag === "BUTTON" || tag === "A" || tag === "SUMMARY") return;
       e.preventDefault(); // Seite nicht scrollen
-      drehen();
+      if (autoDreh?.aktiv()) autoDreh.stoppen();
+      else drehen();
     } else if (/^[1-9]$/.test(e.key) && Number(e.key) <= EINSATZSTUFEN.length) {
       einsatzWaehlen(EINSATZSTUFEN[Number(e.key) - 1]); // Taste 1 = erster Chip, 2 = zweiter …
     }
@@ -2147,6 +2236,17 @@ function starteSpiel() {
   baenderAufbauen();
   alleWalzenSetzen();
   tabelleAufbauen();
+  autoDreh = autoDrehEinrichten({
+    spiel: SPIEL,
+    drehKnopf,
+    drehen,
+    bereit: () => !laeuft && wirksamerEinsatz() > 0 && !document.querySelector("dialog[open]"),
+    hatFreispiele: true,
+    melden: (text) => {
+      drehInfo.textContent = text;
+    },
+    beiAenderung: steuerungAktualisieren,
+  });
   steuerungAktualisieren();
   seiteAktualisieren();
   if (fsZustand) {

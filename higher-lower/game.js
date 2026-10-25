@@ -747,7 +747,7 @@ function starteSpiel() {
       knopf.setAttribute("aria-pressed", String(knopf.dataset.modus === modus));
     }
     const casino = modus === "casino";
-    toplisteTitel.textContent = casino ? "Größte Gewinne · Top 3" : "Lokale Top 3 · Längste Ketten";
+    toplisteTitel.textContent = casino ? "Topliste · Größte Gewinne" : "Topliste · Längste Ketten";
     resetKnopf.textContent = casino ? "Topliste zurücksetzen" : "Spielstand zurücksetzen";
     resetHinweis.hidden = !casino;
   }

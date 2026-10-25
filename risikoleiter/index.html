@@ -3,15 +3,18 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <meta name="theme-color" content="#07070f" />
+    <meta name="theme-color" content="#07070f" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f2f3f9" media="(prefers-color-scheme: light)" />
     <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="../assets/style.css" />
+    <script src="../assets/thema.js?v=20261024"></script>
+    <link rel="stylesheet" href="../assets/style.css?v=20261024w" />
     <!-- spielspezifische Styles (Anzeige, Start-Zeile, Lernbox-Tabelle) – die Leiter selbst steckt im Abschnitt "Risiko" von ../assets/style.css -->
-    <link rel="stylesheet" href="./spiel.css" />
+    <link rel="stylesheet" href="./spiel.css?v=20261024u" />
+    <link rel="stylesheet" href="../assets/kartentisch.css?v=20261024d" />
     <title>Risikoleiter · Browser-Arcade</title>
     <meta
       name="description"
-      content="Risikoleiter mit Spielgeld: Steige Stufe für Stufe auf und entscheide jedes Mal, ob du sammelst oder riskierst. Jeder Schritt ist exakt 50 zu 50. Lerne, warum das fair ist und trotzdem fast alle verlieren. Ohne Konto und Cookies."
+      content="Risikoleiter mit Spielgeld: Steige Stufe für Stufe auf und entscheide jedes Mal, ob du sammelst oder riskierst. Jeder Schritt ist exakt 50 zu 50. Lerne, warum das fair ist und trotzdem fast alle verlieren. Ohne Konto und ohne eigene Cookies."
     />
   </head>
   <body style="--ak: var(--gold)">
@@ -49,7 +52,7 @@
         </div>
       </div>
 
-      <div class="buehne" id="buehne">
+      <div class="buehne filztisch" id="buehne">
         <div class="rl-layout">
           <!-- Links: der aktuelle Betrag und die Meldung. Rechts: die Leiter (game.js baut sie mit risiko.js). -->
           <div class="rl-anzeige">
@@ -87,7 +90,7 @@
       </div>
 
       <section class="top-bereich">
-        <h2>Lokale Top 3 · Größte Gewinne</h2>
+        <h2>Topliste · Größte Gewinne</h2>
         <p class="klein">
           Der höchste Netto-Gewinn einer einzelnen Runde (Endbetrag minus Einsatz). Ein Platz wird
           still eingetragen, ohne Dialog.

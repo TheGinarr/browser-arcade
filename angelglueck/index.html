@@ -3,17 +3,21 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <meta name="theme-color" content="#07070f" />
+    <meta name="theme-color" content="#07070f" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f2f3f9" media="(prefers-color-scheme: light)" />
     <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="../assets/style.css" />
+    <script src="../assets/thema.js?v=20261024"></script>
+    <link rel="stylesheet" href="../assets/style.css?v=20261024w" />
     <!-- Gewinnlinien-Tabs und Linien-Vorschau (gemeinsam mit Tempelschatz, Skript: ../assets/gewinnlinien.js) -->
     <link rel="stylesheet" href="../assets/gewinnlinien.css" />
     <!-- spielspezifische Styles (Walzen, Linien, Fisch-Plaketten, Unterwasser-Bühne) – das gemeinsame Design bleibt in ../assets/style.css -->
-    <link rel="stylesheet" href="./spiel.css" />
+    <link rel="stylesheet" href="./spiel.css?v=20261024t" />
+    <link rel="stylesheet" href="../assets/autodreh.css?v=20261020" />
+    <link rel="stylesheet" href="../assets/kabinett.css?v=20261024" />
     <title>Angelglück · Browser-Arcade</title>
     <meta
       name="description"
-      content="Angelglück: Slot mit Spielgeld, fünf Walzen, zehn Gewinnlinien und ein Angler, der in den Freispielen Fische einsammelt. Lerne nebenbei, wie Linien, Wild, Scatter und RTP funktionieren. Ohne Konto und Cookies."
+      content="Angelglück: Slot mit Spielgeld, fünf Walzen, zehn Gewinnlinien und ein Angler, der in den Freispielen Fische einsammelt. Lerne nebenbei, wie Linien, Wild, Scatter und RTP funktionieren. Ohne Konto und ohne eigene Cookies."
     />
   </head>
   <body style="--ak: var(--gold)">
@@ -597,11 +601,35 @@
         </div>
       </div>
 
-      <div class="buehne" id="buehne">
+      <div class="buehne kabinett kabinett-angel" id="buehne">
+        <div class="kab-topper" aria-hidden="true">
+          <svg viewBox="0 0 80 48" aria-hidden="true">
+            <g class="kab-fisch">
+              <path
+                d="M8 24c10-14 34-16 48-4l14-10-4 14 4 14-14-10C42 40 18 38 8 24z"
+                fill="#3ee0ff"
+                stroke="#0b6b8a"
+                stroke-width="2"
+              />
+              <circle cx="22" cy="21" r="3" fill="#062033" />
+              <path d="M34 14q6 10 0 20" stroke="#0b6b8a" stroke-width="2" fill="none" />
+            </g>
+            <path d="M60 2v14" stroke="#c9ccd6" stroke-width="1.5" />
+            <path d="M60 16q0 6 -4 6" stroke="#c9ccd6" stroke-width="2" fill="none" />
+            <circle cx="66" cy="40" r="3" fill="none" stroke="#bff4ff" />
+            <circle cx="72" cy="32" r="2" fill="none" stroke="#bff4ff" /></svg
+          ><span class="kab-titel">ANGELGLÜCK</span>
+        </div>
         <!-- Freispiel-Leiste: nur sichtbar, solange Freispiele laufen (game.js setzt hidden) -->
         <div class="fs-leiste" id="fs-leiste" hidden>
           <span class="fs-titel">FREISPIELE</span>
           <span id="fs-zaehler">–</span>
+          <span
+            id="fs-multi"
+            class="fs-multi"
+            title="Sammel-Multiplikator: jeder 4. Angler hebt ihn an"
+            >×1</span
+          >
           <span id="fs-gewinn" class="fs-gewinn">+0</span>
         </div>
 
@@ -684,9 +712,7 @@
       </div>
 
       <section style="max-width: 420px; margin-top: 36px">
-        <h2 style="font-family: var(--pixel); font-weight: 400; font-size: 0.85rem">
-          Lokale Top 3
-        </h2>
+        <h2 style="font-family: var(--pixel); font-weight: 400; font-size: 0.85rem">Topliste</h2>
         <p class="klein">
           Die höchsten Netto-Gewinne einzelner bezahlter Drehs, Freispiele eingerechnet (Auszahlung
           minus Einsatz).
@@ -755,6 +781,12 @@
               Geldwert (0,5 bis 10 mal Gesamteinsatz). Landet ein Angler im Fenster, sammelt er die
               Werte aller sichtbaren Fische ein. Mehrere Angler sammeln mehrfach. Ohne Angler
               verfallen die Werte.
+            </li>
+            <li>
+              <strong>Sammel-Multiplikator:</strong> Jeder Angler, der in einer Freispiel-Serie
+              landet, zählt mit (Anzeige oben in der Freispiel-Leiste). Nach 4 Anglern zählen die
+              Fische ×2, nach 8 ×3 und nach 12 sogar ×10, jeweils ab dem nächsten Freispiel.
+              Liniengewinne bleiben unverändert.
             </li>
             <li>
               Die Freispiele laufen automatisch, und dein Gewinn wird erst am Ende gutgeschrieben.
@@ -897,24 +929,27 @@
             lässt sich das Basisspiel dadurch <em>exakt</em> durchrechnen, während die zufälligen
             Fischwerte und die Wiederholung der Freispiele nur per Simulation messbar sind. Drittens
             steuern wir den Reiz über die Freispiel-Bänder: Dort liegen mehr Fische (Walze 1) und
-            mehr Angler (Walze 5) als im Basisspiel.
+            mehr Angler (Walze 5) als im Basisspiel. Seit dem Sammel-Multiplikator zählt
+            <code>freispielVerbuchen()</code> die gelandeten Angler mit, und
+            <code>multiAusAnglern()</code> macht daraus die Stufe ×1, ×2, ×3 oder ×10. Damit die
+            Quote nicht über 100 % steigt, sind die großen Fischwerte dafür seltener geworden.
           </p>
           <p>
             <strong>Die Auszahlungsquote (RTP).</strong> RTP heißt „Return to Player“: Wie viel vom
             Einsatz kommt auf lange Sicht zurück? Das Basisspiel hat 30⁵ = 24.300.000 mögliche
             Stopp-Kombinationen. Ein Programm kann sie alle einmal durchspielen (das geht in
             Sekunden) und kommt exakt auf 62,28 % aus Linien und Scatter-Gewinn. Die Abstimmung
-            zielt auf eine RTP von 95 %, mit mehr niedrigen Symbolen im Band (19 von 30 Feldern)
-            fällt öfter ein kleiner Treffer: Die Trefferquote im Basisspiel liegt bei 42,1 %. Die
-            Freispiele kommen on top: Ein Auslöser kommt etwa jeden 117. Dreh, und jede Serie ist im
-            Schnitt rund 11 Freispiele lang, weil 3 Boote in den Freispielen die Serie verlängern
-            können (rechnerisch 10 ÷ (1 − 10 × p), mit p als Chance auf 3+ Boote pro Freispiel).
-            Eine Simulation mit 120 Millionen bezahlten Drehs ergab insgesamt 95,13 %: rund 62,3 %
-            aus dem Basisspiel und 32,9 % aus den Freispielen (also gut ein Drittel der
+            zielt (mit Multiplikator) auf rund 98 %, mit mehr niedrigen Symbolen im Band (19 von 30
+            Feldern) fällt öfter ein kleiner Treffer: Die Trefferquote im Basisspiel liegt bei 42,1
+            %. Die Freispiele kommen on top: Ein Auslöser kommt etwa jeden 117. Dreh, und jede Serie
+            ist im Schnitt rund 11 Freispiele lang, weil 3 Boote in den Freispielen die Serie
+            verlängern können (rechnerisch 10 ÷ (1 − 10 × p), mit p als Chance auf 3+ Boote pro
+            Freispiel). Eine Simulation mit 48 Millionen bezahlten Drehs ergab insgesamt 97,8 %:
+            rund 62,3 % aus dem Basisspiel und 35,6 % aus den Freispielen (über ein Drittel der
             Auszahlungen). Kurzfristig schwankt das stark: 58 % der bezahlten Drehs zahlen gar
             nichts, 44 % der Treffer liegen unter dem Einsatz, und eine ausgelöste Serie bringt
-            meist das 25- bis 51-Fache des Einsatzes (in einem von hundert Fällen mehr als das
-            118-Fache).
+            meist das 20- bis 49-Fache des Einsatzes (in einem von hundert Fällen mehr als das
+            267-Fache). Etwa jede zehnte Serie erreicht den ×10-Multiplikator.
           </p>
           <p>
             <strong>Spannung, Beinahe-Treffer und Ton.</strong> Alles Folgende liest nur das fertige
@@ -977,6 +1012,6 @@
         </nav>
       </div>
     </footer>
-    <script type="module" src="./game.js"></script>
+    <script type="module" src="./game.js?v=20261023"></script>
   </body>
 </html>

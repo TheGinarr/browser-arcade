@@ -124,11 +124,11 @@
   font-size: 4.6cqw;
 }
 .kachel-innen.ziffern-5 {
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-size: 3.8cqw;
 }
 .kachel-innen.ziffern-6 {
-  font-size: 0.6rem;
+  font-size: 0.75rem;
   font-size: 3.2cqw;
 }
 
@@ -282,4 +282,21 @@
   .brett-huelle {
     --schiebe: 0s;
   }
+}
+
+/* hell-gen: automatisch erzeugt */
+@media (prefers-color-scheme: light) {
+  :where(:root:not([data-thema="dunkel"])) .brett {
+    background: #ebebf7;
+  }
+  :where(:root:not([data-thema="dunkel"])) .zelle {
+    background: color-mix(in srgb, var(--panel2) 70%, #ffffff);
+  }
+}
+
+:where(:root[data-thema="hell"]) .brett {
+  background: #ebebf7;
+}
+:where(:root[data-thema="hell"]) .zelle {
+  background: color-mix(in srgb, var(--panel2) 70%, #ffffff);
 }

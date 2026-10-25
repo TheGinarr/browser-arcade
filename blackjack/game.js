@@ -219,7 +219,7 @@ function eckeBauen(lage) {
  * Die Vorderseite bleibt zunächst LEER – bei der verdeckten Dealer-Karte
  * steht der Wert also nirgends im HTML, bis sie aufgedeckt wird.
  */
-function karteBauen(aufgedeckt) {
+export function karteBauen(aufgedeckt) {
   const szene = neuesElement("div", "karte-szene");
   const dreh = neuesElement("div", "karte-dreh");
   const hinten = neuesElement("div", "flaeche hinten");
@@ -235,7 +235,7 @@ function karteBauen(aufgedeckt) {
 }
 
 /** Schreibt eine Karte auf die Vorderseite – alles per textContent, nie innerHTML. */
-function karteFuellen(karte, daten) {
+export function karteFuellen(karte, daten) {
   const farbe = FARBEN[daten.farbe];
   const wertText = kartenWertText(daten.wert);
   karte.oben.wert.textContent = wertText;
@@ -628,6 +628,7 @@ function starteSpiel() {
   document.addEventListener("keydown", (e) => {
     if (e.ctrlKey || e.metaKey || e.altKey) return; // Browser-Kürzel nicht stören
     if (e.repeat) return; // gehaltene Taste nicht mehrfach auslösen
+    if (document.body.dataset.modus === "tisch") return; // Tischmodus hat eigene Tasten (tisch.js)
     if (document.querySelector("dialog[open]")) return; // Dialog offen → Tasten gehören ihm
     if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
     const taste = e.key?.toLowerCase();

@@ -3,18 +3,24 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <meta name="theme-color" content="#07070f" />
+    <meta name="theme-color" content="#07070f" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f2f3f9" media="(prefers-color-scheme: light)" />
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="assets/style.css" />
+    <script src="assets/thema.js?v=20261024"></script>
+    <link rel="stylesheet" href="assets/style.css?v=20261024w" />
     <title>Browser-Arcade</title>
     <meta
       name="description"
-      content="Kleine Browser-Klassiker zum direkt Losspielen – ohne Konto, ohne Cookies, ohne Tracking. Highscores bleiben im eigenen Browser."
+      content="Kleine Browser-Klassiker zum direkt Losspielen – ohne Konto, ohne eigene Cookies, ohne Tracking. Weltweite Topliste nur mit Initialen."
     />
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Browser-Arcade" />
-    <meta property="og:description" content="Browser-Klassiker ohne Konto, Cookies und Tracking." />
+    <meta
+      property="og:description"
+      content="Browser-Klassiker ohne Konto, eigene Cookies und Tracking."
+    />
     <meta property="og:locale" content="de_DE" />
+    <link rel="stylesheet" href="assets/kacheln/kacheln.css?v=20261024" />
   </head>
   <body>
     <!-- Deko-Raster im Hintergrund (rein optisch, s. style.css) -->
@@ -25,7 +31,6 @@
       <nav class="container nav" aria-label="Hauptnavigation">
         <a class="marke" href="index.html"><span class="logo">▶</span>GAMES</a>
         <div class="nav-links">
-          <a href="#bald">Bald</a>
           <a href="impressum.html">Impressum</a>
           <a href="datenschutz.html">Datenschutz</a>
         </div>
@@ -38,10 +43,35 @@
           <p class="zeile">Insert Coin … nicht nötig</p>
           <h1>Browser-Klassiker.<br />Einfach losspielen.</h1>
           <p class="intro">
-            Kleine Spiele, direkt im Browser – ohne Konto, ohne Cookies, ohne Tracking. Deine
-            Highscores bleiben bei dir auf dem Gerät.
+            Kleine Spiele, direkt im Browser – ohne Konto, ohne eigene Cookies, ohne Tracking. In
+            der weltweiten Topliste stehst du nur mit deinen Initialen.
           </p>
         </div>
+      </section>
+
+      <!-- ===== Dein Fortschritt (lokal, assets/fortschritt.js) ===== -->
+      <section
+        class="container fs-bereich"
+        id="fortschritt"
+        aria-label="Dein Fortschritt"
+        hidden
+      ></section>
+
+      <!-- ===== Weltweit: Spieler-Level / längste Serie (assets/startseite.js) ===== -->
+      <section class="container weltliste" id="spieler-welt" aria-label="Weltweite Bestenliste">
+        <h3>Weltweit – die Fleißigsten</h3>
+        <div class="topliste-reiter" role="group" aria-label="Liste wählen">
+          <button type="button" class="knopf" data-liste="spieler-level" aria-pressed="true">
+            Höchstes Level
+          </button>
+          <button type="button" class="knopf" data-liste="spieler-serie" aria-pressed="false">
+            Längste Serie
+          </button>
+        </div>
+        <ul class="topliste">
+          <li class="leer">Wird geladen …</li>
+        </ul>
+        <p class="topliste-fuss"></p>
       </section>
 
       <!-- ===== Kategorie: Arcade (pink) ===== -->
@@ -49,6 +79,15 @@
         <h2>Arcade</h2>
         <div class="raster-karten">
           <a class="karte" href="snake/" style="--kat: var(--pink)">
+            <img
+              class="karte-bild"
+              src="assets/kacheln/snake.webp?v=20261024"
+              alt=""
+              width="160"
+              height="80"
+              loading="lazy"
+              decoding="async"
+            />
             <span class="karte-icon" aria-hidden="true">
               <svg viewBox="0 0 48 48" fill="currentColor">
                 <path
@@ -69,6 +108,15 @@
           </a>
 
           <a class="karte" href="pixelrex/" style="--kat: var(--pink)">
+            <img
+              class="karte-bild"
+              src="assets/kacheln/pixelrex.webp?v=20261024"
+              alt=""
+              width="160"
+              height="80"
+              loading="lazy"
+              decoding="async"
+            />
             <span class="karte-icon" aria-hidden="true">
               <svg viewBox="0 0 48 48" fill="currentColor">
                 <path
@@ -85,6 +133,15 @@
           </a>
 
           <a class="karte" href="flattervogel/" style="--kat: var(--pink)">
+            <img
+              class="karte-bild"
+              src="assets/kacheln/flattervogel.webp?v=20261024"
+              alt=""
+              width="160"
+              height="80"
+              loading="lazy"
+              decoding="async"
+            />
             <span class="karte-icon" aria-hidden="true">
               <svg viewBox="0 0 48 48" fill="currentColor">
                 <path
@@ -104,6 +161,15 @@
           </a>
 
           <a class="karte" href="froschsprung/" style="--kat: var(--pink)">
+            <img
+              class="karte-bild"
+              src="assets/kacheln/froschsprung.webp?v=20261024"
+              alt=""
+              width="160"
+              height="80"
+              loading="lazy"
+              decoding="async"
+            />
             <span class="karte-icon" aria-hidden="true">
               <svg viewBox="0 0 48 48" fill="currentColor">
                 <ellipse cx="24" cy="30" rx="13" ry="10" />
@@ -130,6 +196,15 @@
           </a>
 
           <a class="karte" href="mauerbrecher/" style="--kat: var(--pink)">
+            <img
+              class="karte-bild"
+              src="assets/kacheln/mauerbrecher.webp?v=20261024"
+              alt=""
+              width="160"
+              height="80"
+              loading="lazy"
+              decoding="async"
+            />
             <span class="karte-icon" aria-hidden="true">
               <svg viewBox="0 0 48 48" fill="currentColor">
                 <rect x="4" y="6" width="12" height="6" rx="1" />
@@ -150,6 +225,15 @@
           </a>
 
           <a class="karte" href="meteorsturm/" style="--kat: var(--pink)">
+            <img
+              class="karte-bild"
+              src="assets/kacheln/meteorsturm.webp?v=20261024"
+              alt=""
+              width="160"
+              height="80"
+              loading="lazy"
+              decoding="async"
+            />
             <span class="karte-icon" aria-hidden="true">
               <svg
                 viewBox="0 0 48 48"
@@ -178,6 +262,15 @@
         <h2>Puzzle</h2>
         <div class="raster-karten">
           <a class="karte" href="2048/" style="--kat: var(--cyan)">
+            <img
+              class="karte-bild"
+              src="assets/kacheln/2048.webp?v=20261024"
+              alt=""
+              width="160"
+              height="80"
+              loading="lazy"
+              decoding="async"
+            />
             <span class="karte-icon" aria-hidden="true">
               <svg viewBox="0 0 48 48" fill="currentColor">
                 <rect x="4" y="4" width="18" height="18" rx="3" opacity=".55" />
@@ -194,6 +287,15 @@
           </a>
 
           <a class="karte" href="minesweeper/" style="--kat: var(--cyan)">
+            <img
+              class="karte-bild"
+              src="assets/kacheln/minesweeper.webp?v=20261024"
+              alt=""
+              width="160"
+              height="80"
+              loading="lazy"
+              decoding="async"
+            />
             <span class="karte-icon" aria-hidden="true">
               <svg viewBox="0 0 48 48" fill="currentColor">
                 <circle cx="24" cy="26" r="11" />
@@ -211,6 +313,15 @@
           </a>
 
           <a class="karte" href="sudoku/" style="--kat: var(--cyan)">
+            <img
+              class="karte-bild"
+              src="assets/kacheln/sudoku.webp?v=20261024"
+              alt=""
+              width="160"
+              height="80"
+              loading="lazy"
+              decoding="async"
+            />
             <span class="karte-icon" aria-hidden="true">
               <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5">
                 <rect x="5" y="5" width="38" height="38" rx="3" />
@@ -224,6 +335,147 @@
               ><span>Highscore: Bestzeit</span><span class="los">Spielen →</span></span
             >
           </a>
+
+          <a class="karte" href="waesche/" style="--kat: var(--cyan)">
+            <img
+              class="karte-bild"
+              src="assets/kacheln/waesche.webp?v=20261024"
+              alt=""
+              width="160"
+              height="80"
+              loading="lazy"
+              decoding="async"
+            />
+            <span class="karte-icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M8 18l8-8h16l8 8-6 4v18H14V22z" />
+                <path d="M20 10c0 4 8 4 8 0" />
+              </svg>
+            </span>
+            <h3>Wäsche</h3>
+            <p>
+              Wäsche nach Farben in Körbe stapeln – mit Waschmaschine, Socken-Paaren und
+              Wäscheleine. 50 Level.
+            </p>
+            <span class="meta"
+              ><span>Highscore: Sterne</span><span class="los">Spielen →</span></span
+            >
+          </a>
+          <a class="karte" href="regale/" style="--kat: var(--cyan)">
+            <img
+              class="karte-bild"
+              src="assets/kacheln/regale.webp?v=20261024"
+              alt=""
+              width="160"
+              height="80"
+              loading="lazy"
+              decoding="async"
+            />
+            <span class="karte-icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M6 8v34M42 8v34M6 18h36M6 30h36M6 42h36" />
+                <path d="M11 13h6M20 13h6M12 25h6M27 25h6M15 37h6" stroke-width="4" />
+              </svg>
+            </span>
+            <h3>Regale</h3>
+            <p>
+              Drei gleiche Waren in ein Fach – weg damit! Combos, Kisten und Zeitlevel. 50 Level.
+            </p>
+            <span class="meta"
+              ><span>Highscore: Sterne</span><span class="los">Spielen →</span></span
+            >
+          </a>
+          <a class="karte" href="gewuerze/" style="--kat: var(--cyan)">
+            <img
+              class="karte-bild"
+              src="assets/kacheln/gewuerze.webp?v=20261024"
+              alt=""
+              width="160"
+              height="80"
+              loading="lazy"
+              decoding="async"
+            />
+            <span class="karte-icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5">
+                <rect x="8" y="14" width="9" height="12" rx="2" />
+                <rect x="20" y="14" width="9" height="12" rx="2" />
+                <rect x="32" y="14" width="9" height="12" rx="2" />
+                <path d="M9 10h7M21 10h7M33 10h7M4 32h40M10 38l-4-6 4-6M38 38l4-6-4-6" />
+              </svg>
+            </span>
+            <h3>Gewürze</h3>
+            <p>
+              Schieberegal: Reihen und Spalten drehen, bis jede Sorte in ihrer Spalte steht. 50
+              Level.
+            </p>
+            <span class="meta"
+              ><span>Highscore: Sterne</span><span class="los">Spielen →</span></span
+            >
+          </a>
+
+          <a class="karte" href="zuckerzauber/" style="--kat: var(--cyan)">
+            <img
+              class="karte-bild"
+              src="assets/kacheln/zuckerzauber.webp?v=20261024"
+              alt=""
+              width="160"
+              height="80"
+              loading="lazy"
+              decoding="async"
+            />
+            <span class="karte-icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M14 20c-4.5-4.5-10 1-6 5l6 6 6-6c4-4-1.5-9.5-6-5z" />
+                <circle cx="34" cy="17" r="8" />
+                <path d="M34 17m-4 0a4 4 0 1 1 4 4" />
+                <path d="M28 33l6-4 6 4v7l-6 3-6-3z" />
+                <path d="M6 40h14" stroke-width="4" />
+              </svg>
+            </span>
+            <h3>Zuckerzauber</h3>
+            <p>
+              Drei gewinnt: 150 süße Level in zehn Welten – Spezial-Bonbons, Gelee, Zutaten und
+              Levelkarte.
+            </p>
+            <span class="meta"
+              ><span>Highscore: Punkte</span><span class="los">Spielen →</span></span
+            >
+          </a>
+        </div>
+      </section>
+
+      <!-- ===== Kategorie: Karten ===== -->
+      <section class="kategorie container" style="--kat: var(--gold)">
+        <h2>Karten</h2>
+        <div class="raster-karten">
+          <a class="karte" href="solitaer/" style="--kat: var(--gold)">
+            <img
+              class="karte-bild"
+              src="assets/kacheln/solitaer.webp?v=20261024"
+              alt=""
+              width="160"
+              height="80"
+              loading="lazy"
+              decoding="async"
+            />
+            <span class="karte-icon" aria-hidden="true"
+              ><svg viewBox="0 0 48 48" fill="currentColor">
+                <rect x="4" y="12" width="16" height="24" rx="2" opacity=".4" />
+                <rect x="16" y="9" width="16" height="26" rx="2" opacity=".7" />
+                <rect x="28" y="6" width="16" height="28" rx="2" />
+                <path
+                  d="M36 13c-2 0-3.4 1.5-3.4 3.3 0 2.6 3.4 5 3.4 5s3.4-2.4 3.4-5c0-1.8-1.4-3.3-3.4-3.3z"
+                  fill="#07070f"
+                /></svg
+            ></span>
+            <h3>Solitär</h3>
+            <p>
+              Klondike mit 1er- oder 3er-Ziehen: Drag &amp; Drop, Rückgängig und Auto-Abschluss.
+            </p>
+            <span class="meta"
+              ><span>Highscore: Bestzeit</span><span class="los">Spielen →</span></span
+            >
+          </a>
         </div>
       </section>
 
@@ -232,6 +484,15 @@
         <h2>Wörter</h2>
         <div class="raster-karten">
           <a class="karte" href="wortfuchs/" style="--kat: var(--lime)">
+            <img
+              class="karte-bild"
+              src="assets/kacheln/wortfuchs.webp?v=20261024"
+              alt=""
+              width="160"
+              height="80"
+              loading="lazy"
+              decoding="async"
+            />
             <span class="karte-icon" aria-hidden="true">
               <svg viewBox="0 0 48 48" fill="currentColor">
                 <rect x="4" y="16" width="12" height="12" rx="2" opacity=".5" />
@@ -254,11 +515,113 @@
         </div>
       </section>
 
+      <!-- ===== Kategorie: Brettspiele (cyan) ===== -->
+      <section class="kategorie container" style="--kat: var(--cyan)">
+        <h2>Brettspiele</h2>
+        <div class="raster-karten">
+          <a class="karte" href="viererreihe/" style="--kat: var(--cyan)">
+            <img
+              class="karte-bild"
+              src="assets/kacheln/viererreihe.webp?v=20261024"
+              alt=""
+              width="160"
+              height="80"
+              loading="lazy"
+              decoding="async"
+            />
+            <span class="karte-icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48" fill="currentColor">
+                <rect x="4" y="8" width="40" height="32" rx="4" opacity=".35" />
+                <circle cx="12" cy="32" r="4" />
+                <circle cx="20" cy="32" r="4" opacity=".6" />
+                <circle cx="20" cy="24" r="4" />
+                <circle cx="28" cy="24" r="4" opacity=".6" />
+                <circle cx="28" cy="16" r="4" />
+                <circle cx="36" cy="16" r="4" opacity=".6" />
+                <rect x="10" y="42" width="6" height="4" rx="1" />
+                <rect x="32" y="42" width="6" height="4" rx="1" />
+              </svg>
+            </span>
+            <h3>Viererreihe</h3>
+            <p>
+              Vier Steine in eine Reihe – gegen den Computer, zu zweit am Gerät oder online mit
+              Code.
+            </p>
+            <span class="meta"
+              ><span>Highscore: Siegesserie</span><span class="los">Spielen →</span></span
+            >
+          </a>
+          <a class="karte" href="schach/" style="--kat: var(--cyan)">
+            <img
+              class="karte-bild"
+              src="assets/kacheln/schach.webp?v=20261024"
+              alt=""
+              width="160"
+              height="80"
+              loading="lazy"
+              decoding="async"
+            />
+            <span class="karte-icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48" fill="currentColor">
+                <path d="M21 6h6v4h4v5h-4v3h-6v-3h-4v-5h4z" />
+                <path d="M16 22h16l-3 14h-10z" opacity=".6" />
+                <rect x="11" y="37" width="26" height="6" rx="2" />
+              </svg>
+            </span>
+            <h3>Schach</h3>
+            <p>
+              Der Klassiker auf Holzbrett – gegen den Computer, zu zweit am Gerät oder online mit
+              Code.
+            </p>
+            <span class="meta"
+              ><span>Highscore: Punkte</span><span class="los">Spielen →</span></span
+            >
+          </a>
+          <a class="karte" href="ludo/" style="--kat: var(--gold)">
+            <img
+              class="karte-bild"
+              src="assets/kacheln/ludo.webp?v=20261024"
+              alt=""
+              width="160"
+              height="80"
+              loading="lazy"
+              decoding="async"
+            />
+            <span class="karte-icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48" fill="currentColor">
+                <circle cx="24" cy="11" r="6" />
+                <path
+                  d="M24 17c-7 0-9 6-6 9-4 5-7 11-8 16h28c-1-5-4-11-8-16 3-3 1-9-6-9z"
+                  opacity=".6"
+                />
+              </svg>
+            </span>
+            <h3>Ludo</h3>
+            <p>
+              Würfeln, rausziehen, schlagen – gegen den Computer, am Gerät oder online mit bis zu
+              vier.
+            </p>
+            <span class="meta"
+              ><span>Highscore: Punkte</span><span class="los">Spielen →</span></span
+            >
+          </a>
+        </div>
+      </section>
+
       <!-- ===== Kategorie: Glück & Zahlen (gold) ===== -->
       <section class="kategorie container" style="--kat: var(--gold)">
         <h2>Glück &amp; Zahlen</h2>
         <div class="raster-karten">
           <a class="karte" href="zahlenraten/" style="--kat: var(--gold)">
+            <img
+              class="karte-bild"
+              src="assets/kacheln/zahlenraten.webp?v=20261024"
+              alt=""
+              width="160"
+              height="80"
+              loading="lazy"
+              decoding="async"
+            />
             <span class="karte-icon" aria-hidden="true">
               <svg viewBox="0 0 48 48" fill="currentColor">
                 <rect x="6" y="6" width="36" height="36" rx="6" opacity=".25" />
@@ -278,6 +641,15 @@
           </a>
 
           <a class="karte" href="higher-lower/" style="--kat: var(--gold)">
+            <img
+              class="karte-bild"
+              src="assets/kacheln/higher-lower.webp?v=20261024"
+              alt=""
+              width="160"
+              height="80"
+              loading="lazy"
+              decoding="async"
+            />
             <span class="karte-icon" aria-hidden="true">
               <svg viewBox="0 0 48 48" fill="currentColor">
                 <path d="M15 44V18H7L19 4l12 14h-8v26z" opacity=".9" />
@@ -294,6 +666,15 @@
           </a>
 
           <a class="karte" href="coinflip/" style="--kat: var(--gold)">
+            <img
+              class="karte-bild"
+              src="assets/kacheln/coinflip.webp?v=20261024"
+              alt=""
+              width="160"
+              height="80"
+              loading="lazy"
+              decoding="async"
+            />
             <span class="karte-icon" aria-hidden="true">
               <svg viewBox="0 0 48 48" fill="currentColor">
                 <circle
@@ -328,6 +709,15 @@
         <h2>Casino <span class="alters-hinweis" style="margin: 0">ab 16</span></h2>
         <div class="raster-karten">
           <a class="karte" href="slots/" style="--kat: var(--gold)">
+            <img
+              class="karte-bild"
+              src="assets/kacheln/slots.webp?v=20261024"
+              alt=""
+              width="160"
+              height="80"
+              loading="lazy"
+              decoding="async"
+            />
             <span class="karte-icon" aria-hidden="true"
               ><svg viewBox="0 0 48 48" fill="currentColor">
                 <rect
@@ -358,6 +748,15 @@
           </a>
 
           <a class="karte" href="blackjack/" style="--kat: var(--gold)">
+            <img
+              class="karte-bild"
+              src="assets/kacheln/blackjack.webp?v=20261024"
+              alt=""
+              width="160"
+              height="80"
+              loading="lazy"
+              decoding="async"
+            />
             <span class="karte-icon" aria-hidden="true"
               ><svg viewBox="0 0 48 48" fill="currentColor">
                 <rect
@@ -394,6 +793,15 @@
           </a>
 
           <a class="karte" href="higher-lower/?modus=casino" style="--kat: var(--gold)">
+            <img
+              class="karte-bild"
+              src="assets/kacheln/higher-lower.webp?v=20261024"
+              alt=""
+              width="160"
+              height="80"
+              loading="lazy"
+              decoding="async"
+            />
             <span class="karte-icon" aria-hidden="true"
               ><svg viewBox="0 0 48 48" fill="currentColor">
                 <path d="M13 40V20H6L16 8l10 12h-7v20z" opacity=".9" />
@@ -415,6 +823,15 @@
           </a>
 
           <a class="karte" href="tempelschatz/" style="--kat: var(--gold)">
+            <img
+              class="karte-bild"
+              src="assets/kacheln/tempelschatz.webp?v=20261024"
+              alt=""
+              width="160"
+              height="80"
+              loading="lazy"
+              decoding="async"
+            />
             <span class="karte-icon" aria-hidden="true">
               <svg viewBox="0 0 48 48" fill="currentColor">
                 <path d="M24 4 44 20H4z" />
@@ -434,6 +851,15 @@
           </a>
 
           <a class="karte" href="angelglueck/" style="--kat: var(--gold)">
+            <img
+              class="karte-bild"
+              src="assets/kacheln/angelglueck.webp?v=20261024"
+              alt=""
+              width="160"
+              height="80"
+              loading="lazy"
+              decoding="async"
+            />
             <span class="karte-icon" aria-hidden="true">
               <svg viewBox="0 0 48 48" fill="currentColor">
                 <path d="M8 22c6-8 16-8 22 0-6 8-16 8-22 0z" />
@@ -455,6 +881,15 @@
           </a>
 
           <a class="karte" href="coinflip/?modus=casino" style="--kat: var(--gold)">
+            <img
+              class="karte-bild"
+              src="assets/kacheln/coinflip.webp?v=20261024"
+              alt=""
+              width="160"
+              height="80"
+              loading="lazy"
+              decoding="async"
+            />
             <span class="karte-icon" aria-hidden="true">
               <svg viewBox="0 0 48 48" fill="currentColor">
                 <circle
@@ -483,6 +918,15 @@
           </a>
 
           <a class="karte" href="risikoleiter/" style="--kat: var(--gold)">
+            <img
+              class="karte-bild"
+              src="assets/kacheln/risikoleiter.webp?v=20261024"
+              alt=""
+              width="160"
+              height="80"
+              loading="lazy"
+              decoding="async"
+            />
             <span class="karte-icon" aria-hidden="true">
               <svg viewBox="0 0 48 48" fill="currentColor">
                 <rect x="12" y="4" width="4" height="40" rx="1.5" />
@@ -502,6 +946,69 @@
               ><span>Highscore: höchster Gewinn</span><span class="los">Spielen →</span></span
             >
           </a>
+          <a class="karte" href="rubbellos/" style="--kat: var(--gold)">
+            <img
+              class="karte-bild"
+              src="assets/kacheln/rubbellos.webp?v=20261024"
+              alt=""
+              width="160"
+              height="80"
+              loading="lazy"
+              decoding="async"
+            />
+            <span class="karte-icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48" fill="currentColor">
+                <rect x="6" y="8" width="36" height="32" rx="4" opacity=".35" />
+                <rect x="11" y="14" width="8" height="8" rx="1.5" />
+                <rect x="20" y="14" width="8" height="8" rx="1.5" opacity=".7" />
+                <rect x="29" y="14" width="8" height="8" rx="1.5" />
+                <rect x="11" y="26" width="8" height="8" rx="1.5" opacity=".7" />
+                <rect x="20" y="26" width="8" height="8" rx="1.5" />
+                <rect x="29" y="26" width="8" height="8" rx="1.5" opacity=".7" />
+              </svg>
+            </span>
+            <h3>Glückslos</h3>
+            <p>
+              Rubbellose wie an der Tankstelle: fünf Sorten von Dreierglück bis Goldmine, mit Maus
+              oder Finger freirubbeln.
+            </p>
+            <span class="meta"
+              ><span>Highscore: höchster Gewinn</span><span class="los">Spielen →</span></span
+            >
+          </a>
+          <a class="karte" href="poker/" style="--kat: var(--gold)">
+            <img
+              class="karte-bild"
+              src="assets/kacheln/poker.webp?v=20261024"
+              alt=""
+              width="160"
+              height="80"
+              loading="lazy"
+              decoding="async"
+            />
+            <span class="karte-icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48" fill="currentColor">
+                <rect
+                  x="6"
+                  y="10"
+                  width="20"
+                  height="28"
+                  rx="3"
+                  opacity=".45"
+                  transform="rotate(-10 16 24)"
+                />
+                <rect x="20" y="10" width="20" height="28" rx="3" transform="rotate(8 30 24)" />
+              </svg>
+            </span>
+            <h3>Pokertisch</h3>
+            <p>
+              Texas Hold'em mit Spielgeld: gegen bis zu fünf Computer oder online mit Code am selben
+              Tisch.
+            </p>
+            <span class="meta"
+              ><span>Highscore: größter Gewinn</span><span class="los">Spielen →</span></span
+            >
+          </a>
         </div>
         <p style="margin-top: 14px; color: var(--mut); font-size: 0.9rem">
           Alle Casino-Spiele teilen sich ein Spielgeld-Konto (Startkapital 1.000). Nur Spielgeld –
@@ -510,59 +1017,19 @@
         </p>
       </section>
 
-      <!-- ===== Kategorie: Karten ===== -->
-      <section class="kategorie container" style="--kat: var(--gold)">
-        <h2>Karten</h2>
-        <div class="raster-karten">
-          <a class="karte" href="solitaer/" style="--kat: var(--gold)">
-            <span class="karte-icon" aria-hidden="true"
-              ><svg viewBox="0 0 48 48" fill="currentColor">
-                <rect x="4" y="12" width="16" height="24" rx="2" opacity=".4" />
-                <rect x="16" y="9" width="16" height="26" rx="2" opacity=".7" />
-                <rect x="28" y="6" width="16" height="28" rx="2" />
-                <path
-                  d="M36 13c-2 0-3.4 1.5-3.4 3.3 0 2.6 3.4 5 3.4 5s3.4-2.4 3.4-5c0-1.8-1.4-3.3-3.4-3.3z"
-                  fill="#07070f"
-                /></svg
-            ></span>
-            <h3>Solitär</h3>
-            <p>
-              Klondike mit 1er- oder 3er-Ziehen: Drag &amp; Drop, Rückgängig und Auto-Abschluss.
-            </p>
-            <span class="meta"
-              ><span>Highscore: Bestzeit</span><span class="los">Spielen →</span></span
-            >
-          </a>
-        </div>
-      </section>
-
-      <!-- ===== Bald verfügbar (violett, nicht klickbar) ===== -->
-      <section class="kategorie container" id="bald" style="--kat: var(--violet)">
-        <h2>Bald verfügbar</h2>
-        <div class="raster-karten">
-          <div class="karte bald" style="--kat: var(--violet)">
-            <span class="badge">Welle 4</span>
-            <span class="karte-icon" aria-hidden="true">
-              <svg viewBox="0 0 48 48" fill="currentColor">
-                <path
-                  d="M14 42h20v-4H14zM16 36h16l-2-6H18zM17 12l3-6h8l3 6c0 6-2 10-3 14H20c-1-4-3-8-3-14z"
-                />
-                <rect x="19" y="4" width="10" height="3" rx="1.5" />
-              </svg>
-            </span>
-            <h3>Brettspiele</h3>
-            <p>Schach, Dame und Ludo – abwechselnd am selben Gerät.</p>
-            <span class="meta"><span>Hot-Seat</span></span>
-          </div>
-        </div>
-      </section>
-
       <section class="container">
         <div class="hinweis">
-          <strong>Deine Daten bleiben deine Daten:</strong> Diese Seite nutzt keine Cookies und
-          sendet nichts an den Server. Highscores und Spielstände liegen ausschließlich im Speicher
-          deines Browsers (localStorage) und lassen sich dort jederzeit löschen. Details in der
-          <a href="datenschutz.html">Datenschutzerklärung</a>.
+          <strong>Deine Daten bleiben deine Daten:</strong> Diese Seite nutzt keine eigenen Cookies
+          und kein Tracking. Spielstände liegen im Speicher deines Browsers (localStorage). Für die
+          weltweite Topliste schickt dein Browser nur deinen Bestwert je Spiel mit Initialen und
+          einer zufälligen Geräte-Kennung an unseren Server – keine IP-Adresse, keinen Namen.
+          Details in der <a href="datenschutz.html">Datenschutzerklärung</a>.
+          <p class="loesch-zeile">
+            <button type="button" class="knopf" data-topliste-loeschen="#loesch-meldung">
+              Meine Topliste-Einträge löschen
+            </button>
+            <span id="loesch-meldung" role="status"></span>
+          </p>
         </div>
       </section>
     </main>
@@ -577,5 +1044,6 @@
       </div>
     </footer>
     <script type="module" src="assets/keks.js"></script>
+    <script type="module" src="assets/startseite.js?v=20261024l"></script>
   </body>
 </html>

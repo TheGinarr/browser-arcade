@@ -3,11 +3,14 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <meta name="theme-color" content="#07070f" />
+    <meta name="theme-color" content="#07070f" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f2f3f9" media="(prefers-color-scheme: light)" />
     <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="../assets/style.css" />
+    <script src="../assets/thema.js?v=20261024"></script>
+    <link rel="stylesheet" href="../assets/style.css?v=20261024w" />
     <!-- Spielspezifische Styles (Brett, Zellen, Notizen, Ziffernleiste) -->
-    <link rel="stylesheet" href="./spiel.css" />
+    <link rel="stylesheet" href="./spiel.css?v=20261024t" />
+    <link rel="stylesheet" href="../assets/umgebung.css?v=20261024" />
     <title>Sudoku · Browser-Arcade</title>
     <meta
       name="description"
@@ -65,7 +68,7 @@
         </button>
       </div>
 
-      <div class="buehne">
+      <div class="buehne umgebung u-sudoku">
         <div class="brett-huelle">
           <!-- Das Brett: game.js baut hier 81 Zellen (Buttons) ein -->
           <div class="brett" id="brett" role="group" aria-label="Sudoku-Brett"></div>
@@ -124,7 +127,7 @@
           id="topliste-titel"
           style="font-family: var(--pixel); font-weight: 400; font-size: 0.85rem"
         >
-          Lokale Top 3
+          Topliste
         </h2>
         <div id="topliste"></div>
         <button class="knopf" id="reset" style="margin-top: 10px">Spielstand zurücksetzen</button>

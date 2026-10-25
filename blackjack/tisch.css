@@ -1,0 +1,130 @@
+/* tisch.css · Blackjack am gemeinsamen Tisch (tisch.js) */
+.tisch-modi {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  margin: 0.75rem 0;
+}
+.tisch-modi .knopf[aria-pressed="true"] {
+  outline: 2px solid var(--akzent, #e3b341);
+  outline-offset: 2px;
+}
+.tisch-modi.gesperrt .knopf:not([aria-pressed="true"]) {
+  opacity: 0.45;
+  pointer-events: none;
+}
+.tisch-beitritt {
+  display: grid;
+  gap: 0.6rem;
+  justify-items: center;
+  max-width: 26rem;
+  margin: 0 auto 1rem;
+  text-align: center;
+}
+.tisch-beitritt label {
+  display: grid;
+  gap: 0.3rem;
+  font-weight: 600;
+}
+.tisch-beitritt input {
+  font:
+    700 1.6rem/1.2 ui-monospace,
+    monospace;
+  letter-spacing: 0.35em;
+  text-align: center;
+  text-transform: uppercase;
+  width: 9ch;
+  padding: 0.4rem 0.3rem 0.4rem 0.65rem;
+  border-radius: 0.5rem;
+  border: 2px solid currentColor;
+  background: transparent;
+  color: inherit;
+}
+.tisch-klein {
+  font-size: 0.8rem;
+  opacity: 0.85;
+  margin: 0;
+}
+.tisch-fehler {
+  color: #ff7b72;
+  font-weight: 600;
+  margin: 0;
+}
+.tisch-kopf {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: space-between;
+  color: #f5ecd0;
+}
+.tisch-code {
+  font:
+    700 1.3rem ui-monospace,
+    monospace;
+  letter-spacing: 0.2em;
+  color: #ffd76a;
+}
+.tisch-status {
+  min-height: 1.2em;
+  margin: 0.3rem 0;
+  font-size: 0.85rem;
+  color: #f5ecd0;
+  text-align: center;
+}
+.tisch-status[data-art="fehler"] {
+  color: #ffb3ad;
+  font-weight: 600;
+}
+.tm-uhr {
+  height: 4px;
+  border-radius: 2px;
+  background: rgb(0 0 0 / 0.25);
+  overflow: hidden;
+  margin: 0.2rem 0 0.5rem;
+}
+.tm-uhr i {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: #ffd76a;
+}
+.tisch-sitze {
+  display: grid;
+  gap: 0.6rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 10.5rem), 1fr));
+  --kw: clamp(44px, 12vw, 70px);
+}
+.tisch-sitz {
+  padding: 0.4rem;
+  border-radius: 0.6rem;
+  border: 2px solid rgb(255 255 255 / 0.12);
+}
+.tisch-sitz.ich {
+  border-color: rgb(255 215 106 / 0.55);
+}
+.tisch-sitz.dran {
+  border-color: #ffd76a;
+  box-shadow: 0 0 0 3px rgb(255 215 106 / 0.25);
+}
+.tisch-sitz .hand-kopf {
+  flex-wrap: wrap;
+}
+.tm-erg.tm-blackjack,
+.tm-erg.tm-sieg {
+  background: #2e7d32;
+  color: #fff;
+}
+.tm-erg.tm-niederlage {
+  background: #8e2a2a;
+  color: #fff;
+}
+.tisch-mehr .bedienung {
+  flex-wrap: wrap;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tm-uhr i {
+    transition: none !important;
+  }
+}

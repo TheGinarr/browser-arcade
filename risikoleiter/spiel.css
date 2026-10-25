@@ -34,7 +34,7 @@
 
 /* Großer aktueller Betrag + Netto-Zeile darunter */
 .rl-label {
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--mut);
@@ -97,4 +97,18 @@
   .rl-anzeige {
     min-width: 100%;
   }
+}
+
+/* p19 leiterbreite */
+.rl-leiter {
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 100%;
+}
+.rl-leiter .rk-leiter {
+  width: 16rem;
+  max-width: 100%;
+}
+.rl-leiter .rk-info {
+  text-align: center;
 }

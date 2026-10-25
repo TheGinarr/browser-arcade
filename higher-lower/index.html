@@ -3,15 +3,18 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <meta name="theme-color" content="#07070f" />
+    <meta name="theme-color" content="#07070f" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f2f3f9" media="(prefers-color-scheme: light)" />
     <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="../assets/style.css" />
+    <script src="../assets/thema.js?v=20261024"></script>
+    <link rel="stylesheet" href="../assets/style.css?v=20261024w" />
     <!-- spielspezifische Styles (Karten, Flip-Animation) – das gemeinsame Design bleibt in ../assets/style.css -->
-    <link rel="stylesheet" href="./spiel.css" />
+    <link rel="stylesheet" href="./spiel.css?v=20261024t" />
+    <link rel="stylesheet" href="../assets/kartentisch.css?v=20261024d" />
     <title>Higher Lower · Browser-Arcade</title>
     <meta
       name="description"
-      content="Higher Lower mit dem Kartendeck: Kommt die nächste Karte höher oder tiefer? Arcade: baue die längste Kette. Casino: tippe mit Spielgeld auf Hoch, Tief oder Gleich. Ohne Konto und Cookies."
+      content="Higher Lower mit dem Kartendeck: Kommt die nächste Karte höher oder tiefer? Arcade: baue die längste Kette. Casino: tippe mit Spielgeld auf Hoch, Tief oder Gleich. Ohne Konto und ohne eigene Cookies."
     />
   </head>
   <body style="--ak: var(--gold)">
@@ -71,7 +74,7 @@
         </div>
       </div>
 
-      <div class="buehne">
+      <div class="buehne filztisch">
         <!-- Die beiden Karten werden von game.js hier hineingebaut (gleiche Bauweise für beide) -->
         <div class="tisch">
           <div class="tisch-spalte">
@@ -152,7 +155,7 @@
           id="topliste-titel"
           style="font-family: var(--pixel); font-weight: 400; font-size: 0.85rem"
         >
-          Lokale Top 3 · Längste Ketten
+          Topliste · Längste Ketten
         </h2>
         <div id="topliste"></div>
         <button class="knopf" id="reset" style="margin-top: 10px">Spielstand zurücksetzen</button>

@@ -37,7 +37,7 @@
   display: block;
   margin-top: 2px;
   font-weight: 400;
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   color: var(--mut);
 }
 .modus-leiste .knopf[aria-pressed="true"] {
@@ -82,7 +82,7 @@
 }
 .beschriftung {
   white-space: nowrap;
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--mut);
@@ -376,3 +376,22 @@
 
 /* Reduzierte Bewegung: der Flip ist dann ein sofortiger Wechsel
    (die globale Regel in style.css kürzt Dauer und Übergänge schon). */
+
+/* hell-gen: automatisch erzeugt */
+@media (prefers-color-scheme: light) {
+  :where(:root:not([data-thema="dunkel"])) .flaeche.hinten {
+    background: repeating-linear-gradient(45deg, #d3d3eb 0 7px, #c2c2e3 7px 14px);
+  }
+  :where(:root:not([data-thema="dunkel"])) .stapel::before,
+  :where(:root:not([data-thema="dunkel"])) .stapel::after {
+    background: #d3d3eb;
+  }
+}
+
+:where(:root[data-thema="hell"]) .flaeche.hinten {
+  background: repeating-linear-gradient(45deg, #d3d3eb 0 7px, #c2c2e3 7px 14px);
+}
+:where(:root[data-thema="hell"]) .stapel::before,
+:where(:root[data-thema="hell"]) .stapel::after {
+  background: #d3d3eb;
+}

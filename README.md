@@ -1,13 +1,21 @@
 # Browser-Arcade
 
-Kleine Browser-Klassiker als rein statische Website: nur HTML, CSS und Vanilla-JavaScript.
-Kein Backend, keine Datenbank, keine Cookies, keine externen Dienste, kein Build-Schritt.
-Alles, was gespeichert wird (Highscores, Spielstände, freigeschaltete Level), liegt im
-localStorage des Browsers.
+Kleine Browser-Klassiker als statische Website: nur HTML, CSS und Vanilla-JavaScript.
+Keine Cookies, kein Tracking, keine Bibliotheken, kein Build-Schritt. Alles, was gespeichert
+wird (Highscores, Spielstände, freigeschaltete Level, Fortschritt), liegt im localStorage des
+Browsers. Online-Topliste und Mehrspieler sind optional und brauchen einen eigenen Server
+(siehe unten), ohne ihn läuft alles andere ganz normal.
 
-**Enthalten:** Snake, Pixelrex, Flattervogel, Froschsprung, Mauerbrecher, Meteorsturm
-(Arcade, alle mit Leveln und Handy-Steuerung), 2048, Minesweeper, Sudoku, Solitär,
-Wortfuchs, Zahlenraten und ein Casino-Bereich mit Spielgeld.
+**Enthalten:**
+
+- **Arcade** (mit Leveln und Handy-Steuerung): Snake, Pixelrex, Flattervogel, Froschsprung,
+  Mauerbrecher, Meteorsturm
+- **Puzzle und Denken:** 2048, Minesweeper, Sudoku, Solitär, Wortfuchs, Zahlenraten,
+  Zuckerzauber (Dreier-Reihen), Regale, Gewürze, Wäsche (Sortierspiele)
+- **Brettspiele** (gegen den Computer, am selben Gerät oder online mit Code): Schach,
+  Viererreihe, Ludo
+- **Casino mit Spielgeld:** Slots, Angelglück, Tempelschatz, Risikoleiter, Blackjack,
+  Pokertisch, Glückslos (Rubbellos), Coinflip, Higher-Lower
 
 Code und Kommentare sind bewusst auf Deutsch und ausführlich: Jede Spielseite hat
 eine aufklappbare Lernbox „Wie funktioniert der Code?“.
@@ -31,13 +39,28 @@ Ordnerinhalt einfach hochladen.
 Klammern. Bitte mit eigenen Angaben füllen und für das eigene Angebot prüfen
 (keine Rechtsberatung).
 
+## Online-Funktionen (optional)
+
+Zwei Funktionen sprechen mit einem Server. Der Server-Code ist **nicht** Teil dieses Repos;
+ohne ihn schlagen nur diese Aufrufe fehl, alle Spiele bleiben spielbar.
+
+- **Öffentliche Topliste** (`assets/bestenliste.js`): schickt den eigenen Bestwert je Spiel
+  mit Initialen und einer zufälligen Geräte-Kennung an `/api/…` auf derselben Domain.
+- **Mehrspieler mit Code** (`assets/mehrspieler.js`): Ein WebSocket unter `/ws/vermittlung`
+  vermittelt nur den Verbindungsaufbau, danach spielen die Browser direkt per WebRTC
+  miteinander. Als STUN-Server ist `stun.cloudflare.com` eingetragen (anpassbar in der
+  Datei). Mitspieler sehen dabei technisch bedingt die IP-Adressen der anderen.
+
+Wer das nutzt, muss es in `datenschutz.html` beschreiben (die Vorlage enthält dafür
+bereits die Abschnitte 3a und 3b).
+
 ## Ordnerstruktur
 
 ```
 games/
 ├── index.html            Hub: Übersicht aller Spiele
-├── impressum.html        Rechtliches (angepasst von der Landing)
-├── datenschutz.html      inkl. localStorage-Abschnitt
+├── impressum.html        Vorlage (Platzhalter ausfüllen)
+├── datenschutz.html      Vorlage inkl. localStorage, Topliste, Mehrspieler
 ├── 404.html              Fehlerseite
 ├── favicon.svg           eigenes Pixel-Joystick-Icon
 ├── assets/
@@ -113,7 +136,8 @@ Label-Generator von JusProg nutzen und die Casino-Ordner mit 16 kennzeichnen.
   („So funktioniert dieses Spiel"), jede Seite hat unten eine aufklappbare
   Lernbox („Wie funktioniert der Code?") mit den wichtigsten Konzepten.
 - Keine Bibliotheken, keine CDNs, keine Bilder von Dritten. Grafik entsteht aus
-  CSS, Inline-SVG oder Canvas-Zeichnungen (markenrechtlich alles Eigenbau).
+  CSS, Inline-SVG oder Canvas-Zeichnungen (markenrechtlich alles Eigenbau). Schach und
+  Viererreihe rechnen ihre Computerzüge in einem Web Worker (`ki-worker.js`).
 - Animationen: CSS-Transitions/Keyframes für UI, `requestAnimationFrame` für
   Spielschleifen. `prefers-reduced-motion` wird respektiert (CSS automatisch,
   JS über `bewegungReduziert()` aus ui.js).
@@ -126,12 +150,8 @@ Label-Generator von JusProg nutzen und die Casino-Ordner mit 16 kennzeichnen.
 ## Spielstände löschen
 
 Jedes Spiel hat einen Reset. Alternativ im Browser: Einstellungen → Websitedaten
-für diese Seite löschen. Es existiert keine Kopie auf dem Server.
-
-## Geplant
-
-Welle 4 (optional): Hot-Seat-Brettspiele (Schach, Dame, Ludo) –
-abwechselnd am selben Gerät, weiterhin ohne Server.
+für diese Seite löschen. Nur wenn die optionale Online-Topliste genutzt wird, liegt der
+Bestwert zusätzlich auf dem Server; die Datenschutz-Vorlage hat dafür einen Lösch-Knopf.
 
 ## Code-Stil
 
@@ -144,6 +164,7 @@ höchstens 100 Zeichen pro Zeile. Vor einem Commit einfach `npx prettier --write
 Code: MIT, siehe `LICENSE`. Schriften in `assets/fonts/`: SIL Open Font License 1.1
 (Press Start 2P und IBM Plex, siehe `assets/fonts/OFL-LIZENZ.txt`). Die Rate-Wortliste `wortfuchs/woerter-haeufig.js` stammt aus
 [FrequencyWords](https://github.com/hermitdave/FrequencyWords) (Hermit Dave) und steht unter
-CC BY-SA 4.0. Alle Grafiken entstehen per Canvas, CSS oder
-Inline-SVG im Code, es gibt keine fremden Bilddateien. Die Spiele sind eigene Umsetzungen
-bekannter Spielprinzipien, ohne Originalnamen, -grafiken oder -sounds.
+CC BY-SA 4.0. Grafiken entstehen per Canvas, CSS oder Inline-SVG im Code; die Vorschaubilder
+in `assets/kacheln/` sind Ausschnitte aus den eigenen Spielen. Es gibt keine fremden
+Bilddateien. Die Spiele sind eigene Umsetzungen bekannter Spielprinzipien, ohne
+Originalnamen, -grafiken oder -sounds. Code und Grafiken entstanden mit Unterstützung von KI.

@@ -793,7 +793,7 @@ function hudZeichnen() {
 /** Zeigt die Topliste der aktuell gewählten Stufe (Punkte sind Sekunden → mm:ss). */
 function toplisteAktualisieren() {
   toplisteAnzeigen(el.topliste, toplisteKey(stufeKey), zeitText);
-  el.toplisteTitel.textContent = `Lokale Top 3 · ${STUFEN[stufeKey].name}`;
+  el.toplisteTitel.textContent = `Topliste · ${STUFEN[stufeKey].name}`;
 }
 
 /** Meldung für Screenreader (sichtbar ist sie nicht). */

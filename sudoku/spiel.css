@@ -44,7 +44,7 @@
   display: block;
   margin-top: 2px;
   font-weight: 400;
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   color: var(--mut);
 }
 .stufen-leiste .knopf[aria-pressed="true"] {
@@ -245,7 +245,7 @@
   border-radius: 10px;
   background: #07070fe6;
   font-family: var(--pixel);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   color: var(--ak);
   animation: erzeugung-rein 0.25s ease 0.2s backwards;
 }
@@ -418,7 +418,7 @@ dialog.spiel-dialog p.gross {
     padding: 10px 6px;
   }
   .hud-feld .label {
-    font-size: 0.6rem;
+    font-size: 0.75rem;
     letter-spacing: 0.06em;
   }
   .hud-feld .wert {
@@ -441,4 +441,95 @@ dialog.spiel-dialog p.gross {
   .werkzeuge {
     justify-content: flex-start;
   }
+}
+
+/* hell-gen: automatisch erzeugt */
+@media (prefers-color-scheme: light) {
+  :where(:root:not([data-thema="dunkel"])) .brett {
+    --blocklinie: color-mix(in srgb, var(--ak) 55%, #c2c2df);
+    background: #ececf7;
+  }
+  :where(:root:not([data-thema="dunkel"])) .zelle {
+    background-color: #e8e8f5;
+    box-shadow: inset 0 0 0 1px #c8c8e5;
+  }
+  :where(:root:not([data-thema="dunkel"])) .zelle.vorgabe {
+    background-color: #cecee9;
+  }
+  :where(:root:not([data-thema="dunkel"])) .zelle.bereich {
+    background-color: #dcdcf0;
+  }
+  :where(:root:not([data-thema="dunkel"])) .zelle.vorgabe.bereich {
+    background-color: #c8c8e6;
+  }
+  :where(:root:not([data-thema="dunkel"])) .zelle.gleich {
+    background-color: color-mix(in srgb, var(--ak) 24%, #e8e8f5);
+  }
+  :where(:root:not([data-thema="dunkel"])) .zelle.vorgabe.gleich {
+    background-color: color-mix(in srgb, var(--ak) 28%, #cecee9);
+  }
+  :where(:root:not([data-thema="dunkel"])) .zelle.auswahl {
+    background-color: color-mix(in srgb, var(--ak) 34%, #e8e8f5);
+  }
+  :where(:root:not([data-thema="dunkel"])) .zelle.vorgabe.auswahl {
+    background-color: color-mix(in srgb, var(--ak) 38%, #cecee9);
+  }
+  :where(:root:not([data-thema="dunkel"])) .zelle.konflikt {
+    background-color: #f0d7e1;
+  }
+  :where(:root:not([data-thema="dunkel"])) .zelle.konflikt.auswahl {
+    background-color: #e9c6d3;
+  }
+  :where(:root:not([data-thema="dunkel"])) .zelle.falsch {
+    box-shadow:
+      inset 0 -4px 0 -1px var(--pink),
+      inset 0 0 0 1px #c8c8e5;
+  }
+  :where(:root:not([data-thema="dunkel"])) .erzeugung {
+    background: #1a1d4032;
+  }
+}
+
+:where(:root[data-thema="hell"]) .brett {
+  --blocklinie: color-mix(in srgb, var(--ak) 55%, #c2c2df);
+  background: #ececf7;
+}
+:where(:root[data-thema="hell"]) .zelle {
+  background-color: #e8e8f5;
+  box-shadow: inset 0 0 0 1px #c8c8e5;
+}
+:where(:root[data-thema="hell"]) .zelle.vorgabe {
+  background-color: #cecee9;
+}
+:where(:root[data-thema="hell"]) .zelle.bereich {
+  background-color: #dcdcf0;
+}
+:where(:root[data-thema="hell"]) .zelle.vorgabe.bereich {
+  background-color: #c8c8e6;
+}
+:where(:root[data-thema="hell"]) .zelle.gleich {
+  background-color: color-mix(in srgb, var(--ak) 24%, #e8e8f5);
+}
+:where(:root[data-thema="hell"]) .zelle.vorgabe.gleich {
+  background-color: color-mix(in srgb, var(--ak) 28%, #cecee9);
+}
+:where(:root[data-thema="hell"]) .zelle.auswahl {
+  background-color: color-mix(in srgb, var(--ak) 34%, #e8e8f5);
+}
+:where(:root[data-thema="hell"]) .zelle.vorgabe.auswahl {
+  background-color: color-mix(in srgb, var(--ak) 38%, #cecee9);
+}
+:where(:root[data-thema="hell"]) .zelle.konflikt {
+  background-color: #f0d7e1;
+}
+:where(:root[data-thema="hell"]) .zelle.konflikt.auswahl {
+  background-color: #e9c6d3;
+}
+:where(:root[data-thema="hell"]) .zelle.falsch {
+  box-shadow:
+    inset 0 -4px 0 -1px var(--pink),
+    inset 0 0 0 1px #c8c8e5;
+}
+:where(:root[data-thema="hell"]) .erzeugung {
+  background: #1a1d4032;
 }

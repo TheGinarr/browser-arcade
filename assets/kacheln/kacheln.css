@@ -1,0 +1,33 @@
+/* Startkacheln: eigene Illustration oben, Icon bleibt für "Weiterspielen" im DOM */
+.karte:has(.karte-bild) .karte-icon {
+  display: none;
+}
+.karte-bild {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 2 / 1;
+  border-radius: 10px;
+  margin-bottom: 4px;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--kat) 45%, transparent),
+    0 4px 10px #0005;
+  transition: transform 0.25s ease;
+}
+.karte:hover .karte-bild,
+.karte:focus-visible .karte-bild {
+  transform: scale(1.03) rotate(-0.6deg);
+}
+@media (prefers-reduced-motion: reduce) {
+  .karte-bild {
+    transition: none;
+  }
+  .karte:hover .karte-bild,
+  .karte:focus-visible .karte-bild {
+    transform: none;
+  }
+}
+
+.karte-bild {
+  object-fit: cover;
+}

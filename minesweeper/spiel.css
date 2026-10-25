@@ -40,7 +40,7 @@
   display: block;
   margin-top: 2px;
   font-weight: 400;
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   color: var(--mut);
 }
 /* Aktive Stufe: per aria-pressed gestylt, so bleiben Optik und
@@ -245,10 +245,47 @@ dialog.spiel-dialog p.gross {
     padding: 10px 6px;
   }
   .hud-feld .label {
-    font-size: 0.6rem;
+    font-size: 0.75rem;
     letter-spacing: 0.06em;
   }
   .hud-feld .wert {
     font-size: 0.85rem;
   }
+}
+
+/* hell-gen: automatisch erzeugt */
+@media (prefers-color-scheme: light) {
+  :where(:root:not([data-thema="dunkel"])) .zelle {
+    background-color: #cacae7;
+  }
+  @media (hover: hover) {
+    :where(:root:not([data-thema="dunkel"])) .zelle:hover:not(.offen):not(.mine) {
+      background-color: #babade;
+    }
+  }
+  :where(:root:not([data-thema="dunkel"])) .zelle.offen,
+  :where(:root:not([data-thema="dunkel"])) .zelle.mine {
+    background-color: #ececf7;
+    box-shadow: inset 0 0 0 1px #d6d6ec;
+  }
+  :where(:root:not([data-thema="dunkel"])) .zelle.falsch {
+    background-color: #f3e1ea;
+  }
+}
+
+:where(:root[data-thema="hell"]) .zelle {
+  background-color: #cacae7;
+}
+@media (hover: hover) {
+  :where(:root[data-thema="hell"]) .zelle:hover:not(.offen):not(.mine) {
+    background-color: #babade;
+  }
+}
+:where(:root[data-thema="hell"]) .zelle.offen,
+:where(:root[data-thema="hell"]) .zelle.mine {
+  background-color: #ececf7;
+  box-shadow: inset 0 0 0 1px #d6d6ec;
+}
+:where(:root[data-thema="hell"]) .zelle.falsch {
+  background-color: #f3e1ea;
 }
